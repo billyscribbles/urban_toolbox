@@ -1,0 +1,22 @@
+.page-hero {
+  background: var(--color-dark);
+  color: #fff;
+  padding: 76px 0 72px;
+}
+
+.page-hero__title {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 7vw, 60px);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+
+.page-hero__intro {
+  font-size: 19px;
+  line-height: 1.55;
+  color: var(--color-dark-text);
+  max-width: 640px;
+}

@@ -1,0 +1,89 @@
+// Single source of truth for brand identity, nav, SEO, integrations.
+// Every new site starts by editing this file.
+
+export const site = {
+  brand: {
+    name: 'Urban Toolboxes',
+    logoText: 'URBAN TOOLBOXES',
+    tagline:
+      'Custom aluminium caravan toolboxes, ute accessories and metal fabrication — designed and built in Dandenong South.',
+    // Circular building-bars logo mark shown beside the wordmark in the Navbar/Footer.
+    logoMark: '/brand/logo-mark.png',
+    // Short line rendered under the wordmark (mirrors the badge lockup).
+    logoSub: 'BUILT TO WORK. BUILT TO LAST.',
+    // Optional single-image logo — leave null to use the mark + wordmark lockup.
+    logoSrc: null,
+  },
+
+  nav: [
+    { label: 'Home', to: '/' },
+    { label: 'Caravan Toolboxes', to: '/caravan-toolboxes' },
+    { label: 'Ute Accessories', to: '/ute-accessories' },
+    { label: 'Fabrication', to: '/fabrication' },
+    { label: 'About', to: '/about' },
+  ],
+
+  // Primary conversion action — a mailto, per the handoff.
+  cta: {
+    label: 'Get a Quote',
+    href: 'mailto:sales@urbantoolboxes.com.au',
+  },
+
+  footer: {
+    columns: [
+      {
+        title: 'Products',
+        links: [
+          { label: 'Caravan Toolboxes', to: '/caravan-toolboxes' },
+          { label: 'Ute Accessories', to: '/ute-accessories' },
+          { label: 'Fabrication', to: '/fabrication' },
+        ],
+      },
+      {
+        title: 'Company',
+        links: [
+          { label: 'Home', to: '/' },
+          { label: 'About & Contact', to: '/about' },
+          { label: 'Get a Quote', href: 'mailto:sales@urbantoolboxes.com.au' },
+        ],
+      },
+    ],
+    copyright: `© ${new Date().getFullYear()} Urban Toolboxes. A division of Urban Trading & Construction Pty Ltd.`,
+    // Right-hand line in the footer's bottom bar.
+    madeLine: 'Australian Made · Dandenong South, VIC',
+    // Agency credit — always shown in the footer.
+    credit: { label: 'Site by Onrai', href: 'https://www.onraistudio.com/' },
+  },
+
+  social: {
+    instagram: 'https://www.instagram.com/urbantoolboxes',
+    facebook: 'https://www.facebook.com/urbantoolboxes',
+    linkedin: '',
+  },
+
+  contact: {
+    email: 'sales@urbantoolboxes.com.au',
+    phone: '0405 970 059',
+    phoneAlt: '0451 065 592',
+    location: '23/10 Assembly Drive, Dandenong South VIC 3175',
+    hours: 'Mon–Fri 8:00am – 4:30pm',
+    mapUrl:
+      'https://www.google.com/maps/search/?api=1&query=23%2F10+Assembly+Drive+Dandenong+South+VIC+3175',
+  },
+
+  seo: {
+    defaultTitle: 'Urban Toolboxes — Custom Aluminium Caravan & Ute Toolboxes',
+    titleTemplate: '%s · Urban Toolboxes',
+    description:
+      'Australian-made custom aluminium caravan toolboxes, ute accessories and metal fabrication — designed and built in Dandenong South, Victoria.',
+    siteUrl: import.meta.env.VITE_SITE_URL || 'https://urbantoolboxes.com.au',
+    // 1200x630 PNG — social platforms ignore SVG.
+    ogImage: '/brand/og-image.png',
+    locale: 'en_AU',
+  },
+
+  integrations: {
+    formspreeId: import.meta.env.VITE_FORMSPREE_ID || '',
+    gaId: import.meta.env.VITE_GA_ID || '',
+  },
+}

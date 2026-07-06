@@ -1,0 +1,28 @@
+.process__media {
+  margin-bottom: 22px;
+}
+
+.process__step-num {
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 8px;
+}
+
+.process__step-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #fff;
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+
+.process__step-body {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--color-dark-text);
+}

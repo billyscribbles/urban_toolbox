@@ -1,0 +1,40 @@
+.fab-service {
+  border: 1px solid var(--color-border-light);
+  padding: 34px;
+}
+
+.fab-service__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 1.5px solid var(--color-accent);
+  color: var(--color-accent);
+  margin-bottom: 22px;
+}
+
+.fab-service__title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-ink-strong);
+  font-weight: 400;
+  margin-bottom: 12px;
+}
+
+.fab-service__body {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-gray-muted);
+  margin-bottom: 16px;
+}
+
+.fab-service__points {
+  list-style: disc;
+  padding-left: 18px;
+  color: var(--color-gray-muted);
+  font-size: 14px;
+  line-height: 1.9;
+}

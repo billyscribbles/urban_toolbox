@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 72" width="340" height="72" role="img" aria-label="Urban Toolboxes">
+  <g transform="translate(6,6) scale(0.5)">
+    <circle cx="60" cy="60" r="50" fill="none" stroke="#6d727a" stroke-width="3.4"/>
+    <g fill="#ced1d5" stroke="#6d727a" stroke-width="1.9" stroke-linejoin="round">
+      <path d="M25.75 98 L25.75 61 L31.25 56 L36.75 61 L36.75 98 Z"/>
+      <path d="M37.25 98 L37.25 53 L42.75 48 L48.25 53 L48.25 98 Z"/>
+      <path d="M48.75 98 L48.75 39 L54.25 34 L59.75 39 L59.75 98 Z"/>
+      <path d="M60.25 98 L60.25 35 L65.75 30 L71.25 35 L71.25 98 Z"/>
+      <path d="M71.75 98 L71.75 63 L77.25 58 L82.75 63 L82.75 98 Z"/>
+      <path d="M83.25 98 L83.25 57 L88.75 52 L94.25 57 L94.25 98 Z"/>
+    </g>
+  </g>
+  <text x="72" y="38" font-family="'Space Grotesk','Arial Narrow',sans-serif" font-size="23" font-weight="700" fill="#14181c" letter-spacing="1.5">URBAN TOOLBOXES</text>
+  <text x="73" y="56" font-family="'Inter',Arial,sans-serif" font-size="9.5" font-weight="600" fill="#6b7580" letter-spacing="3">BUILT TO WORK. BUILT TO LAST.</text>
+</svg>

@@ -1,0 +1,282 @@
+/* Base resets + shared utility classes.
+ * Design tokens are injected onto :root by src/lib/applyTheme.js at boot.
+ * Reference them via var(--color-accent), var(--font-display), etc.
+ * Fonts (Anton / Barlow / JetBrains Mono) are loaded from Google Fonts in index.html.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  overflow-x: hidden;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--color-ink);
+  background-color: var(--color-white);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+::selection {
+  background: var(--color-accent);
+  color: #fff;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  cursor: pointer;
+  font-family: var(--font-body);
+  border: none;
+  background: none;
+}
+ul,
+ol {
+  list-style: none;
+}
+input,
+textarea,
+select {
+  font-family: var(--font-body);
+}
+
+/* ---------------------------------------------------------------- layout */
+
+.container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.section {
+  padding: 96px 0;
+}
+
+.section--alt {
+  background: var(--color-off-white);
+}
+
+.section--dark {
+  background: var(--color-dark);
+  color: #fff;
+}
+
+/* ------------------------------------------------------------- headings */
+
+.h2 {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 4.4vw, 44px);
+  line-height: 1.02;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-ink-strong);
+  font-weight: 400;
+}
+
+.section--dark .h2 {
+  color: #fff;
+}
+
+/* Slightly smaller sub-section heading (feature grids, story blocks). */
+.h2--md {
+  font-size: clamp(30px, 4vw, 38px);
+}
+
+/* Eyebrow + H2 lockup that opens most content sections. */
+.section-head {
+  margin-bottom: 48px;
+  max-width: 760px;
+}
+
+.section-head__sub {
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--color-gray-muted);
+  margin-top: 14px;
+}
+
+.section--dark .section-head__sub {
+  color: var(--color-dark-text);
+}
+
+/* --------------------------------------------------------------- buttons */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 17px 30px;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.btn--green {
+  background: var(--color-accent);
+  color: #fff;
+}
+.btn--green:hover {
+  background: var(--color-accent-hover);
+}
+
+.btn--outline {
+  background: var(--color-white);
+  color: var(--color-ink-strong);
+  border-color: #cfcfca;
+}
+.btn--outline:hover {
+  border-color: var(--color-ink-strong);
+}
+
+.btn--dark {
+  background: var(--color-dark);
+  color: #fff;
+  padding: 18px 34px;
+}
+.btn--dark:hover {
+  background: var(--color-ink);
+}
+
+/* ----------------------------------------------------------------- grids */
+
+.grid {
+  display: grid;
+}
+.grid--2 {
+  grid-template-columns: 1fr 1fr;
+  gap: 26px;
+}
+.grid--3 {
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 26px;
+}
+.grid--4 {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .grid--2,
+  .grid--3 {
+    grid-template-columns: 1fr;
+  }
+  .grid--4 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .grid--4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ----------------------------------------------------------- text links */
+
+/* Green "EXPLORE →" / "SEE ALL SERVICES →" inline action links. */
+.action-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+/* --------------------------------------------------------- a11y helpers */
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+#main:focus {
+  outline: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 1000;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--color-accent);
+  transform: translateY(-160%);
+  transition: transform var(--transition-fast);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* ----------------------------------------------------------- responsive */
+
+@media (max-width: 900px) {
+  .container {
+    padding: 0 24px;
+  }
+  .section {
+    padding: 68px 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .container {
+    padding: 0 20px;
+  }
+}
+
+/* Honour the OS "reduce motion" setting — neutralise CSS animation. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

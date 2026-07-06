@@ -1,0 +1,190 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: var(--color-dark);
+  border-bottom: 1px solid var(--color-border-dark);
+}
+
+.navbar__inner {
+  height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+/* ---------------------------------------------------------------- brand */
+
+.navbar__logo {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  flex-shrink: 0;
+}
+
+.navbar__logo-mark {
+  width: 60px;
+  height: 60px;
+  display: block;
+  /* Icon already carries its own white ring; no CSS border (avoids a double ring). */
+}
+
+.navbar__logo-img {
+  height: 46px;
+  width: auto;
+}
+
+.navbar__logo-lockup {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.navbar__logo-word {
+  font-family: var(--font-display);
+  color: #fff;
+  font-size: 22px;
+  letter-spacing: 0.05em;
+}
+
+.navbar__logo-sub {
+  color: var(--color-accent);
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  font-weight: 600;
+  margin-top: 5px;
+}
+
+/* ------------------------------------------------------------ nav links */
+
+.navbar__links {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.navbar__link {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--color-dark-text);
+  transition: color var(--transition-fast);
+}
+
+.navbar__link:hover,
+.navbar__link.active {
+  color: #fff;
+}
+
+/* --------------------------------------------------------------- cta */
+
+.navbar__cta {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: #fff;
+  border: 1.5px solid var(--color-accent);
+  padding: 12px 22px;
+  background: transparent;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.navbar__cta:hover {
+  background: var(--color-accent);
+}
+
+/* --------------------------------------------------------- hamburger */
+
+.navbar__hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.navbar__hamburger span {
+  display: block;
+  height: 2px;
+  width: 22px;
+  margin: 0 auto;
+  background: #fff;
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
+}
+
+.navbar__hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.navbar__hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+.navbar__hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ------------------------------------------------------------ mobile */
+
+.navbar__mobile {
+  display: none;
+  flex-direction: column;
+  background: var(--color-dark);
+  border-top: 1px solid var(--color-border-dark);
+  padding: 8px 24px 20px;
+}
+
+.navbar__mobile-link {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-dark-text);
+  padding: 14px 0;
+  border-bottom: 1px solid var(--color-border-dark);
+}
+
+.navbar__mobile-link.active {
+  color: #fff;
+}
+
+.navbar__mobile-cta {
+  margin-top: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: #fff;
+  border: 1.5px solid var(--color-accent);
+  padding: 14px 22px;
+}
+
+.navbar__mobile-cta:hover {
+  background: var(--color-accent);
+}
+
+@media (max-width: 900px) {
+  .navbar__links,
+  .navbar__cta {
+    display: none;
+  }
+  .navbar__hamburger {
+    display: flex;
+  }
+  .navbar__mobile.open {
+    display: flex;
+  }
+}

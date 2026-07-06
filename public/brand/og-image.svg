@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#191d22"/>
+      <stop offset="1" stop-color="#0d1013"/>
+    </linearGradient>
+    <pattern id="tread" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M15 4 L20 7 L15 10 L10 7 Z" fill="#ffffff" opacity="0.03"/>
+      <path d="M15 30 L20 27 L15 24 L10 27 Z" fill="#000000" opacity="0.10"/>
+    </pattern>
+    <radialGradient id="glow" cx="0.82" cy="0.2" r="0.6">
+      <stop offset="0" stop-color="#57a53c" stop-opacity="0.26"/>
+      <stop offset="1" stop-color="#57a53c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#tread)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- skyline mark + wordmark -->
+  <g transform="translate(80,74)">
+    <g transform="scale(0.62)">
+      <circle cx="60" cy="60" r="50" fill="none" stroke="#e7e9eb" stroke-width="4"/>
+      <g fill="#e7e9eb">
+        <path d="M25.75 98 L25.75 61 L31.25 56 L36.75 61 L36.75 98 Z"/>
+        <path d="M37.25 98 L37.25 53 L42.75 48 L48.25 53 L48.25 98 Z"/>
+        <path d="M48.75 98 L48.75 39 L54.25 34 L59.75 39 L59.75 98 Z"/>
+        <path d="M60.25 98 L60.25 35 L65.75 30 L71.25 35 L71.25 98 Z"/>
+        <path d="M71.75 98 L71.75 63 L77.25 58 L82.75 63 L82.75 98 Z"/>
+        <path d="M83.25 98 L83.25 57 L88.75 52 L94.25 57 L94.25 98 Z"/>
+      </g>
+    </g>
+    <text x="96" y="34" font-family="'Space Grotesk','Arial Narrow',sans-serif" font-size="26" font-weight="700" fill="#ffffff" letter-spacing="3">URBAN TOOLBOXES</text>
+    <text x="97" y="60" font-family="'Inter',Arial,sans-serif" font-size="13" font-weight="600" fill="#8b949c" letter-spacing="4">BUILT TO WORK. BUILT TO LAST.</text>
+  </g>
+
+  <text x="80" y="330" font-family="'Space Grotesk',Arial,sans-serif" font-size="82" font-weight="700" fill="#ffffff" letter-spacing="-1">Built for work.</text>
+  <text x="80" y="418" font-family="'Space Grotesk',Arial,sans-serif" font-size="82" font-weight="700" fill="#57a53c" letter-spacing="-1">Ready for adventure.</text>
+  <text x="80" y="486" font-family="'Inter',Arial,sans-serif" font-size="26" fill="#c2c8ce">Custom aluminium toolboxes &amp; fabrication — Dandenong South, VIC</text>
+
+  <g transform="translate(80,528)" font-family="'Inter',Arial,sans-serif" font-size="18" font-weight="600" fill="#8b949c" letter-spacing="1">
+    <text x="0" y="14">AUSTRALIAN MADE</text>
+    <text x="230" y="14">•</text>
+    <text x="260" y="14">BUILT TO LAST</text>
+    <text x="450" y="14">•</text>
+    <text x="480" y="14">CUSTOM BUILT</text>
+  </g>
+</svg>
