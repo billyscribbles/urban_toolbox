@@ -41,8 +41,9 @@ export default [
     },
   },
   {
-    // Test files, Vitest config, and build scripts run under Node + Vitest globals.
-    files: ['src/test/**/*.{js,jsx}', 'scripts/**/*.{js,mjs}', '*.config.js'],
+    // Test files, Vitest config, and Node scripts (build + prod server) run
+    // under Node + Vitest globals.
+    files: ['src/test/**/*.{js,jsx}', 'scripts/**/*.{js,mjs}', '*.config.js', 'server.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
