@@ -7,18 +7,23 @@ export const fabrication = {
   },
   services: [
     {
+      // anchor also serves the legacy /laser-cutting redirect (see App.jsx).
+      anchor: 'laser-cutting',
       icon: 'Crosshair',
       title: 'Laser Cutting',
       body: 'Flawless precision, clean edges and quick turnaround. Custom patterns, logos and intricate designs cut to spec.',
       points: ['Custom designs & logos', 'Fast & accurate', 'Prototyping & production'],
     },
     {
+      // anchor also serves the legacy /folding redirect (see App.jsx).
+      anchor: 'folding',
       icon: 'Spline',
       title: 'Folding',
       body: 'Accurate bends with sharp, clean lines. From simple bends to complex shapes across various thicknesses.',
       points: ['Aluminium, steel & more', 'Tight-tolerance bends', 'Scalable production'],
     },
     {
+      anchor: 'custom-fabrication',
       icon: 'Wrench',
       title: 'Custom Fabrication',
       body: 'Cutting, welding, bending and assembly to create strong, reliable products for any application.',

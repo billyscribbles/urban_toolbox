@@ -1,6 +1,9 @@
 .fab-service {
   border: 1px solid var(--color-border-light);
   padding: 34px;
+  /* Offset so legacy #laser-cutting / #folding anchor jumps clear the
+     sticky navbar instead of hiding the heading beneath it. */
+  scroll-margin-top: 96px;
 }
 
 .fab-service__icon {

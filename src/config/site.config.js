@@ -69,6 +69,16 @@ export const site = {
     hours: 'Mon–Fri 8:00am – 4:30pm',
     mapUrl:
       'https://www.google.com/maps/search/?api=1&query=23%2F10+Assembly+Drive+Dandenong+South+VIC+3175',
+    // Structured address + map pin — mirrors the LocalBusiness schema the old
+    // GoDaddy site emitted, so local rankings and the Google map pin carry over.
+    address: {
+      street: '23/10 Assembly Drive',
+      locality: 'Dandenong South',
+      region: 'VIC',
+      postalCode: '3175',
+      country: 'AU',
+    },
+    geo: { lat: -38.0075151, lng: 145.2463482 },
   },
 
   seo: {
@@ -84,6 +94,12 @@ export const site = {
 
   integrations: {
     formspreeId: import.meta.env.VITE_FORMSPREE_ID || '',
-    gaId: import.meta.env.VITE_GA_ID || '',
+    // GA4 + GTM carried over 1:1 from the old GoDaddy site so historical
+    // analytics stay continuous and any Google Ads conversion / remarketing
+    // tags living inside the GTM container keep firing after the migration.
+    // Env overrides win; the baked-in defaults guarantee tracking still ships
+    // even if the Railway env vars are ever missing.
+    gaId: import.meta.env.VITE_GA_ID || 'G-SSNHCGBC00',
+    gtmId: import.meta.env.VITE_GTM_ID || 'GTM-5LSFWFMN',
   },
 }

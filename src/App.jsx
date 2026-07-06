@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { useEffect, useLayoutEffect, lazy, Suspense } from 'react'
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
+import Lightbox from './components/Lightbox.jsx'
 import Home from './pages/Home.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import RouteFallback from './components/RouteFallback.jsx'
@@ -48,6 +49,26 @@ function RouteChange() {
     if (hash) return
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
   }, [pathname, hash])
+  // Scroll to a #hash target once it exists. The destination page is lazy-
+  // loaded, so the element may not be mounted on the first frame — retry across
+  // a few frames until it appears. Powers the /laser-cutting & /folding legacy
+  // redirects that land on sections of /fabrication.
+  useEffect(() => {
+    if (!hash) return
+    const id = decodeURIComponent(hash.slice(1))
+    let frame
+    let tries = 0
+    const tryScroll = () => {
+      const el = document.getElementById(id)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      } else if (tries++ < 60) {
+        frame = requestAnimationFrame(tryScroll)
+      }
+    }
+    frame = requestAnimationFrame(tryScroll)
+    return () => cancelAnimationFrame(frame)
+  }, [pathname, hash])
   useEffect(() => {
     trackPageview(`${pathname}${hash}`)
   }, [pathname, hash])
@@ -78,12 +99,17 @@ export default function App() {
               <Route path="/privacy" element={<LegalPage type="privacy" />} />
               <Route path="/terms" element={<LegalPage type="terms" />} />
 
-              {/* Legacy URLs from the previous site — kept alive so existing
-                  search rankings and inbound links don't 404 after migration. */}
+              {/* Legacy URLs from the previous GoDaddy site — kept alive so
+                  existing search rankings and inbound links don't 404 after
+                  migration. laser-cutting & folding were separate pages that are
+                  now sections of /fabrication; photos had no equivalent. */}
               <Route path="/ute-accesories" element={<Navigate to="/ute-accessories" replace />} />
-              <Route path="/laser-cutting" element={<Navigate to="/fabrication" replace />} />
-              <Route path="/folding" element={<Navigate to="/fabrication" replace />} />
-              <Route path="/photos" element={<Navigate to="/caravan-toolboxes" replace />} />
+              <Route
+                path="/laser-cutting"
+                element={<Navigate to="/fabrication#laser-cutting" replace />}
+              />
+              <Route path="/folding" element={<Navigate to="/fabrication#folding" replace />} />
+              <Route path="/photos" element={<Navigate to="/" replace />} />
 
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
@@ -91,6 +117,7 @@ export default function App() {
         </ErrorBoundary>
       </div>
       <Footer />
+      <Lightbox />
     </BrowserRouter>
   )
 }

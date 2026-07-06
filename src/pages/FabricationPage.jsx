@@ -27,7 +27,7 @@ export default function FabricationPage() {
           {fabrication.services.map((s) => {
             const Icon = ICONS[s.icon] || Wrench
             return (
-              <div className="fab-service" key={s.title}>
+              <div className="fab-service" id={s.anchor} key={s.title}>
                 <span className="fab-service__icon" aria-hidden="true">
                   <Icon size={22} strokeWidth={1.7} />
                 </span>

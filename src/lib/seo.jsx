@@ -16,6 +16,27 @@ const organizationLd = (() => {
   }
   if (site.brand.logoSrc) schema.logo = `${site.seo.siteUrl}${site.brand.logoSrc}`
   if (sameAs.length) schema.sameAs = sameAs
+  if (site.contact?.phone) schema.telephone = site.contact.phone
+  // Structured address + geo pin — carried over from the old site's schema so
+  // Google keeps the map location and local relevance after the migration.
+  if (site.contact?.address) {
+    const a = site.contact.address
+    schema.address = {
+      '@type': 'PostalAddress',
+      streetAddress: a.street,
+      addressLocality: a.locality,
+      addressRegion: a.region,
+      postalCode: a.postalCode,
+      addressCountry: a.country,
+    }
+  }
+  if (site.contact?.geo) {
+    schema.geo = {
+      '@type': 'GeoCoordinates',
+      latitude: site.contact.geo.lat,
+      longitude: site.contact.geo.lng,
+    }
+  }
   if (site.contact?.email) {
     schema.contactPoint = {
       '@type': 'ContactPoint',
