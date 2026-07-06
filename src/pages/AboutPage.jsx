@@ -64,7 +64,11 @@ export default function AboutPage() {
       <section className="section">
         <div className="container about-story">
           {about.photo.img ? (
-            <img className="about-story__img" src={about.photo.img} alt={about.photo.imgAlt} />
+            <img
+              className="about-story__img zoomable"
+              src={about.photo.img}
+              alt={about.photo.imgAlt}
+            />
           ) : (
             <Placeholder label={about.photo.label} height={380} />
           )}

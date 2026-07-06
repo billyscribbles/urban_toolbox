@@ -1,6 +1,7 @@
 .process__media {
   margin-bottom: 22px;
   overflow: hidden;
+  aspect-ratio: 4 / 3;
   background: var(--color-dark);
   border: 1px solid var(--color-border-dark-2);
 }
@@ -9,7 +10,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .process__step-num {

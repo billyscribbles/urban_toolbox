@@ -11,7 +11,7 @@ export default function Capability() {
       <div className="container capability__grid">
         {capability.photo.img ? (
           <img
-            className="capability__img"
+            className="capability__img zoomable"
             src={capability.photo.img}
             alt={capability.photo.imgAlt}
             loading="lazy"

@@ -23,7 +23,12 @@ export default function Card({
     <>
       <div className="card__media" style={{ height }}>
         {img ? (
-          <img className="card__img" src={img} alt={imgAlt || title} loading="lazy" />
+          <img
+            className={`card__img${to ? '' : ' zoomable'}`}
+            src={img}
+            alt={imgAlt || title}
+            loading="lazy"
+          />
         ) : (
           <Placeholder label={ph} sub={phSub} height={height} />
         )}
