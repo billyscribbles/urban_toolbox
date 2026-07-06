@@ -27,18 +27,18 @@ export default function FabricationPage() {
           {fabrication.services.map((s) => {
             const Icon = ICONS[s.icon] || Wrench
             return (
-            <div className="fab-service" key={s.title}>
-              <span className="fab-service__icon" aria-hidden="true">
-                <Icon size={22} strokeWidth={1.7} />
-              </span>
-              <h3 className="fab-service__title">{s.title}</h3>
-              <p className="fab-service__body">{s.body}</p>
-              <ul className="fab-service__points">
-                {s.points.map((point) => (
-                  <li key={point}>{point}</li>
-                ))}
-              </ul>
-            </div>
+              <div className="fab-service" key={s.title}>
+                <span className="fab-service__icon" aria-hidden="true">
+                  <Icon size={22} strokeWidth={1.7} />
+                </span>
+                <h3 className="fab-service__title">{s.title}</h3>
+                <p className="fab-service__body">{s.body}</p>
+                <ul className="fab-service__points">
+                  {s.points.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
             )
           })}
         </div>

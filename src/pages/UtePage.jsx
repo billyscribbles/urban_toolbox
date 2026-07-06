@@ -21,6 +21,8 @@ export default function UtePage() {
               key={p.title}
               ph={p.ph}
               phSub={p.phSub}
+              img={p.img}
+              imgAlt={p.imgAlt}
               title={p.title}
               body={p.body}
               height={260}

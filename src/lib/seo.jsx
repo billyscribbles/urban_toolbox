@@ -33,7 +33,9 @@ export default function SEO({ title, description, image, path = '' }) {
   const seo = site.seo
   const resolvedTitle = title ? seo.titleTemplate.replace('%s', title) : seo.defaultTitle
   const resolvedDescription = description || seo.description
-  const resolvedImage = image || seo.ogImage
+  const rawImage = image || seo.ogImage
+  // Social crawlers need an absolute image URL.
+  const resolvedImage = rawImage.startsWith('http') ? rawImage : `${seo.siteUrl}${rawImage}`
   const url = `${seo.siteUrl}${path}`
 
   return (

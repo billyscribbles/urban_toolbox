@@ -9,7 +9,16 @@ export default function Capability() {
   return (
     <section className="section">
       <div className="container capability__grid">
-        <Placeholder label={capability.photo.label} sub={capability.photo.sub} height={380} />
+        {capability.photo.img ? (
+          <img
+            className="capability__img"
+            src={capability.photo.img}
+            alt={capability.photo.imgAlt}
+            loading="lazy"
+          />
+        ) : (
+          <Placeholder label={capability.photo.label} sub={capability.photo.sub} height={380} />
+        )}
         <div>
           <Eyebrow>{capability.eyebrow}</Eyebrow>
           <h2 className="h2 capability__heading">{capability.heading}</h2>

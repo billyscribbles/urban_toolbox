@@ -7,11 +7,18 @@ import './Hero.css'
 // (faded to white on the left by an overlay gradient); content sits above it.
 export default function Hero() {
   return (
-    <section
-      className="hero"
-      style={{ backgroundImage: `url('${hero.image}')` }}
-      aria-label={hero.imageAlt}
-    >
+    <section className="hero">
+      <img
+        className="hero__img"
+        src={hero.image}
+        srcSet={`${hero.imageMobile} 900w, ${hero.image} 1600w`}
+        sizes="100vw"
+        alt={hero.imageAlt}
+        width={1600}
+        height={900}
+        fetchPriority="high"
+        decoding="async"
+      />
       <div className="hero__overlay" aria-hidden="true" />
       <div className="container hero__inner">
         <div className="hero__content">

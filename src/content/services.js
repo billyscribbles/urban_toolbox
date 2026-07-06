@@ -14,6 +14,8 @@ export const services = {
       to: '/caravan-toolboxes',
       ph: 'PRODUCT SHOT',
       phSub: 'caravan toolbox',
+      img: '/images/caravan-tb-169.jpg',
+      imgAlt: 'Aluminium checkerplate caravan toolbox with the lid raised',
     },
     {
       icon: 'Truck',
@@ -23,6 +25,8 @@ export const services = {
       to: '/ute-accessories',
       ph: 'PRODUCT SHOT',
       phSub: 'ute canopy / under-tray',
+      img: '/images/ute-utb-18d.jpg',
+      imgAlt: 'Black aluminium ute tool chest with multiple drawers',
     },
     {
       icon: 'Wrench',
@@ -32,6 +36,8 @@ export const services = {
       to: '/fabrication',
       ph: 'PRODUCT SHOT',
       phSub: 'fabrication / laser cutting',
+      img: '/images/fabrication.jpg',
+      imgAlt: 'Custom metal fabrication work in the Urban Toolboxes workshop',
     },
   ],
 }

@@ -11,10 +11,33 @@
          Preconnect first so the font CSS + files resolve without a slow handshake. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Preload the LCP hero image (responsive) so it paints fast. -->
+    <link
+      rel="preload"
+      as="image"
+      href="/brand/hero-caravan-900.jpg"
+      imagesrcset="/brand/hero-caravan-900.jpg 900w, /brand/hero-caravan.jpg 1600w"
+      imagesizes="100vw"
+      fetchpriority="high"
+    />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      media="print"
+      onload="this.media = 'all'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      />
+    </noscript>
 
     <!-- Fallback SEO — runtime Helmet (src/lib/seo.jsx) overrides these per page.
          og-image.png is a 1200x630 raster; social platforms do not render SVG. -->
@@ -33,7 +56,7 @@
       property="og:description"
       content="Australian-made custom aluminium toolboxes and fabrication, built in Dandenong South, Victoria."
     />
-    <meta property="og:image" content="/brand/og-image.png" />
+    <meta property="og:image" content="/brand/og-image.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
@@ -43,7 +66,7 @@
       name="twitter:description"
       content="Australian-made custom aluminium toolboxes and fabrication, built in Dandenong South, Victoria."
     />
-    <meta name="twitter:image" content="/brand/og-image.png" />
+    <meta name="twitter:image" content="/brand/og-image.jpg" />
   </head>
   <body>
     <div id="root"></div>

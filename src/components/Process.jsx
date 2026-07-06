@@ -16,8 +16,17 @@ export default function Process() {
         <div className="grid grid--3">
           {howItWorks.steps.map((step) => (
             <div className="process__step" key={step.number}>
-              <div className="process__media">
-                <Placeholder label={step.ph} height={190} dark />
+              <div className="process__media" style={{ height: 190 }}>
+                {step.img ? (
+                  <img
+                    className="process__img"
+                    src={step.img}
+                    alt={step.imgAlt || step.title}
+                    loading="lazy"
+                  />
+                ) : (
+                  <Placeholder label={step.ph} height={190} dark />
+                )}
               </div>
               <div className="process__step-num">Step {step.number}</div>
               <h3 className="process__step-title">{step.title}</h3>

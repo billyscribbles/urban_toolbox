@@ -20,12 +20,15 @@ export default function CaravanPage() {
       />
 
       <section className="section">
+        {caravan.header.note && <p className="container section-sub">{caravan.header.note}</p>}
         <div className="container grid grid--3">
           {caravan.products.map((p) => (
             <Card
               key={p.title}
               ph={p.ph}
               phSub={p.phSub}
+              img={p.img}
+              imgAlt={p.imgAlt}
               title={p.title}
               body={p.body}
               height={240}

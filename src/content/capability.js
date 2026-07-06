@@ -2,7 +2,12 @@
 export const capability = {
   eyebrow: 'In-house capability',
   heading: 'Precision metalwork under one roof',
-  photo: { label: 'WORKSHOP PHOTO', sub: 'fabrication in progress' },
+  photo: {
+    label: 'WORKSHOP PHOTO',
+    sub: 'fabrication in progress',
+    img: '/images/ute-utb-215.jpg',
+    imgAlt: 'Tall aluminium cabinet being fabricated in the Urban Toolboxes workshop',
+  },
   items: [
     {
       title: 'Laser Cutting',

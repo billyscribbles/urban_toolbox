@@ -77,8 +77,8 @@ export const site = {
     description:
       'Australian-made custom aluminium caravan toolboxes, ute accessories and metal fabrication — designed and built in Dandenong South, Victoria.',
     siteUrl: import.meta.env.VITE_SITE_URL || 'https://urbantoolboxes.com.au',
-    // 1200x630 PNG — social platforms ignore SVG.
-    ogImage: '/brand/og-image.png',
+    // 1200x630 branded card — social platforms ignore SVG.
+    ogImage: '/brand/og-image.jpg',
     locale: 'en_AU',
   },
 

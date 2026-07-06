@@ -63,7 +63,11 @@ export default function AboutPage() {
 
       <section className="section">
         <div className="container about-story">
-          <Placeholder label={about.photo.label} height={380} />
+          {about.photo.img ? (
+            <img className="about-story__img" src={about.photo.img} alt={about.photo.imgAlt} />
+          ) : (
+            <Placeholder label={about.photo.label} height={380} />
+          )}
           <div>
             <h2 className="h2 h2--md about-story__heading">{about.story.heading}</h2>
             {about.story.paragraphs.map((p) => (
@@ -77,13 +81,44 @@ export default function AboutPage() {
 
       <section className="section section--alt about-contact-section">
         <div className="container grid grid--3">
-          {about.contact.map((card) => (
-            <div className="about-contact" key={card.title}>
-              <span className="about-contact__icon" aria-hidden="true" />
-              <div className="about-contact__title">{card.title}</div>
-              <ContactCardBody card={card} />
-            </div>
-          ))}
+          {about.contact.map((card) => {
+            const Icon = ICONS[card.icon] || MapPin
+            return (
+              <div className="about-contact" key={card.title}>
+                <span className="about-contact__icon" aria-hidden="true">
+                  <Icon size={20} strokeWidth={1.7} />
+                </span>
+                <div className="about-contact__title">{card.title}</div>
+                <ContactCardBody card={card} />
+              </div>
+            )
+          })}
+        </div>
+      </section>
+
+      <section className="section about-map-section">
+        <div className="container">
+          <div className="about-map__head">
+            <h2 className="h2 h2--md about-map__heading">{about.map.heading}</h2>
+            <a
+              className="action-link about-map__directions"
+              href={about.map.directionsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Get directions →
+            </a>
+          </div>
+          <div className="about-map">
+            <iframe
+              className="about-map__frame"
+              src={about.map.embedSrc}
+              title={`Map showing Urban Toolboxes at ${about.map.address}`}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
+          </div>
         </div>
       </section>
 

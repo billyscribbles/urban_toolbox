@@ -7,6 +7,8 @@ import './Card.css'
 export default function Card({
   ph,
   phSub,
+  img,
+  imgAlt,
   title,
   body,
   cta,
@@ -19,8 +21,12 @@ export default function Card({
   const style = { '--card-title': `${titleSize}px`, '--card-pad': `${pad}px` }
   const inner = (
     <>
-      <div className="card__media">
-        <Placeholder label={ph} sub={phSub} height={height} />
+      <div className="card__media" style={{ height }}>
+        {img ? (
+          <img className="card__img" src={img} alt={imgAlt || title} loading="lazy" />
+        ) : (
+          <Placeholder label={ph} sub={phSub} height={height} />
+        )}
       </div>
       <div className="card__body">
         <h3 className="card__title">{title}</h3>

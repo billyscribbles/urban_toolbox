@@ -17,6 +17,8 @@ export default function WhatWeBuild() {
               key={s.title}
               ph={s.ph}
               phSub={s.phSub}
+              img={s.img}
+              imgAlt={s.imgAlt}
               title={s.title}
               body={s.body}
               cta={s.cta}

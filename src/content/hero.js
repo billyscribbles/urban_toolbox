@@ -8,5 +8,6 @@ export const hero = {
   primaryCta: { label: 'Get a Quote', to: 'mailto:sales@urbantoolboxes.com.au' },
   secondaryCta: { label: 'View Toolboxes', to: '/caravan-toolboxes' },
   image: '/brand/hero-caravan.jpg',
+  imageMobile: '/brand/hero-caravan-900.jpg',
   imageAlt: 'Caravan fitted with a black checkerplate Urban Toolboxes toolbox',
 }
