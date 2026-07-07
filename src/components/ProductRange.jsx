@@ -47,6 +47,7 @@ export default function ProductRange({ data }) {
                   alt
                   quote={p.quote}
                   quoteCategory={header.title}
+                  build={s.build || data.build}
                 />
               ))}
             </div>

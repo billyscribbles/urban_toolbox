@@ -37,6 +37,7 @@ export default function CaravanPage() {
               alt
               quote={p.quote}
               quoteCategory="Caravan"
+              build={caravan.features}
             />
           ))}
         </div>

@@ -1,14 +1,31 @@
-import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Check, ArrowRight } from 'lucide-react'
 import Placeholder from './Placeholder.jsx'
 import QuoteButton from './QuoteButton.jsx'
 import { useQuote } from '../lib/quoteStore.js'
+import { openDetail } from '../lib/detailStore.js'
 import './Card.css'
 
 // Australian thousands separator: 3900 -> "$3,900".
 function formatPrice(n) {
   return `$${Number(n).toLocaleString('en-AU')}`
+}
+
+// A product `body` packs its specs as dot-separated segments, e.g.
+// "2200 × 570 × 1010mm · 70kg" or a finish sentence. Split them into labelled
+// rows for the detail drawer: a segment with an "×" is the dimensions, a bare
+// weight (…kg) is the weight, anything else is a finish/feature note.
+function parseSpecs(body) {
+  if (!body) return []
+  return body
+    .split('·')
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((value) => {
+      if (value.includes('×')) return { label: 'Dimensions', value }
+      if (/^\d+(\.\d+)?\s*kg$/i.test(value)) return { label: 'Weight', value }
+      return { label: 'Finish', value }
+    })
 }
 
 // Product / category card: striped photo slot over a heading and body. With a
@@ -31,17 +48,40 @@ export default function Card({
   pad = 28,
   quote,
   quoteCategory,
+  build,
 }) {
   const { items } = useQuote()
   const inQuote = quote ? items.some((i) => i.id === quote.id) : false
-  const imgRef = useRef(null)
+  const quoteItem = quote
+    ? {
+        id: quote.id,
+        name: title,
+        category: quoteCategory,
+        priceFrom: quote.priceFrom ?? null,
+        standardDims: quote.standardDims ?? '',
+      }
+    : null
+  // "View details" opens the detail drawer with everything the card already
+  // knows — photo, price, specs parsed from `body`, the shared build list and
+  // the same add-to-quote descriptor.
+  function showDetails() {
+    openDetail({
+      title,
+      img,
+      imgAlt,
+      category: quoteCategory,
+      priceFrom: quote?.priceFrom ?? null,
+      specs: parseSpecs(body),
+      build,
+      quoteItem,
+    })
+  }
   const style = { '--card-title': `${titleSize}px`, '--card-pad': `${pad}px` }
   const inner = (
     <>
       <div className="card__media" style={{ height }}>
         {img ? (
           <img
-            ref={imgRef}
             className={`card__img${to ? '' : ' zoomable'}`}
             src={img}
             alt={imgAlt || title}
@@ -65,7 +105,9 @@ export default function Card({
             <div className="card__price">
               {quote.priceFrom != null ? (
                 <>
-                  <span className="card__price-amount">{formatPrice(quote.priceFrom)}</span>
+                  <span className="card__price-amount">
+                    <span className="card__price-from">from</span> {formatPrice(quote.priceFrom)}
+                  </span>
                   <span className="card__price-gst">+ GST</span>
                 </>
               ) : (
@@ -73,21 +115,8 @@ export default function Card({
               )}
             </div>
             <div className="card__actions">
-              <QuoteButton
-                item={{
-                  id: quote.id,
-                  name: title,
-                  category: quoteCategory,
-                  priceFrom: quote.priceFrom ?? null,
-                  standardDims: quote.standardDims ?? '',
-                }}
-              />
-              <button
-                type="button"
-                className="card__details"
-                onClick={() => imgRef.current?.click()}
-                disabled={!img}
-              >
+              <QuoteButton item={quoteItem} />
+              <button type="button" className="card__details" onClick={showDetails}>
                 View details <ArrowRight size={15} strokeWidth={2} aria-hidden="true" />
               </button>
             </div>

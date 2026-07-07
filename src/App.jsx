@@ -4,6 +4,7 @@ import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
 import Lightbox from './components/Lightbox.jsx'
 import QuoteDrawer from './components/QuoteDrawer.jsx'
+import DetailDrawer from './components/DetailDrawer.jsx'
 import Home from './pages/Home.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import RouteFallback from './components/RouteFallback.jsx'
@@ -126,6 +127,7 @@ export default function App() {
       <Footer />
       <Lightbox />
       <QuoteDrawer />
+      <DetailDrawer />
     </BrowserRouter>
   )
 }
