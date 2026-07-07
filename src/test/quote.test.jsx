@@ -8,13 +8,17 @@ import {
   updateItem,
   removeItem,
   clearItems,
-  // eslint-disable-next-line no-unused-vars -- imported to exercise the full store interface; not called by any case here
   openQuote,
   closeQuote,
   serializeQuoteItems,
   useQuote,
 } from '../lib/quoteStore.js'
 import QuoteButton from '../components/QuoteButton.jsx'
+import { MemoryRouter } from 'react-router-dom'
+import { axe, toHaveNoViolations } from 'jest-axe'
+import QuoteDrawer from '../components/QuoteDrawer.jsx'
+
+expect.extend(toHaveNoViolations)
 
 // The store is a module singleton; reset it (and its localStorage mirror)
 // before each test so cases don't leak into one another.
@@ -150,5 +154,27 @@ describe('QuoteButton', () => {
     await user.click(btn)
     expect(useQuote.__getSnapshot().items.some((i) => i.id === 'tb-165')).toBe(true)
     expect(screen.getByText(/in your quote/i)).toBeInTheDocument()
+  })
+})
+
+describe('QuoteDrawer', () => {
+  it('lists added items with editable specs and has no axe violations', async () => {
+    addItem({
+      id: 'tb-277',
+      name: 'TB-277',
+      category: 'Caravan',
+      priceFrom: 1900,
+      standardDims: '2000×710×700',
+    })
+    openQuote()
+    const { container } = render(
+      <MemoryRouter>
+        <QuoteDrawer />
+      </MemoryRouter>,
+    )
+    expect(screen.getByRole('dialog', { name: /your quote/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'TB-277' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /send enquiry/i })).toBeInTheDocument()
+    expect(await axe(container)).toHaveNoViolations()
   })
 })
