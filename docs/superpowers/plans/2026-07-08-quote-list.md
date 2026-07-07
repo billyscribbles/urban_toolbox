@@ -24,10 +24,12 @@
 ### Task 1: Quote store + serializer
 
 **Files:**
+
 - Create: `src/lib/quoteStore.js`
 - Test: `src/test/quote.test.jsx`
 
 **Interfaces:**
+
 - Produces:
   - `useQuote(): { items: Item[], isOpen: boolean }` — reactive snapshot hook.
   - `addItem(descriptor)` where `descriptor = { id, name, category, priceFrom, standardDims }`; normalizes to a full `Item`, dedupes by `id`, opens the drawer.
@@ -62,8 +64,20 @@ beforeEach(() => {
   window.localStorage.clear()
 })
 
-const TB295 = { id: 'tb-295', name: 'TB-295', category: 'Caravan', priceFrom: 3900, standardDims: '2200×570×1010' }
-const TB150 = { id: 'tb-150', name: 'TB-150', category: 'Caravan', priceFrom: 1800, standardDims: '1500×600×900' }
+const TB295 = {
+  id: 'tb-295',
+  name: 'TB-295',
+  category: 'Caravan',
+  priceFrom: 3900,
+  standardDims: '2200×570×1010',
+}
+const TB150 = {
+  id: 'tb-150',
+  name: 'TB-150',
+  category: 'Caravan',
+  priceFrom: 1800,
+  standardDims: '1500×600×900',
+}
 
 // A tiny non-React reader for the store snapshot in logic tests.
 const snap = () => useQuote.__getSnapshot()
@@ -95,7 +109,11 @@ describe('quoteStore — actions', () => {
   it('updates, removes and clears items', () => {
     addItem(TB295)
     updateItem('tb-295', { qty: 3, dims: { w: '2100', h: '560', d: '1000' }, notes: 'raise lid' })
-    expect(snap().items[0]).toMatchObject({ qty: 3, dims: { w: '2100', h: '560', d: '1000' }, notes: 'raise lid' })
+    expect(snap().items[0]).toMatchObject({
+      qty: 3,
+      dims: { w: '2100', h: '560', d: '1000' },
+      notes: 'raise lid',
+    })
     removeItem('tb-295')
     expect(snap().items).toHaveLength(0)
     addItem(TB150)
@@ -113,9 +131,36 @@ describe('quoteStore — actions', () => {
 describe('quoteStore — serializeQuoteItems', () => {
   it('renders standard, custom and price-on-enquiry lines exactly', () => {
     const items = [
-      { id: 'tb-295', name: 'TB-295', category: 'Caravan', priceFrom: 3900, standardDims: '2200×570×1010', dims: { w: '', h: '', d: '' }, qty: 1, notes: 'extra lid clearance' },
-      { id: 'tb-150', name: 'TB-150', category: 'Caravan', priceFrom: 1800, standardDims: '1500×600×900', dims: { w: '1600', h: '600', d: '900' }, qty: 2, notes: '' },
-      { id: 'tray-a', name: 'Tray A', category: 'Utes', priceFrom: null, standardDims: '', dims: { w: '', h: '', d: '' }, qty: 1, notes: '' },
+      {
+        id: 'tb-295',
+        name: 'TB-295',
+        category: 'Caravan',
+        priceFrom: 3900,
+        standardDims: '2200×570×1010',
+        dims: { w: '', h: '', d: '' },
+        qty: 1,
+        notes: 'extra lid clearance',
+      },
+      {
+        id: 'tb-150',
+        name: 'TB-150',
+        category: 'Caravan',
+        priceFrom: 1800,
+        standardDims: '1500×600×900',
+        dims: { w: '1600', h: '600', d: '900' },
+        qty: 2,
+        notes: '',
+      },
+      {
+        id: 'tray-a',
+        name: 'Tray A',
+        category: 'Utes',
+        priceFrom: null,
+        standardDims: '',
+        dims: { w: '', h: '', d: '' },
+        qty: 1,
+        notes: '',
+      },
     ]
     expect(serializeQuoteItems(items)).toBe(
       [
@@ -235,7 +280,12 @@ export function serializeQuoteItems(items) {
   return items
     .map((it) => {
       const { w, h, d } = it.dims
-      const dims = w && h && d ? `custom ${w}×${h}×${d}mm` : it.standardDims ? `${it.standardDims}mm` : 'size TBC'
+      const dims =
+        w && h && d
+          ? `custom ${w}×${h}×${d}mm`
+          : it.standardDims
+            ? `${it.standardDims}mm`
+            : 'size TBC'
       const price = it.priceFrom ? `from $${it.priceFrom}+GST` : 'price on enquiry'
       const notes = it.notes && it.notes.trim() ? it.notes.trim() : '—'
       return `${it.qty}× ${it.name} (${it.category}) — ${dims} — ${price} — Notes: ${notes}`
@@ -261,10 +311,12 @@ git commit -m "feat: add quote store and email serializer"
 ### Task 2: QuoteButton — add-to-quote control
 
 **Files:**
+
 - Create: `src/components/QuoteButton.jsx`
 - Test: `src/test/quote.test.jsx` (append a `describe` block)
 
 **Interfaces:**
+
 - Consumes: `addItem`, `useQuote` from `quoteStore.js`.
 - Produces: `<QuoteButton item={descriptor} />` where `descriptor = { id, name, category, priceFrom, standardDims }`. Renders "+ Add to quote"; once the item is in the list, shows a disabled-looking "✓ In your quote" state.
 
@@ -280,7 +332,17 @@ import QuoteButton from '../components/QuoteButton.jsx'
 describe('QuoteButton', () => {
   it('adds the item and flips to the in-quote state', async () => {
     const user = userEvent.setup()
-    render(<QuoteButton item={{ id: 'tb-165', name: 'TB-165', category: 'Caravan', priceFrom: 1750, standardDims: '1565×520×680' }} />)
+    render(
+      <QuoteButton
+        item={{
+          id: 'tb-165',
+          name: 'TB-165',
+          category: 'Caravan',
+          priceFrom: 1750,
+          standardDims: '1565×520×680',
+        }}
+      />,
+    )
     const btn = screen.getByRole('button', { name: /add to quote/i })
     await user.click(btn)
     expect(useQuote.__getSnapshot().items.some((i) => i.id === 'tb-165')).toBe(true)
@@ -375,11 +437,13 @@ git commit -m "feat: add QuoteButton add-to-quote control"
 ### Task 3: QuoteDrawer — slide-over + mount in App
 
 **Files:**
+
 - Create: `src/components/QuoteDrawer.jsx`, `src/components/QuoteDrawer.css`
 - Modify: `src/App.jsx` (mount beside `<Lightbox />`)
 - Test: `src/test/quote.test.jsx` (append a rendered-drawer axe + behavior block)
 
 **Interfaces:**
+
 - Consumes: `useQuote`, `updateItem`, `removeItem`, `closeQuote`, `clearItems` from `quoteStore.js`; `useNavigate` from `react-router-dom`.
 - Produces: `<QuoteDrawer />` — reads the store, renders nothing when `isOpen` is false. "Send enquiry →" closes the drawer and navigates to `/quote`.
 
@@ -397,7 +461,13 @@ expect.extend(toHaveNoViolations)
 
 describe('QuoteDrawer', () => {
   it('lists added items with editable specs and has no axe violations', async () => {
-    addItem({ id: 'tb-277', name: 'TB-277', category: 'Caravan', priceFrom: 1900, standardDims: '2000×710×700' })
+    addItem({
+      id: 'tb-277',
+      name: 'TB-277',
+      category: 'Caravan',
+      priceFrom: 1900,
+      standardDims: '2000×710×700',
+    })
     openQuote()
     const { container } = render(
       <MemoryRouter>
@@ -466,18 +536,37 @@ export default function QuoteDrawer() {
 
   const panelMotion = reduce
     ? {}
-    : { initial: { x: '100%' }, animate: { x: 0 }, exit: { x: '100%' }, transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] } }
-  const fade = reduce ? {} : { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
+    : {
+        initial: { x: '100%' },
+        animate: { x: 0 },
+        exit: { x: '100%' },
+        transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
+      }
+  const fade = reduce
+    ? {}
+    : { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
 
   return (
     <AnimatePresence>
       {isOpen && (
         <div className="quote-drawer" role="dialog" aria-modal="true" aria-label="Your quote">
-          <motion.button type="button" className="quote-drawer__backdrop" aria-label="Close quote" onClick={closeQuote} {...fade} />
+          <motion.button
+            type="button"
+            className="quote-drawer__backdrop"
+            aria-label="Close quote"
+            onClick={closeQuote}
+            {...fade}
+          />
           <motion.div className="quote-drawer__panel" {...panelMotion}>
             <div className="quote-drawer__head">
               <h2 className="quote-drawer__title">Your quote</h2>
-              <button ref={closeRef} type="button" className="quote-drawer__close" onClick={closeQuote} aria-label="Close quote">
+              <button
+                ref={closeRef}
+                type="button"
+                className="quote-drawer__close"
+                onClick={closeQuote}
+                aria-label="Close quote"
+              >
                 <X size={22} strokeWidth={1.8} aria-hidden="true" />
               </button>
             </div>
@@ -494,15 +583,27 @@ export default function QuoteDrawer() {
                       <div>
                         <h3 className="quote-item__name">{it.name}</h3>
                         <p className="quote-item__meta">
-                          {it.category} · {it.priceFrom ? `from $${it.priceFrom} + GST (indicative)` : 'Price on enquiry'}
+                          {it.category} ·{' '}
+                          {it.priceFrom
+                            ? `from $${it.priceFrom} + GST (indicative)`
+                            : 'Price on enquiry'}
                         </p>
                       </div>
-                      <button type="button" className="quote-item__remove" onClick={() => removeItem(it.id)} aria-label={`Remove ${it.name}`}>
+                      <button
+                        type="button"
+                        className="quote-item__remove"
+                        onClick={() => removeItem(it.id)}
+                        aria-label={`Remove ${it.name}`}
+                      >
                         <Trash2 size={18} strokeWidth={1.7} aria-hidden="true" />
                       </button>
                     </div>
 
-                    <div className="quote-item__dims" role="group" aria-label={`${it.name} dimensions in millimetres`}>
+                    <div
+                      className="quote-item__dims"
+                      role="group"
+                      aria-label={`${it.name} dimensions in millimetres`}
+                    >
                       {DIM_KEYS.map((k) => (
                         <label key={k} className="quote-item__dim">
                           <span className="quote-item__dim-label">{k.toUpperCase()}</span>
@@ -512,11 +613,15 @@ export default function QuoteDrawer() {
                             min="0"
                             placeholder={placeholder(it.standardDims, k)}
                             value={it.dims[k]}
-                            onChange={(e) => updateItem(it.id, { dims: { ...it.dims, [k]: e.target.value } })}
+                            onChange={(e) =>
+                              updateItem(it.id, { dims: { ...it.dims, [k]: e.target.value } })
+                            }
                           />
                         </label>
                       ))}
-                      <span className="quote-item__dim-unit" aria-hidden="true">mm</span>
+                      <span className="quote-item__dim-unit" aria-hidden="true">
+                        mm
+                      </span>
                     </div>
 
                     <label className="quote-item__qty">
@@ -525,7 +630,9 @@ export default function QuoteDrawer() {
                         type="number"
                         min="1"
                         value={it.qty}
-                        onChange={(e) => updateItem(it.id, { qty: Math.max(1, Number(e.target.value) || 1) })}
+                        onChange={(e) =>
+                          updateItem(it.id, { qty: Math.max(1, Number(e.target.value) || 1) })
+                        }
                       />
                     </label>
 
@@ -545,10 +652,16 @@ export default function QuoteDrawer() {
 
             {items.length > 0 && (
               <div className="quote-drawer__foot">
-                <button type="button" className="btn btn--green quote-drawer__send" onClick={handleSend}>
+                <button
+                  type="button"
+                  className="btn btn--green quote-drawer__send"
+                  onClick={handleSend}
+                >
                   Send enquiry →
                 </button>
-                <p className="quote-drawer__note">No payment — we’ll call you back to confirm details and price.</p>
+                <p className="quote-drawer__note">
+                  No payment — we’ll call you back to confirm details and price.
+                </p>
               </div>
             )}
           </motion.div>
@@ -761,10 +874,12 @@ git commit -m "feat: add quote slide-over drawer, mount in App"
 ### Task 4: Navbar quote badge
 
 **Files:**
+
 - Modify: `src/components/Navbar.jsx`, `src/components/Navbar.css`
 - Test: `src/test/quote.test.jsx` (append)
 
 **Interfaces:**
+
 - Consumes: `useQuote`, `openQuote` from `quoteStore.js`.
 - Produces: a "Quote (N)" button in both the desktop and mobile navs, hidden while the list is empty, that calls `openQuote()`.
 
@@ -784,7 +899,13 @@ describe('Navbar quote badge', () => {
     )
     expect(screen.queryByRole('button', { name: /open your quote/i })).toBeNull()
 
-    addItem({ id: 'tb-199', name: 'TB-199', category: 'Caravan', priceFrom: 1950, standardDims: '1900×540×950' })
+    addItem({
+      id: 'tb-199',
+      name: 'TB-199',
+      category: 'Caravan',
+      priceFrom: 1950,
+      standardDims: '1900×540×950',
+    })
     rerender(
       <MemoryRouter>
         <Navbar />
@@ -812,41 +933,45 @@ import { useQuote, openQuote } from '../lib/quoteStore.js'
 Inside `export default function Navbar()`, after `const { brand, nav, cta } = site`, read the count:
 
 ```jsx
-  const { items } = useQuote()
-  const quoteCount = items.length
+const { items } = useQuote()
+const quoteCount = items.length
 ```
 
 Define a small badge element once (place above the `return`):
 
 ```jsx
-  const quoteBadge = quoteCount > 0 && (
-    <button
-      type="button"
-      className="navbar__quote"
-      onClick={openQuote}
-      aria-label={`Open your quote, ${quoteCount} item${quoteCount === 1 ? '' : 's'}`}
-    >
-      Quote <span className="navbar__quote-count">{quoteCount}</span>
-    </button>
-  )
+const quoteBadge = quoteCount > 0 && (
+  <button
+    type="button"
+    className="navbar__quote"
+    onClick={openQuote}
+    aria-label={`Open your quote, ${quoteCount} item${quoteCount === 1 ? '' : 's'}`}
+  >
+    Quote <span className="navbar__quote-count">{quoteCount}</span>
+  </button>
+)
 ```
 
 Render it in the desktop bar, right before the `<SmartLink ... navbar__cta>`:
 
 ```jsx
-        {quoteBadge}
-        <SmartLink to={cta.href} className="navbar__cta">
-          {cta.label}
-        </SmartLink>
+{
+  quoteBadge
+}
+;<SmartLink to={cta.href} className="navbar__cta">
+  {cta.label}
+</SmartLink>
 ```
 
 And in the mobile nav, right before the mobile `<SmartLink ... navbar__mobile-cta>`:
 
 ```jsx
-        {quoteBadge}
-        <SmartLink to={cta.href} className="navbar__mobile-cta" onClick={() => setMenuOpen(false)}>
-          {cta.label}
-        </SmartLink>
+{
+  quoteBadge
+}
+;<SmartLink to={cta.href} className="navbar__mobile-cta" onClick={() => setMenuOpen(false)}>
+  {cta.label}
+</SmartLink>
 ```
 
 - [ ] **Step 4: Add badge styles to `Navbar.css`**
@@ -908,15 +1033,18 @@ git commit -m "feat: add navbar quote badge"
 ### Task 5: Wire products to the quote — Card prop + content data
 
 **Files:**
+
 - Modify: `src/components/Card.jsx`, `src/components/ProductRange.jsx`, `src/pages/CaravanPage.jsx`
 - Modify: `src/content/caravan.js`, `src/content/utes.js`, `src/content/trucks.js`
 - Test: `src/test/content.test.js` (append a `quote`-shape contract)
 
 **Interfaces:**
+
 - Consumes: `QuoteButton` (Task 2), the `Item` descriptor shape.
 - Produces: `<Card quote={...} quoteCategory="Caravan" />` renders a `QuoteButton`. Content products carry `quote: { id, priceFrom, standardDims }`.
 
 **Content data rule (apply to every product that lists real specs):**
+
 - `id`: the product `title` lowercased, non-alphanumeric runs collapsed to a single `-` (e.g. `'TB-295' → 'tb-295'`, `'Tray A' → 'tray-a'`).
 - `standardDims`: the three W×H×D numbers from the product's `body`, joined with `×` and no units (e.g. `'2200 × 570 × 1010mm …' → '2200×570×1010'`). If the body has no W×H×D triple, use `''`.
 - `priceFrom`: the dollar figure in the body as a number (e.g. `'$3900 + GST' → 3900`); if the body says "Enquire" / "Enquire for pricing" / has no price, use `null`.
@@ -981,22 +1109,22 @@ export default function Card({
 In the `card__body` block, after the `cta` span:
 
 ```jsx
-      <div className="card__body">
-        <h3 className="card__title">{title}</h3>
-        <p className="card__text">{body}</p>
-        {cta && <span className="action-link card__cta">{cta} →</span>}
-        {quote && (
-          <QuoteButton
-            item={{
-              id: quote.id,
-              name: title,
-              category: quoteCategory,
-              priceFrom: quote.priceFrom ?? null,
-              standardDims: quote.standardDims ?? '',
-            }}
-          />
-        )}
-      </div>
+<div className="card__body">
+  <h3 className="card__title">{title}</h3>
+  <p className="card__text">{body}</p>
+  {cta && <span className="action-link card__cta">{cta} →</span>}
+  {quote && (
+    <QuoteButton
+      item={{
+        id: quote.id,
+        name: title,
+        category: quoteCategory,
+        priceFrom: quote.priceFrom ?? null,
+        standardDims: quote.standardDims ?? '',
+      }}
+    />
+  )}
+</div>
 ```
 
 Note: product cards pass no `to`, so they render as `<div>` — the button is not nested in a link (no a11y violation).
@@ -1006,21 +1134,21 @@ Note: product cards pass no `to`, so they render as `<div>` — the button is no
 In `src/pages/CaravanPage.jsx`, add the two props to the `<Card>`:
 
 ```jsx
-            <Card
-              key={p.title}
-              ph={p.ph}
-              phSub={p.phSub}
-              img={p.img}
-              imgAlt={p.imgAlt}
-              title={p.title}
-              body={p.body}
-              height={240}
-              titleSize={22}
-              pad={26}
-              alt
-              quote={p.quote}
-              quoteCategory="Caravan"
-            />
+<Card
+  key={p.title}
+  ph={p.ph}
+  phSub={p.phSub}
+  img={p.img}
+  imgAlt={p.imgAlt}
+  title={p.title}
+  body={p.body}
+  height={240}
+  titleSize={22}
+  pad={26}
+  alt
+  quote={p.quote}
+  quoteCategory="Caravan"
+/>
 ```
 
 - [ ] **Step 5: Pass `quote` through in `ProductRange.jsx`**
@@ -1028,21 +1156,23 @@ In `src/pages/CaravanPage.jsx`, add the two props to the `<Card>`:
 In `src/components/ProductRange.jsx`, add the two props to the `<Card>` inside the products map (`header.title` is `'Utes'` / `'Trucks'`):
 
 ```jsx
-              {s.products.map((p) => (
-                <Card
-                  key={p.title}
-                  img={p.img}
-                  imgAlt={p.imgAlt}
-                  title={p.title}
-                  body={p.body}
-                  height={s.columns === 2 ? 260 : 240}
-                  titleSize={s.columns === 2 ? 22 : 20}
-                  pad={26}
-                  alt
-                  quote={p.quote}
-                  quoteCategory={header.title}
-                />
-              ))}
+{
+  s.products.map((p) => (
+    <Card
+      key={p.title}
+      img={p.img}
+      imgAlt={p.imgAlt}
+      title={p.title}
+      body={p.body}
+      height={s.columns === 2 ? 260 : 240}
+      titleSize={s.columns === 2 ? 22 : 20}
+      pad={26}
+      alt
+      quote={p.quote}
+      quoteCategory={header.title}
+    />
+  ))
+}
 ```
 
 - [ ] **Step 6: Add `quote` objects to content files**
@@ -1088,10 +1218,12 @@ git commit -m "feat: wire product cards to the quote list"
 ### Task 6: QuotePage — item summary + serialized submission
 
 **Files:**
+
 - Modify: `src/pages/QuotePage.jsx`, `src/content/quote.js`
 - Test: `src/test/quote.test.jsx` (append)
 
 **Interfaces:**
+
 - Consumes: `useQuote`, `clearItems`, `serializeQuoteItems` from `quoteStore.js`.
 - Produces: when the list has items, `/quote` shows a read-only summary and submits two hidden fields — `quote_items` (text) and `quote_items_json` (JSON) — then `clearItems()` on success.
 
@@ -1106,7 +1238,13 @@ import { serializeQuoteItems } from '../lib/quoteStore.js'
 
 describe('QuotePage — quote list summary', () => {
   it('shows the item summary and the serialized hidden field', () => {
-    addItem({ id: 'tb-150', name: 'TB-150', category: 'Caravan', priceFrom: 1800, standardDims: '1500×600×900' })
+    addItem({
+      id: 'tb-150',
+      name: 'TB-150',
+      category: 'Caravan',
+      priceFrom: 1800,
+      standardDims: '1500×600×900',
+    })
     const { container } = render(
       <HelmetProvider>
         <MemoryRouter>
@@ -1154,7 +1292,7 @@ import { useQuote, clearItems, serializeQuoteItems } from '../lib/quoteStore.js'
 Inside `QuotePage()`, read the list:
 
 ```jsx
-  const { items } = useQuote()
+const { items } = useQuote()
 ```
 
 In `handleSubmit`, on success, clear the list — change the success branch to:
@@ -1170,33 +1308,35 @@ In `handleSubmit`, on success, clear the list — change the success branch to:
 Inside the `<form>` (only when the form is shown, i.e. the `isConfigured` branch), render the summary and hidden fields immediately after the honeypot / `_subject` inputs and before the fields map:
 
 ```jsx
-                {items.length > 0 && (
-                  <>
-                    <input type="hidden" name="quote_items" value={serializeQuoteItems(items)} />
-                    <input type="hidden" name="quote_items_json" value={JSON.stringify(items)} />
-                    <div className="quote-summary">
-                      <h2 className="quote-summary__heading">{quote.list.heading}</h2>
-                      <p className="quote-summary__intro">{quote.list.intro}</p>
-                      <ul className="quote-summary__list">
-                        {items.map((it) => (
-                          <li key={it.id} className="quote-summary__item">
-                            <strong>
-                              {it.qty}× {it.name}
-                            </strong>{' '}
-                            <span className="quote-summary__meta">
-                              {it.dims.w && it.dims.h && it.dims.d
-                                ? `${it.dims.w}×${it.dims.h}×${it.dims.d}mm`
-                                : it.standardDims
-                                  ? `${it.standardDims}mm`
-                                  : 'size TBC'}
-                              {it.notes.trim() ? ` · ${it.notes.trim()}` : ''}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </>
-                )}
+{
+  items.length > 0 && (
+    <>
+      <input type="hidden" name="quote_items" value={serializeQuoteItems(items)} />
+      <input type="hidden" name="quote_items_json" value={JSON.stringify(items)} />
+      <div className="quote-summary">
+        <h2 className="quote-summary__heading">{quote.list.heading}</h2>
+        <p className="quote-summary__intro">{quote.list.intro}</p>
+        <ul className="quote-summary__list">
+          {items.map((it) => (
+            <li key={it.id} className="quote-summary__item">
+              <strong>
+                {it.qty}× {it.name}
+              </strong>{' '}
+              <span className="quote-summary__meta">
+                {it.dims.w && it.dims.h && it.dims.d
+                  ? `${it.dims.w}×${it.dims.h}×${it.dims.d}mm`
+                  : it.standardDims
+                    ? `${it.standardDims}mm`
+                    : 'size TBC'}
+                {it.notes.trim() ? ` · ${it.notes.trim()}` : ''}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
+  )
+}
 ```
 
 - [ ] **Step 5: Add summary styles to `QuotePage.css`**
@@ -1271,6 +1411,7 @@ Expected: build succeeds, vendor chunks split as before, no new warnings.
 - [ ] **Step 4: Manual smoke (dev server)**
 
 Run: `yarn dev`, then verify:
+
 - `/caravan-toolboxes` — each card shows "+ Add to quote"; clicking one opens the drawer, the navbar shows "Quote (1)".
 - In the drawer: edit W/H/D, qty, notes; add a second box; remove one.
 - "Send enquiry →" navigates to `/quote`; the summary lists the items above the form.
@@ -1291,6 +1432,7 @@ git commit -m "chore: format + verification fixes for quote list"
 ## Self-Review
 
 **Spec coverage:**
+
 - Module store, no context (spec §Architecture) → Task 1.
 - Item shape / dims / qty / notes → Task 1 (shape), Task 3 (editing UI).
 - localStorage persistence → Task 1 (+ smoke in Task 7).

@@ -14,7 +14,7 @@ personally calls or talks to every customer.
 
 Today the site has product category pages (caravan / utes / trucks /
 fabrication) that render read-only cards, and a single `/quote` page that posts
-a flat form to Formspree. There is no way to collect *which* products a customer
+a flat form to Formspree. There is no way to collect _which_ products a customer
 is interested in, or their per-item specs.
 
 ## Goal
@@ -34,7 +34,7 @@ Explicitly **not** a checkout: no payment, no binding total.
 2. **UX pattern:** a slide-over drawer from the right, opened from a navbar
    **"Quote (N)"** badge and from "Add to quote" buttons on product cards.
 3. **Prices:** each catalog item shows its list price as `from $X + GST
-   (indicative)`; custom/fabrication items show `Price on enquiry`. **No grand
+(indicative)`; custom/fabrication items show `Price on enquiry`. **No grand
    total anywhere** — avoids implying a fixed, checkout-style quote.
 4. **Submission:** reuse the existing `/quote` Formspree form; the drawer hands
    the list off to it in one post.
@@ -167,12 +167,14 @@ page renders exactly the current plain form — fully backwards-compatible.
 ## Files
 
 **New**
+
 - `src/lib/quoteStore.js`
 - `src/components/QuoteButton.jsx`
 - `src/components/QuoteDrawer.jsx` + `QuoteDrawer.css`
 - `src/test/quote.test.js`
 
 **Edited**
+
 - `src/App.jsx` — mount `<QuoteDrawer />` beside `<Lightbox />`
 - `src/components/Navbar.jsx` + `Navbar.css` — quote badge
 - `src/components/Card.jsx` — optional `quote` prop → `QuoteButton`
