@@ -1,33 +1,28 @@
 // Home hero. Bright, light layout: a white content panel on the left over a
 // single full-bleed feature photo that fills the right. The H1 renders as two
-// lines; both are ink (no accent).
+// uppercase ink lines, followed by a green tagline line, then the body copy.
 //
-// `media.slides` is the rotating hero photo set — the ute and caravan builds
-// crossfade on a timer. Slide 0 shows first on load. Add or reorder slides here;
-// the component fades between them automatically (and holds still for visitors
-// with reduced-motion enabled).
+// `media.slides` is the hero photo set. A single slide shows static; add a
+// second and the component crossfades between them on a timer (and holds still
+// for visitors with reduced-motion enabled).
 export const hero = {
-  eyebrow: 'Premium Caravan & Ute Toolboxes',
-  headline: 'Built for work.',
-  headlineLine2: 'Ready for adventure.',
+  eyebrow: 'Premium Caravan Toolboxes',
+  headline: 'Custom Caravan',
+  headlineLine2: 'Toolboxes',
+  // Green accent line under the headline.
+  tagline: 'Built to work. Ready to roam.',
   subheadline:
-    'Custom aluminium toolboxes, trays and canopies designed and fabricated in Dandenong South.',
+    'Precision-engineered aluminium toolboxes, built tough for the harshest conditions and every adventure.',
   // Both CTAs are internal routes — primary goes to the quote form.
   primaryCta: { label: 'Get a Quote', to: '/quote' },
-  secondaryCta: { label: 'View the Range', to: '/utes' },
+  secondaryCta: { label: 'View Range', to: '/caravan-toolboxes' },
   media: {
     slides: [
       {
-        img: '/images/ute-hero.jpg',
-        pos: 'center 58%',
-        alt: 'Ute fitted with dual custom Urban Toolboxes checkerplate canopies',
-      },
-      {
-        img: '/brand/hero-caravan.jpg',
-        pos: 'center 64%',
-        alt: 'Tungsten Tourer caravan fitted with a custom Urban Toolboxes checkerplate front toolbox',
-        // The black checkerplate toolbox sweeps into the left of this shot, so
-        // keep the white scrim on to hold the ink headline and copy legible.
+        img: '/brand/hero-caravan-toolbox.jpg',
+        // Object-position is controlled in CSS per breakpoint (anchored right on
+        // desktop, centred on mobile), so no inline `pos` override here.
+        alt: 'Custom Urban Toolboxes checkerplate toolbox mounted on a caravan drawbar',
       },
     ],
   },

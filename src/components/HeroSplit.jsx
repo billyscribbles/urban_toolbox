@@ -6,8 +6,8 @@ import SmartLink from './SmartLink.jsx'
 import './HeroSplit.css'
 
 // Home hero: a bright white content panel on the left over a single full-bleed
-// feature photo that fills the right. The photos crossfade on a timer, rotating
-// between the ute and caravan builds. Rotation pauses for visitors who prefer
+// feature photo that fills the right. With one slide the photo is static; with
+// several they crossfade on a timer. Rotation pauses for visitors who prefer
 // reduced motion — they just see the first slide.
 export default function HeroSplit() {
   const { slides } = hero.media
@@ -51,6 +51,7 @@ export default function HeroSplit() {
             <br />
             {hero.headlineLine2}
           </h1>
+          {hero.tagline && <p className="hero-split__tagline">{hero.tagline}</p>}
           <p className="hero-split__sub">{hero.subheadline}</p>
           <div className="hero-split__actions">
             <SmartLink to={hero.primaryCta.to} className="btn btn--green">
