@@ -19,16 +19,15 @@ export const hero = {
     slides: [
       {
         img: '/images/ute-hero.jpg',
-        pos: 'center 32%',
+        pos: 'center 58%',
         alt: 'Ute fitted with dual custom Urban Toolboxes checkerplate canopies',
       },
       {
         img: '/brand/hero-caravan.jpg',
-        pos: 'center 42%',
-        alt: 'Caravan fitted with a custom Urban Toolboxes checkerplate toolbox',
-        // This photo is bright on the left, so it reads clean without the white
-        // scrim — show it full-bleed and let the scrim fade out while it's up.
-        scrim: false,
+        pos: 'center 64%',
+        alt: 'Tungsten Tourer caravan fitted with a custom Urban Toolboxes checkerplate front toolbox',
+        // The black checkerplate toolbox sweeps into the left of this shot, so
+        // keep the white scrim on to hold the ink headline and copy legible.
       },
     ],
   },
