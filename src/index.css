@@ -281,29 +281,41 @@ select {
   }
 }
 
-/* Add-to-quote button on product cards */
+/* Add-to-quote button on product cards — pairs with View Details in a 1fr grid */
 .quote-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  margin-top: 14px;
-  padding: 9px 16px;
+  width: 100%;
+  padding: 11px 14px;
   font: inherit;
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--color-white);
   background: var(--color-accent);
-  border: 1px solid var(--color-accent);
+  border: 1.5px solid var(--color-accent);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast);
 }
 .quote-btn:hover {
   background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
 }
 .quote-btn--added {
-  color: var(--color-ink-muted);
+  color: var(--color-ink-strong);
   background: transparent;
-  border-color: var(--color-border-light);
+  border-color: var(--color-border, #d7d7d1);
   cursor: default;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+.quote-btn--added svg {
+  color: var(--color-accent);
 }
