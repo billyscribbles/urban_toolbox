@@ -31,7 +31,8 @@ if (typeof window !== 'undefined') {
 }
 
 const CaravanPage = lazyWithRetry(() => import('./pages/CaravanPage.jsx'))
-const UtePage = lazyWithRetry(() => import('./pages/UtePage.jsx'))
+const UtesPage = lazyWithRetry(() => import('./pages/UtesPage.jsx'))
+const TrucksPage = lazyWithRetry(() => import('./pages/TrucksPage.jsx'))
 const FabricationPage = lazyWithRetry(() => import('./pages/FabricationPage.jsx'))
 const AboutPage = lazyWithRetry(() => import('./pages/AboutPage.jsx'))
 const QuotePage = lazyWithRetry(() => import('./pages/QuotePage.jsx'))
@@ -92,7 +93,8 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/caravan-toolboxes" element={<CaravanPage />} />
-              <Route path="/ute-accessories" element={<UtePage />} />
+              <Route path="/utes" element={<UtesPage />} />
+              <Route path="/trucks" element={<TrucksPage />} />
               <Route path="/fabrication" element={<FabricationPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/quote" element={<QuotePage />} />
@@ -104,8 +106,10 @@ export default function App() {
               {/* Legacy URLs from the previous GoDaddy site — kept alive so
                   existing search rankings and inbound links don't 404 after
                   migration. laser-cutting & folding were separate pages that are
-                  now sections of /fabrication; photos had no equivalent. */}
-              <Route path="/ute-accesories" element={<Navigate to="/ute-accessories" replace />} />
+                  now sections of /fabrication; photos had no equivalent. The
+                  ute-accessories page became the broader /utes range. */}
+              <Route path="/ute-accessories" element={<Navigate to="/utes" replace />} />
+              <Route path="/ute-accesories" element={<Navigate to="/utes" replace />} />
               <Route
                 path="/laser-cutting"
                 element={<Navigate to="/fabrication#laser-cutting" replace />}

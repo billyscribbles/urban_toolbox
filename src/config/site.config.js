@@ -18,7 +18,8 @@ export const site = {
   nav: [
     { label: 'Home', to: '/' },
     { label: 'Caravan Toolboxes', to: '/caravan-toolboxes' },
-    { label: 'Ute Accessories', to: '/ute-accessories' },
+    { label: 'Utes', to: '/utes' },
+    { label: 'Trucks', to: '/trucks' },
     { label: 'Fabrication', to: '/fabrication' },
     { label: 'About', to: '/about' },
   ],
@@ -35,7 +36,8 @@ export const site = {
         title: 'Products',
         links: [
           { label: 'Caravan Toolboxes', to: '/caravan-toolboxes' },
-          { label: 'Ute Accessories', to: '/ute-accessories' },
+          { label: 'Utes', to: '/utes' },
+          { label: 'Trucks', to: '/trucks' },
           { label: 'Fabrication', to: '/fabrication' },
         ],
       },

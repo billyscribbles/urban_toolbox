@@ -1,4 +1,6 @@
 .trust {
+  /* Sits at the bottom of the hero fold, flush to the base of the screen. */
+  flex-shrink: 0;
   background: var(--color-dark);
 }
 

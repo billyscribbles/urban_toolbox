@@ -1,0 +1,229 @@
+// Utes range. One page renders every section below; the sub-nav is generated
+// from each section's { id, label }. New products carry no price — they show
+// "Enquire for pricing" and lean on the quote CTA (Hofast supplier range,
+// pricing confirmed per build). Specs list only what's verifiable from the
+// supplier drawings/photos: size, finish and visible opening style.
+export const utes = {
+  header: {
+    eyebrow: 'For the tradie & tourer',
+    title: 'Utes',
+    intro:
+      'Trays, toolboxes, canopies, service bodies and accessories — fabricated to fit your ute and finished to take a beating on site or off the black top.',
+    note: 'Prices exclude GST. Contact us for pricing and to match a build to your tray and wheelbase.',
+  },
+  sections: [
+    {
+      id: 'trays',
+      label: 'Trays',
+      heading: 'Ute Trays',
+      sub: 'Four tray styles — built to your wheelbase (adjustable 300–480mm) and finished in silver anodised or powder-coat black/white.',
+      columns: 2,
+      products: [
+        {
+          title: 'Tray A',
+          img: '/images/ute-tray-a.jpg',
+          imgAlt: 'Tray A aluminium ute tray with alloy headboard and rope rails',
+          body: 'Alloy tray with mesh headboard and rope rails · silver anodised, powder-coat black or white · Enquire for pricing',
+        },
+        {
+          title: 'Tray B',
+          img: '/images/ute-tray-b.jpg',
+          imgAlt: 'Tray B heavy-duty ute tray fitted to a dual-cab with under-tray boxes',
+          body: 'Heavy-duty tray with mesh headboard and under-tray toolboxes · powder-coat black · Enquire for pricing',
+        },
+        {
+          title: 'Tray C',
+          img: '/images/ute-tray-c.jpg',
+          imgAlt: 'Tray C ute tray with fold-out ramp and under-tray drawers',
+          body: 'Drop-side tray with fold-out tailgate ramp and under-tray drawers · powder-coat black · Enquire for pricing',
+        },
+        {
+          title: 'Tray D',
+          img: '/images/ute-tray-d.jpg',
+          imgAlt: 'Tray D ute tray with full mesh headboard and stainless insert',
+          body: 'Tray with full mesh headboard, stainless insert and under-tray storage · powder-coat black · Enquire for pricing',
+        },
+      ],
+    },
+    {
+      id: 'toolboxes',
+      label: 'Toolboxes',
+      heading: 'Ute Toolboxes',
+      sub: 'Tray-top chests and drawer boxes in aluminium checkerplate or powder-coated flat plate.',
+      columns: 3,
+      products: [
+        {
+          title: '1200 × 500 × 500mm',
+          img: '/images/utb-1200-a.png',
+          imgAlt: 'Aluminium checkerplate top-opening ute toolbox',
+          body: '1200 × 500 × 500mm · aluminium checkerplate · gas-strut top lid · Enquire for pricing',
+        },
+        {
+          title: '1200 × 500 × 500mm Drawer',
+          img: '/images/utb-1200-b.png',
+          imgAlt: 'Black powder-coated ute toolbox with slide-out drawer',
+          body: '1200 × 500 × 500mm · powder-coated aluminium · slide-out drawer · Enquire for pricing',
+        },
+        {
+          title: '1220 × 400 × 350mm',
+          img: '/images/utb-1220.png',
+          imgAlt: 'Low-profile black powder-coated ute toolbox',
+          body: '1220 × 400 × 350mm · powder-coated aluminium · side-hinged lid · Enquire for pricing',
+        },
+        {
+          title: '1500 × 500 × 450mm',
+          img: '/images/utb-1500.png',
+          imgAlt: 'Aluminium checkerplate top-opening ute chest',
+          body: '1500 × 500 × 450mm · aluminium checkerplate · gas-strut top lid · Enquire for pricing',
+        },
+        {
+          title: '1700 × 600 × 500mm',
+          img: '/images/utb-1700-500.png',
+          imgAlt: 'Black powder-coated top-opening ute chest',
+          body: '1700 × 600 × 500mm · powder-coated aluminium · top-opening lid · Enquire for pricing',
+        },
+        {
+          title: '1770 × 600 × 500mm',
+          img: '/images/utb-1770-500-a.png',
+          imgAlt: 'Aluminium checkerplate top-opening ute toolbox',
+          body: '1770 × 600 × 500mm · aluminium checkerplate · gas-strut top lid · Enquire for pricing',
+        },
+        {
+          title: '1770 × 600 × 500mm Dual',
+          img: '/images/utb-1770-500-b.png',
+          imgAlt: 'Aluminium checkerplate ute toolbox with top and side openings',
+          body: '1770 × 600 × 500mm · aluminium checkerplate · top and side openings · Enquire for pricing',
+        },
+        {
+          title: '600 × 450 × 450mm',
+          img: '/images/utb-600-450.png',
+          imgAlt: 'Compact aluminium checkerplate ute toolbox',
+          body: '600 × 450 × 450mm · aluminium checkerplate · top-opening lid · Enquire for pricing',
+        },
+        {
+          title: '600 × 230 × 400mm',
+          img: '/images/utb-600-230.png',
+          imgAlt: 'Compact powder-coated ute toolbox with side hatch',
+          body: '600 × 230 × 400mm · powder-coated aluminium · side hatch · Enquire for pricing',
+        },
+      ],
+    },
+    {
+      id: 'canopies',
+      label: 'Canopies',
+      heading: 'Canopies',
+      sub: 'Walk-in tourer canopies with internal shelving and drawer systems.',
+      columns: 2,
+      products: [
+        {
+          title: 'Tourer Canopy',
+          img: '/images/ute-canopy.jpg',
+          imgAlt: 'Powder-coated tourer canopy with gullwing doors and internal shelving',
+          body: 'Gullwing doors, internal shelving and drawer system · powder-coat black · Enquire for pricing',
+        },
+        {
+          title: 'Tray & Canopy Combo',
+          img: '/images/ute-canopy-combo.jpg',
+          imgAlt: 'Tray and canopy combo with drawers, ladder and jerry-can mounts',
+          body: 'Tray and canopy built as one — drawers, ladder, jerry-can and spare-wheel mounts · powder-coat black · Enquire for pricing',
+        },
+        {
+          title: 'Checkerplate Canopy',
+          img: '/images/canopy-1770.png',
+          imgAlt: 'Full walk-in aluminium checkerplate canopy with gullwing doors',
+          body: '1770 × 1200 × 820mm · aluminium checkerplate · gullwing doors · Enquire for pricing',
+        },
+        {
+          title: 'Fit-Out Canopy',
+          img: '/images/canopy-1900-a.png',
+          imgAlt: 'Powder-coated canopy with internal shelving and drawer fit-out',
+          body: '1900 × 600 × 1200mm · powder-coated aluminium · internal shelving and drawers · Enquire for pricing',
+        },
+      ],
+    },
+    {
+      id: 'service-canopies',
+      label: 'Service Canopies',
+      heading: 'Service Canopies',
+      sub: 'Walk-in service bodies with gullwing wing-doors, internal shelving and lockable drawers — wheelbase-adjustable to suit your cab-chassis.',
+      columns: 2,
+      products: [
+        {
+          title: 'Service Body',
+          img: '/images/ute-service-body.jpg',
+          imgAlt: 'Walk-in aluminium service body with gullwing wing-doors and drawers',
+          body: 'Gullwing wing-doors, internal shelving and lockable drawers · wheelbase-adjustable · powder-coat finish · Enquire for pricing',
+        },
+      ],
+    },
+    {
+      id: 'accessories',
+      label: 'Accessories',
+      heading: 'Accessories',
+      sub: 'Bolt-on extras to finish your tray, canopy or service body.',
+      columns: 3,
+      products: [
+        {
+          title: 'Slider Drawer',
+          img: '/images/acc-slider-drawer.jpg',
+          imgAlt: 'Slide-out under-tray drawer',
+          body: 'Full-extension slide-out drawer for under-tray or canopy storage · powder-coat black · Enquire for pricing',
+        },
+        {
+          title: 'Under-Tray Toolboxes',
+          img: '/images/acc-undertray-toolbox.jpg',
+          imgAlt: 'Pair of angled under-tray toolboxes',
+          body: 'Angled under-tray toolboxes (left + right) · lockable · powder-coat black · Enquire for pricing',
+        },
+        {
+          title: 'Under-Tray Drawer',
+          img: '/images/acc-undertray-drawer.jpg',
+          imgAlt: 'Under-tray drawer fitted to a ute tray',
+          body: 'Under-tray drawer that tucks beneath the tray floor · powder-coat black · Enquire for pricing',
+        },
+        {
+          title: 'Mudguards',
+          img: '/images/acc-mudguard.jpg',
+          imgAlt: 'Pair of alloy mudguards',
+          body: 'Alloy mudguards (pair) to suit tray and service-body builds · Enquire for pricing',
+        },
+        {
+          title: 'Fold-Down Ladder',
+          img: '/images/acc-ladder.jpg',
+          imgAlt: 'Fold-down access ladder',
+          body: 'Fold-down access ladder for canopy and service-body rear · powder-coat black · Enquire for pricing',
+        },
+        {
+          title: 'Jerry-Can Holder',
+          img: '/images/acc-jerry-can.jpg',
+          imgAlt: 'Lockable jerry-can holder',
+          body: 'Lockable jerry-can holder · powder-coat black · Enquire for pricing',
+        },
+        {
+          title: 'Spare-Wheel Bracket',
+          img: '/images/acc-spare-wheel.jpg',
+          imgAlt: 'Adjustable spare-wheel bracket',
+          body: 'Adjustable spare-wheel carrier bracket · powder-coat black · Enquire for pricing',
+        },
+        {
+          title: 'Top Rack',
+          img: '/images/acc-top-rack.jpg',
+          imgAlt: 'Roof / canopy top rack',
+          body: 'Bolt-on top rack for canopy or service body · powder-coat black · Enquire for pricing',
+        },
+        {
+          title: 'Drop-Down Door',
+          img: '/images/acc-door.jpg',
+          imgAlt: 'Drop-down tailgate door',
+          body: 'Drop-down side/rear door with stainless latches · powder-coat black · Enquire for pricing',
+        },
+        {
+          title: 'Water Tank',
+          img: '/images/acc-water-tank.png',
+          imgAlt: 'Aluminium checkerplate under-tray water tank with tap',
+          body: '600 × 200 × 400mm · aluminium checkerplate · fitted tap · Enquire for pricing',
+        },
+      ],
+    },
+  ],
+}

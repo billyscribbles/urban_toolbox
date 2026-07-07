@@ -1,5 +1,5 @@
 import SEO from '../lib/seo.jsx'
-import Hero from '../components/Hero.jsx'
+import HeroSplit from '../components/HeroSplit.jsx'
 import TrustBar from '../components/TrustBar.jsx'
 import WhatWeBuild from '../components/WhatWeBuild.jsx'
 import Process from '../components/Process.jsx'
@@ -11,8 +11,10 @@ export default function Home() {
   return (
     <main>
       <SEO />
-      <Hero />
-      <TrustBar />
+      <div className="hero-fold">
+        <HeroSplit />
+        <TrustBar />
+      </div>
       <WhatWeBuild />
       <Process />
       <Capability />

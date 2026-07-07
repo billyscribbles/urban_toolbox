@@ -12,34 +12,10 @@ export const caravan = {
   // that set each model apart.
   products: [
     {
-      title: 'TB-169',
-      img: '/images/caravan-tb-169.jpg',
-      imgAlt: 'TB-169 aluminium checkerplate caravan toolbox',
-      body: '1800 × 600 × 900mm · 40kg · $1900 + GST',
-    },
-    {
       title: 'TB-295',
       img: '/images/caravan-tb-295.jpg',
       imgAlt: 'TB-295 large aluminium checkerplate caravan toolbox',
       body: '2200 × 570 × 1010mm · 70kg · $3900 + GST',
-    },
-    {
-      title: 'TB-183',
-      img: '/images/caravan-tb-183.jpg',
-      imgAlt: 'TB-183 aluminium checkerplate caravan toolbox',
-      body: '1250 × 370 × 800mm · 25kg · $1450 + GST',
-    },
-    {
-      title: 'TB-243',
-      img: '/images/caravan-tb-243.jpg',
-      imgAlt: 'TB-243 long low-profile aluminium caravan toolbox',
-      body: '2200 × 450 × 300mm · 25kg · $1450 + GST',
-    },
-    {
-      title: 'TB-233',
-      img: '/images/caravan-tb-233.jpg',
-      imgAlt: 'TB-233 long low-profile aluminium caravan toolbox',
-      body: '2200 × 370 × 300mm · 25kg · $1250 + GST',
     },
     {
       title: 'TB-150',
@@ -78,12 +54,6 @@ export const caravan = {
       body: '2000 × 710 × 700mm · 35kg · $1900 + GST',
     },
     {
-      title: 'TB-178',
-      img: '/images/caravan-tb-178.jpg',
-      imgAlt: 'TB-178 aluminium checkerplate caravan toolbox',
-      body: '1700 × 450 × 800mm · 30kg · $1850 + GST',
-    },
-    {
       title: 'TB-199',
       img: '/images/caravan-tb-199.jpg',
       imgAlt: 'TB-199 aluminium checkerplate caravan toolbox',
@@ -94,12 +64,6 @@ export const caravan = {
       img: '/images/caravan-tb-147.jpg',
       imgAlt: 'TB-147 aluminium checkerplate caravan toolbox',
       body: '1450 × 450 × 610mm · 25kg · $1200 + GST',
-    },
-    {
-      title: 'TB-1446',
-      img: '/images/caravan-tb-1446.jpg',
-      imgAlt: 'TB-1446 aluminium checkerplate caravan toolbox',
-      body: '1460 × 460 × 610mm · 25kg · $1150 + GST',
     },
     {
       title: 'TB-756',

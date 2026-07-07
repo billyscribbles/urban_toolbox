@@ -5,7 +5,7 @@ export const capability = {
   photo: {
     label: 'WORKSHOP PHOTO',
     sub: 'fabrication in progress',
-    img: '/images/ute-utb-215.jpg',
+    img: '/images/fabrication.jpg',
     imgAlt: 'Tall aluminium cabinet being fabricated in the Urban Toolboxes workshop',
   },
   items: [
