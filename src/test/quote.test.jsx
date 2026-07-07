@@ -1,7 +1,7 @@
 // Contract: the quote store holds the enquiry list, persists it, and serializes
 // it into the exact text the shop receives by email. Pure-logic tests — no React.
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   addItem,
@@ -189,12 +189,14 @@ describe('Navbar quote badge', () => {
     )
     expect(screen.queryByRole('button', { name: /open your quote/i })).toBeNull()
 
-    addItem({
-      id: 'tb-199',
-      name: 'TB-199',
-      category: 'Caravan',
-      priceFrom: 1950,
-      standardDims: '1900×540×950',
+    act(() => {
+      addItem({
+        id: 'tb-199',
+        name: 'TB-199',
+        category: 'Caravan',
+        priceFrom: 1950,
+        standardDims: '1900×540×950',
+      })
     })
     rerender(
       <MemoryRouter>
@@ -202,6 +204,6 @@ describe('Navbar quote badge', () => {
       </MemoryRouter>,
     )
     // Badge appears in both desktop and mobile navs.
-    expect(screen.getAllByRole('button', { name: /open your quote/i }).length).toBeGreaterThan(0)
+    expect(screen.getAllByRole('button', { name: /open your quote/i })).toHaveLength(2)
   })
 })
