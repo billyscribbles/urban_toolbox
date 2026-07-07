@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import Placeholder from './Placeholder.jsx'
+import QuoteButton from './QuoteButton.jsx'
 import './Card.css'
 
 // Product / category card: striped photo slot over a heading, body and an
@@ -17,6 +18,8 @@ export default function Card({
   alt = false,
   titleSize = 24,
   pad = 28,
+  quote,
+  quoteCategory,
 }) {
   const style = { '--card-title': `${titleSize}px`, '--card-pad': `${pad}px` }
   const inner = (
@@ -37,6 +40,17 @@ export default function Card({
         <h3 className="card__title">{title}</h3>
         <p className="card__text">{body}</p>
         {cta && <span className="action-link card__cta">{cta} →</span>}
+        {quote && (
+          <QuoteButton
+            item={{
+              id: quote.id,
+              name: title,
+              category: quoteCategory,
+              priceFrom: quote.priceFrom ?? null,
+              standardDims: quote.standardDims ?? '',
+            }}
+          />
+        )}
       </div>
     </>
   )

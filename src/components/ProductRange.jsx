@@ -45,6 +45,8 @@ export default function ProductRange({ data }) {
                   titleSize={s.columns === 2 ? 22 : 20}
                   pad={26}
                   alt
+                  quote={p.quote}
+                  quoteCategory={header.title}
                 />
               ))}
             </div>

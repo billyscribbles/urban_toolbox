@@ -35,6 +35,8 @@ export default function CaravanPage() {
               titleSize={22}
               pad={26}
               alt
+              quote={p.quote}
+              quoteCategory="Caravan"
             />
           ))}
         </div>
