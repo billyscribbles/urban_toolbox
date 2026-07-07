@@ -1,4 +1,5 @@
 import { cta } from '../content/cta.js'
+import SmartLink from './SmartLink.jsx'
 import './CtaBand.css'
 
 // Full-width green conversion band, reused at the foot of every page.
@@ -11,9 +12,9 @@ export default function CtaBand({ sub = cta.sub }) {
           <h2 className="cta-band__heading">{cta.heading}</h2>
           <p className="cta-band__sub">{sub}</p>
         </div>
-        <a href={cta.button.href} className="btn btn--dark">
+        <SmartLink to={cta.button.href} className="btn btn--dark">
           {cta.button.label} →
-        </a>
+        </SmartLink>
       </div>
     </section>
   )

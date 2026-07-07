@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { site } from '../config/site.config.js'
+import SmartLink from './SmartLink.jsx'
 import './Navbar.css'
 
 function Brand({ brand }) {
@@ -57,9 +58,9 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <a href={cta.href} className="navbar__cta">
+        <SmartLink to={cta.href} className="navbar__cta">
           {cta.label}
-        </a>
+        </SmartLink>
 
         <button
           className={`navbar__hamburger${menuOpen ? ' open' : ''}`}
@@ -85,9 +86,9 @@ export default function Navbar() {
             {l.label}
           </NavLink>
         ))}
-        <a href={cta.href} className="navbar__mobile-cta" onClick={() => setMenuOpen(false)}>
+        <SmartLink to={cta.href} className="navbar__mobile-cta" onClick={() => setMenuOpen(false)}>
           {cta.label}
-        </a>
+        </SmartLink>
       </nav>
     </header>
   )

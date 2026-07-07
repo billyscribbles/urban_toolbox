@@ -34,6 +34,7 @@ const CaravanPage = lazyWithRetry(() => import('./pages/CaravanPage.jsx'))
 const UtePage = lazyWithRetry(() => import('./pages/UtePage.jsx'))
 const FabricationPage = lazyWithRetry(() => import('./pages/FabricationPage.jsx'))
 const AboutPage = lazyWithRetry(() => import('./pages/AboutPage.jsx'))
+const QuotePage = lazyWithRetry(() => import('./pages/QuotePage.jsx'))
 const LegalPage = lazyWithRetry(() => import('./pages/LegalPage.jsx'))
 const NotFoundPage = lazyWithRetry(() => import('./pages/NotFoundPage.jsx'))
 
@@ -94,8 +95,9 @@ export default function App() {
               <Route path="/ute-accessories" element={<UtePage />} />
               <Route path="/fabrication" element={<FabricationPage />} />
               <Route path="/about" element={<AboutPage />} />
-              {/* About & Contact are one page in this design — keep /contact alive. */}
-              <Route path="/contact" element={<Navigate to="/about" replace />} />
+              <Route path="/quote" element={<QuotePage />} />
+              {/* /contact is an enquiry intent — send it to the quote form. */}
+              <Route path="/contact" element={<Navigate to="/quote" replace />} />
               <Route path="/privacy" element={<LegalPage type="privacy" />} />
               <Route path="/terms" element={<LegalPage type="terms" />} />
 

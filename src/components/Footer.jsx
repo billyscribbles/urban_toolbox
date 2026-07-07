@@ -1,20 +1,14 @@
-import { Link } from 'react-router-dom'
 import { site } from '../config/site.config.js'
+import SmartLink from './SmartLink.jsx'
 import './Footer.css'
 
-// A footer link is either an internal route (`to`) or an external/mailto (`href`).
+// A footer link carries either an internal route (`to`) or an external/mailto
+// (`href`); SmartLink renders the right element for whichever is set.
 function FooterLink({ link }) {
-  if (link.href) {
-    return (
-      <a href={link.href} className="footer__link">
-        {link.label}
-      </a>
-    )
-  }
   return (
-    <Link to={link.to} className="footer__link">
+    <SmartLink to={link.href || link.to} className="footer__link">
       {link.label}
-    </Link>
+    </SmartLink>
   )
 }
 

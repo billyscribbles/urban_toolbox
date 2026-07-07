@@ -23,10 +23,10 @@ export const site = {
     { label: 'About', to: '/about' },
   ],
 
-  // Primary conversion action — a mailto, per the handoff.
+  // Primary conversion action — the quote request form.
   cta: {
     label: 'Get a Quote',
-    href: 'mailto:sales@urbantoolboxes.com.au',
+    href: '/quote',
   },
 
   footer: {
@@ -44,7 +44,7 @@ export const site = {
         links: [
           { label: 'Home', to: '/' },
           { label: 'About & Contact', to: '/about' },
-          { label: 'Get a Quote', href: 'mailto:sales@urbantoolboxes.com.au' },
+          { label: 'Get a Quote', to: '/quote' },
         ],
       },
     ],

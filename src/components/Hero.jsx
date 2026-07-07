@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { hero } from '../content/hero.js'
 import Eyebrow from './Eyebrow.jsx'
+import SmartLink from './SmartLink.jsx'
 import './Hero.css'
 
 // Full-bleed home hero. The caravan photo is a CSS background on the section
@@ -30,9 +31,9 @@ export default function Hero() {
           </h1>
           <p className="hero__sub">{hero.subheadline}</p>
           <div className="hero__actions">
-            <a href={hero.primaryCta.to} className="btn btn--green">
+            <SmartLink to={hero.primaryCta.to} className="btn btn--green">
               {hero.primaryCta.label} →
-            </a>
+            </SmartLink>
             <Link to={hero.secondaryCta.to} className="btn btn--outline">
               {hero.secondaryCta.label} →
             </Link>

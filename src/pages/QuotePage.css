@@ -1,0 +1,175 @@
+/* Quote request page — form + direct-contact aside. */
+
+.quote-layout {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 56px;
+  align-items: start;
+}
+
+/* --------------------------------------------------------------- the form */
+
+.quote-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.quote-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quote-field__label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-strong);
+}
+
+.quote-field__label span {
+  color: var(--color-accent);
+}
+
+.quote-field input,
+.quote-field select,
+.quote-field textarea {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 16px;
+  color: var(--color-ink);
+  background: var(--color-white);
+  border: 1.5px solid var(--color-border-light);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.quote-field textarea {
+  resize: vertical;
+  min-height: 128px;
+}
+
+.quote-field input:focus,
+.quote-field select:focus,
+.quote-field textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+/* Spam trap — kept in the DOM for bots, hidden from people and AT. */
+.quote-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.quote-form__footer {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.quote-form__footer .btn--green:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.quote-form__aria {
+  margin: 0;
+  font-size: 14px;
+  color: #c0392b;
+}
+
+/* --------------------------------------------------- success / error notes */
+
+.quote-note {
+  border: 1.5px solid var(--color-border-light);
+  border-left-width: 4px;
+  padding: 24px 28px;
+  background: var(--color-off-white);
+  color: var(--color-ink-muted);
+  line-height: 1.55;
+}
+
+.quote-note--ok {
+  border-left-color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.quote-note--err {
+  border-left-color: #c0392b;
+  margin-top: 4px;
+}
+
+.quote-note__heading {
+  font-family: var(--font-display);
+  font-size: 26px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-ink-strong);
+  margin-bottom: 8px;
+  font-weight: 400;
+}
+
+/* ------------------------------------------------------------- the aside */
+
+.quote-aside {
+  background: var(--color-dark);
+  color: var(--color-dark-text);
+  padding: 36px 32px;
+}
+
+.quote-aside__heading {
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #fff;
+  margin-bottom: 24px;
+  font-weight: 400;
+}
+
+.quote-aside__list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.quote-aside__list li {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.quote-aside__list svg {
+  color: var(--color-accent);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.quote-aside__list a {
+  color: #fff;
+  transition: color var(--transition-fast);
+}
+
+.quote-aside__list a:hover {
+  color: var(--color-accent);
+}
+
+/* ---------------------------------------------------------------- mobile */
+
+@media (max-width: 860px) {
+  .quote-layout {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
