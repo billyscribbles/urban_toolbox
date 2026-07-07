@@ -12,17 +12,13 @@
 .trust__cell {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 16px;
   padding: 26px 30px;
   border-right: 1px solid #222;
 }
 
-.trust__cell:first-child {
-  padding-left: 0;
-}
-
 .trust__cell:last-child {
-  padding-right: 0;
   border-right: none;
 }
 
