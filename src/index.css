@@ -280,3 +280,30 @@ select {
     scroll-behavior: auto !important;
   }
 }
+
+/* Add-to-quote button on product cards */
+.quote-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 9px 16px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-white);
+  background: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+.quote-btn:hover {
+  background: var(--color-accent-hover);
+}
+.quote-btn--added {
+  color: var(--color-ink-muted);
+  background: transparent;
+  border-color: var(--color-border-light);
+  cursor: default;
+}

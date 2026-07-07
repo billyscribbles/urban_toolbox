@@ -1,6 +1,8 @@
 // Contract: the quote store holds the enquiry list, persists it, and serializes
 // it into the exact text the shop receives by email. Pure-logic tests — no React.
 import { describe, it, expect, beforeEach } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import {
   addItem,
   updateItem,
@@ -12,6 +14,7 @@ import {
   serializeQuoteItems,
   useQuote,
 } from '../lib/quoteStore.js'
+import QuoteButton from '../components/QuoteButton.jsx'
 
 // The store is a module singleton; reset it (and its localStorage mirror)
 // before each test so cases don't leak into one another.
@@ -126,5 +129,26 @@ describe('quoteStore — serializeQuoteItems', () => {
         '1× Tray A (Utes) — size TBC — price on enquiry — Notes: —',
       ].join('\n'),
     )
+  })
+})
+
+describe('QuoteButton', () => {
+  it('adds the item and flips to the in-quote state', async () => {
+    const user = userEvent.setup()
+    render(
+      <QuoteButton
+        item={{
+          id: 'tb-165',
+          name: 'TB-165',
+          category: 'Caravan',
+          priceFrom: 1750,
+          standardDims: '1565×520×680',
+        }}
+      />,
+    )
+    const btn = screen.getByRole('button', { name: /add to quote/i })
+    await user.click(btn)
+    expect(useQuote.__getSnapshot().items.some((i) => i.id === 'tb-165')).toBe(true)
+    expect(screen.getByText(/in your quote/i)).toBeInTheDocument()
   })
 })
