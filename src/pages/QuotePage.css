@@ -173,3 +173,35 @@
     gap: 40px;
   }
 }
+
+/* ---------------------------------------------------------- quote summary */
+
+.quote-summary {
+  margin-bottom: 28px;
+  padding: 18px 20px;
+  background: var(--color-off-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+}
+.quote-summary__heading {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+  color: var(--color-ink-strong);
+}
+.quote-summary__intro {
+  margin: 0 0 14px;
+  font-size: 0.9rem;
+  color: var(--color-ink-muted);
+}
+.quote-summary__list {
+  margin: 0;
+  padding-left: 18px;
+}
+.quote-summary__item {
+  margin-bottom: 6px;
+  color: var(--color-ink);
+}
+.quote-summary__meta {
+  color: var(--color-ink-muted);
+  font-size: 0.9rem;
+}

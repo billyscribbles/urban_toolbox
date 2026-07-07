@@ -9,6 +9,9 @@ import { howItWorks } from '../content/howItWorks.js'
 import { testimonials } from '../content/testimonials.js'
 import { faq } from '../content/faq.js'
 import { legal } from '../content/legal.js'
+import { caravan } from '../content/caravan.js'
+import { utes } from '../content/utes.js'
+import { trucks } from '../content/trucks.js'
 
 describe('content — section copy contract', () => {
   it('hero has a headline and a primary CTA', () => {
@@ -68,5 +71,32 @@ describe('content — section copy contract', () => {
         expect(section.body).toBeTruthy()
       }
     }
+  })
+})
+
+describe('caravan products — quote descriptor contract', () => {
+  it('every product carries a quote object with an id and dims', () => {
+    for (const p of caravan.products) {
+      expect(p.quote).toBeTruthy()
+      expect(p.quote.id).toMatch(/^[a-z0-9-]+$/)
+      expect(typeof p.quote.standardDims).toBe('string')
+      expect(p.quote.priceFrom === null || typeof p.quote.priceFrom === 'number').toBe(true)
+    }
+  })
+
+  it('quote ids are unique across the caravan range', () => {
+    const ids = caravan.products.map((p) => p.quote.id)
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it('quote ids are globally unique across caravan, utes and trucks', () => {
+    const ids = [
+      ...caravan.products,
+      ...utes.sections.flatMap((s) => s.products),
+      ...trucks.sections.flatMap((s) => s.products),
+    ]
+      .filter((p) => p.quote)
+      .map((p) => p.quote.id)
+    expect(new Set(ids).size).toBe(ids.length)
   })
 })

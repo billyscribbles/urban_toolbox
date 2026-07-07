@@ -19,9 +19,33 @@
 }
 
 .card__media {
+  position: relative;
   border-bottom: 1px solid var(--color-border-light);
   overflow: hidden;
   background: var(--color-off-white);
+}
+
+/* "In your quote" chip overlaid on the photo — dark pill, green tick. */
+.card__badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px 7px 10px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-white);
+  background: var(--color-ink-strong);
+  border-radius: var(--radius-full);
+}
+
+.card__badge svg {
+  color: var(--color-accent);
 }
 
 .card__img {
@@ -56,4 +80,72 @@
 
 .card__cta {
   margin-top: 18px;
+}
+
+/* Price row — bold amount left, muted "+ GST" right (or the enquire fallback). */
+.card__price {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 18px;
+}
+
+.card__price-amount {
+  font-family: var(--font-body);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-ink-strong);
+}
+
+.card__price-gst {
+  font-size: 14px;
+  color: var(--color-gray-muted);
+}
+
+.card__price-enquire {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-ink-strong);
+}
+
+/* Two equal-width actions: add-to-quote + View Details. */
+.card__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.card__details {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 14px;
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink-strong);
+  background: transparent;
+  border: 1.5px solid var(--color-border, #d7d7d1);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.card__details:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.card__details:disabled {
+  opacity: 0.5;
+  cursor: default;
 }

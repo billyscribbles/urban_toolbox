@@ -4,6 +4,7 @@ import SEO from '../lib/seo.jsx'
 import PageHero from '../components/PageHero.jsx'
 import { quote } from '../content/quote.js'
 import { site } from '../config/site.config.js'
+import { useQuote, clearItems, serializeQuoteItems } from '../lib/quoteStore.js'
 import './QuotePage.css'
 
 const { formspreeId } = site.integrations
@@ -90,6 +91,7 @@ function ContactAside() {
 export default function QuotePage() {
   // idle | submitting | success | error
   const [status, setStatus] = useState('idle')
+  const { items } = useQuote()
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -104,6 +106,7 @@ export default function QuotePage() {
       if (res.ok) {
         setStatus('success')
         form.reset()
+        clearItems()
       } else {
         setStatus('error')
       }
@@ -145,6 +148,34 @@ export default function QuotePage() {
                   aria-hidden="true"
                 />
                 <input type="hidden" name="_subject" value={quote.emailSubject} />
+
+                {items.length > 0 && (
+                  <>
+                    <input type="hidden" name="quote_items" value={serializeQuoteItems(items)} />
+                    <input type="hidden" name="quote_items_json" value={JSON.stringify(items)} />
+                    <div className="quote-summary">
+                      <h2 className="quote-summary__heading">{quote.list.heading}</h2>
+                      <p className="quote-summary__intro">{quote.list.intro}</p>
+                      <ul className="quote-summary__list">
+                        {items.map((it) => (
+                          <li key={it.id} className="quote-summary__item">
+                            <strong>
+                              {it.qty}× <span>{it.name}</span>
+                            </strong>{' '}
+                            <span className="quote-summary__meta">
+                              {it.dims.w && it.dims.h && it.dims.d
+                                ? `${it.dims.w}×${it.dims.h}×${it.dims.d}mm`
+                                : it.standardDims
+                                  ? `${it.standardDims}mm`
+                                  : 'size TBC'}
+                              {it.notes.trim() ? ` · ${it.notes.trim()}` : ''}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </>
+                )}
 
                 {quote.fields.map((field) => (
                   <Field key={field.name} field={field} />

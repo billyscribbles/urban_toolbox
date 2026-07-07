@@ -8,6 +8,13 @@ export const quote = {
       'Tell us about your caravan toolbox, ute setup or fabrication job and we’ll get back to you — usually the same day — with a free, no-obligation quote.',
   },
 
+  list: {
+    heading: 'Your quote list',
+    intro:
+      'These are the items you’ve added. Add your details below and we’ll call you back to confirm sizes and price.',
+    empty: '',
+  },
+
   // Each field maps 1:1 to a form control. `name` is what Formspree stores and
   // emails. Order here is render order.
   fields: [
