@@ -310,7 +310,7 @@ select {
 .quote-btn--added {
   color: var(--color-ink-strong);
   background: transparent;
-  border-color: var(--color-border, #d7d7d1);
+  border-color: var(--color-border-light);
   cursor: default;
   font-weight: 600;
   letter-spacing: 0.02em;

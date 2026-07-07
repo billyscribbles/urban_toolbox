@@ -24,6 +24,7 @@ export default function QuoteDrawer() {
 
   useEffect(() => {
     if (!isOpen) return
+    const trigger = document.activeElement
     const { overflow } = document.body.style
     document.body.style.overflow = 'hidden'
     const onKey = (e) => e.key === 'Escape' && closeQuote()
@@ -32,6 +33,7 @@ export default function QuoteDrawer() {
     return () => {
       document.removeEventListener('keydown', onKey)
       document.body.style.overflow = overflow
+      trigger?.focus?.()
     }
   }, [isOpen])
 
