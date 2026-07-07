@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { site } from '../config/site.config.js'
+import { useQuote, openQuote } from '../lib/quoteStore.js'
 import SmartLink from './SmartLink.jsx'
 import './Navbar.css'
 
@@ -32,11 +33,24 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const { pathname } = useLocation()
   const { brand, nav, cta } = site
+  const { items } = useQuote()
+  const quoteCount = items.length
 
   // Close the mobile menu whenever the route changes.
   useEffect(() => {
     setMenuOpen(false)
   }, [pathname])
+
+  const quoteBadge = quoteCount > 0 && (
+    <button
+      type="button"
+      className="navbar__quote"
+      onClick={openQuote}
+      aria-label={`Open your quote, ${quoteCount} item${quoteCount === 1 ? '' : 's'}`}
+    >
+      Quote <span className="navbar__quote-count">{quoteCount}</span>
+    </button>
+  )
 
   return (
     <header className="navbar">
@@ -58,6 +72,7 @@ export default function Navbar() {
           ))}
         </nav>
 
+        {quoteBadge}
         <SmartLink to={cta.href} className="navbar__cta">
           {cta.label}
         </SmartLink>
@@ -86,6 +101,7 @@ export default function Navbar() {
             {l.label}
           </NavLink>
         ))}
+        {quoteBadge}
         <SmartLink to={cta.href} className="navbar__mobile-cta" onClick={() => setMenuOpen(false)}>
           {cta.label}
         </SmartLink>

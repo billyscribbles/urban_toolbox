@@ -17,6 +17,7 @@ import QuoteButton from '../components/QuoteButton.jsx'
 import { MemoryRouter } from 'react-router-dom'
 import { axe, toHaveNoViolations } from 'jest-axe'
 import QuoteDrawer from '../components/QuoteDrawer.jsx'
+import Navbar from '../components/Navbar.jsx'
 
 expect.extend(toHaveNoViolations)
 
@@ -176,5 +177,31 @@ describe('QuoteDrawer', () => {
     expect(screen.getByRole('heading', { name: 'TB-277' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /send enquiry/i })).toBeInTheDocument()
     expect(await axe(container)).toHaveNoViolations()
+  })
+})
+
+describe('Navbar quote badge', () => {
+  it('is hidden when empty and shows the count once items are added', async () => {
+    const { rerender } = render(
+      <MemoryRouter>
+        <Navbar />
+      </MemoryRouter>,
+    )
+    expect(screen.queryByRole('button', { name: /open your quote/i })).toBeNull()
+
+    addItem({
+      id: 'tb-199',
+      name: 'TB-199',
+      category: 'Caravan',
+      priceFrom: 1950,
+      standardDims: '1900×540×950',
+    })
+    rerender(
+      <MemoryRouter>
+        <Navbar />
+      </MemoryRouter>,
+    )
+    // Badge appears in both desktop and mobile navs.
+    expect(screen.getAllByRole('button', { name: /open your quote/i }).length).toBeGreaterThan(0)
   })
 })

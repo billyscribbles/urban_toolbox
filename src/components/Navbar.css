@@ -225,3 +225,41 @@
     display: none;
   }
 }
+
+/* --------------------------------------------------------- quote badge */
+
+.navbar__quote {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+.navbar__quote:hover {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+.navbar__quote-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  font-size: 0.8rem;
+  color: var(--color-white);
+  background: var(--color-accent);
+  border-radius: var(--radius-full);
+}
+.navbar__quote:hover .navbar__quote-count {
+  color: var(--color-accent);
+  background: var(--color-white);
+}
