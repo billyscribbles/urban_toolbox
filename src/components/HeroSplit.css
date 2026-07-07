@@ -25,7 +25,7 @@
 .hero-split__media {
   position: absolute;
   inset: 0;
-  background: #fff;
+  background: var(--color-off-white);
 }
 
 .hero-split__img {
@@ -33,11 +33,26 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center;
+  /* Show the whole photo (matching the design's framing) rather than cropping
+     in. Anchored right so the toolbox sits toward the right; the leftover
+     sliver on the left tucks under the opaque part of the white scrim. */
+  object-fit: contain;
+  object-position: right center;
   display: block;
   opacity: 0;
   transition: opacity 1.1s ease-in-out;
+  /* Soft-fade the photo's left edge into the off-white background so the
+     contained image dissolves into the panel instead of ending on a hard line.
+     The contained image's left edge sits ~30% in, so the ramp is held
+     transparent through the empty zone then fades the photo in gradually,
+     reaching full opacity just before the toolbox (~52%). */
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 32%,
+    #000 55%
+  );
+  mask-image: linear-gradient(90deg, transparent 0%, transparent 32%, #000 55%);
 }
 
 .hero-split__img.is-active {
@@ -101,6 +116,22 @@
   text-shadow: 0 0 18px rgba(250, 250, 248, 0.7);
 }
 
+/* Green accent line under the headline. Uppercase, bold, with the same soft
+   white halo the body copy uses so it stays crisp over the photo. */
+.hero-split__tagline {
+  font-family: var(--font-display);
+  font-size: clamp(19px, 2.5vw, 26px);
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  font-weight: 400;
+  margin: 0 0 22px;
+  text-shadow:
+    0 0 14px rgba(250, 250, 248, 0.95),
+    0 0 5px rgba(250, 250, 248, 0.9);
+}
+
 .hero-split__sub {
   font-size: clamp(17px, 2.2vw, 20px);
   line-height: 1.55;
@@ -136,6 +167,14 @@
     height: auto;
     min-height: 580px;
     max-height: none;
+  }
+  /* A landscape photo would letterbox badly if contained in the tall mobile
+     hero — fill and crop instead, full-bleed with no left-edge fade. */
+  .hero-split__img {
+    object-fit: cover;
+    object-position: center 58%;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
   /* Vertical white scrim on mobile so the text stays legible over the photo. */
   .hero-split__scrim {
