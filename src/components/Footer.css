@@ -150,5 +150,19 @@
 @media (max-width: 560px) {
   .footer__main {
     grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  /* Roomier tap targets for the stacked nav links on touch screens. */
+  .footer__links {
+    gap: 2px;
+  }
+  .footer__link {
+    display: inline-block;
+    padding: 8px 0;
+  }
+  .footer__contact-link,
+  .footer__email {
+    display: inline-block;
+    padding: 3px 0;
   }
 }

@@ -13,7 +13,7 @@
 
 .cta-band__heading {
   font-family: var(--font-display);
-  font-size: 40px;
+  font-size: clamp(30px, 8vw, 40px);
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: #fff;
@@ -23,6 +23,15 @@
 }
 
 .cta-band__sub {
-  font-size: 18px;
+  font-size: clamp(16px, 4.4vw, 18px);
   color: var(--color-accent-soft);
+}
+
+@media (max-width: 640px) {
+  .cta-band {
+    padding: 52px 0;
+  }
+  .cta-band__inner {
+    gap: 24px;
+  }
 }

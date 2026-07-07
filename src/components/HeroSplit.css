@@ -122,6 +122,15 @@
   gap: 14px;
 }
 
+/* Navbar shrinks to 60px at ≤700px — match the fold offset so the trust strip
+   still lands flush on the bottom edge of the screen. */
+@media (max-width: 700px) {
+  .hero-fold {
+    min-height: calc(100vh - 60px);
+    min-height: calc(100svh - 60px);
+  }
+}
+
 @media (max-width: 760px) {
   .hero-split {
     height: auto;
