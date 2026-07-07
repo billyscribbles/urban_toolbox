@@ -1,8 +1,9 @@
 // Contract: the quote store holds the enquiry list, persists it, and serializes
 // it into the exact text the shop receives by email. Pure-logic tests — no React.
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { HelmetProvider } from 'react-helmet-async'
 import {
   addItem,
   updateItem,
@@ -18,8 +19,24 @@ import { MemoryRouter } from 'react-router-dom'
 import { axe, toHaveNoViolations } from 'jest-axe'
 import QuoteDrawer from '../components/QuoteDrawer.jsx'
 import Navbar from '../components/Navbar.jsx'
+import QuotePage from '../pages/QuotePage.jsx'
 
 expect.extend(toHaveNoViolations)
+
+// The /quote form only renders once Formspree is configured (a real
+// VITE_FORMSPREE_ID). That env var is developer/CI-local and unset here, so
+// force it on for this file only — QuotePage's rendered form is what we're
+// testing, not the env wiring itself.
+vi.mock('../config/site.config.js', async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    site: {
+      ...actual.site,
+      integrations: { ...actual.site.integrations, formspreeId: 'test-form-id' },
+    },
+  }
+})
 
 // The store is a module singleton; reset it (and its localStorage mirror)
 // before each test so cases don't leak into one another.
@@ -205,5 +222,30 @@ describe('Navbar quote badge', () => {
     )
     // Badge appears in both desktop and mobile navs.
     expect(screen.getAllByRole('button', { name: /open your quote/i })).toHaveLength(2)
+  })
+})
+
+describe('QuotePage — quote list summary', () => {
+  it('shows the item summary and the serialized hidden field', () => {
+    addItem({
+      id: 'tb-150',
+      name: 'TB-150',
+      category: 'Caravan',
+      priceFrom: 1800,
+      standardDims: '1500×600×900',
+    })
+    const { container } = render(
+      <HelmetProvider>
+        <MemoryRouter>
+          <QuotePage />
+        </MemoryRouter>
+      </HelmetProvider>,
+    )
+    // Item name appears in the on-page summary.
+    expect(screen.getByText('TB-150')).toBeInTheDocument()
+    // Hidden field carries the serialized list for Formspree.
+    const hidden = container.querySelector('input[name="quote_items"]')
+    expect(hidden).not.toBeNull()
+    expect(hidden.value).toBe(serializeQuoteItems(useQuote.__getSnapshot().items))
   })
 })
