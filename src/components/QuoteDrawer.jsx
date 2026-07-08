@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { X, Trash2 } from 'lucide-react'
+import { X, Trash2, ChevronDown } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useQuote, updateItem, removeItem, closeQuote } from '../lib/quoteStore.js'
 import './QuoteDrawer.css'
@@ -12,6 +12,98 @@ function placeholder(standardDims, key) {
   if (!standardDims) return ''
   const part = standardDims.split('×')[DIM_KEYS.indexOf(key)]
   return part ? part.trim() : ''
+}
+
+// One quote line: thumbnail + name up top, notes, an inline quantity stepper,
+// and the custom W/H/D dimensions tucked behind a collapsible toggle (most
+// enquiries take the standard size, so keep that input quiet by default).
+function QuoteLineItem({ it }) {
+  const hasDims = Boolean(it.dims.w || it.dims.h || it.dims.d)
+  const [dimsOpen, setDimsOpen] = useState(hasDims)
+  const dimsId = `quote-dims-${it.id}`
+  return (
+    <li className="quote-item">
+      <div className="quote-item__head">
+        {it.img ? (
+          <img
+            className="quote-item__thumb"
+            src={it.img}
+            alt={it.imgAlt || it.name}
+            loading="lazy"
+          />
+        ) : (
+          <span className="quote-item__thumb quote-item__thumb--empty" aria-hidden="true" />
+        )}
+        <h3 className="quote-item__name">{it.name}</h3>
+        <button
+          type="button"
+          className="quote-item__remove"
+          onClick={() => removeItem(it.id)}
+          aria-label={`Remove ${it.name}`}
+        >
+          <Trash2 size={18} strokeWidth={1.7} aria-hidden="true" />
+        </button>
+      </div>
+
+      <label className="quote-item__notes">
+        <span className="quote-item__notes-label">Notes</span>
+        <textarea
+          rows={2}
+          placeholder="Anything specific — mounting, colour, cut-outs…"
+          value={it.notes}
+          onChange={(e) => updateItem(it.id, { notes: e.target.value })}
+        />
+      </label>
+
+      <div className="quote-item__controls">
+        <label className="quote-item__qty">
+          <span>Qty</span>
+          <input
+            type="number"
+            min="1"
+            value={it.qty}
+            onChange={(e) => updateItem(it.id, { qty: Math.max(1, Number(e.target.value) || 1) })}
+          />
+        </label>
+        <button
+          type="button"
+          className={`quote-item__dims-toggle${dimsOpen ? ' is-open' : ''}`}
+          onClick={() => setDimsOpen((v) => !v)}
+          aria-expanded={dimsOpen}
+          aria-controls={dimsId}
+        >
+          Custom dimensions
+          <ChevronDown size={16} strokeWidth={2} aria-hidden="true" />
+        </button>
+      </div>
+
+      {dimsOpen && (
+        <div
+          id={dimsId}
+          className="quote-item__dims"
+          role="group"
+          aria-label={`${it.name} dimensions in millimetres`}
+        >
+          {DIM_KEYS.map((k) => (
+            <label key={k} className="quote-item__dim">
+              <span className="quote-item__dim-label">{k.toUpperCase()}</span>
+              <input
+                type="number"
+                inputMode="numeric"
+                min="0"
+                placeholder={placeholder(it.standardDims, k)}
+                value={it.dims[k]}
+                onChange={(e) => updateItem(it.id, { dims: { ...it.dims, [k]: e.target.value } })}
+              />
+            </label>
+          ))}
+          <span className="quote-item__dim-unit" aria-hidden="true">
+            mm
+          </span>
+        </div>
+      )}
+    </li>
+  )
 }
 
 // Site-wide quote drawer. Mounted once in App beside Lightbox; borrows its
@@ -86,74 +178,7 @@ export default function QuoteDrawer() {
             ) : (
               <ul className="quote-drawer__list">
                 {items.map((it) => (
-                  <li key={it.id} className="quote-item">
-                    <div className="quote-item__head">
-                      <div>
-                        <h3 className="quote-item__name">{it.name}</h3>
-                        <p className="quote-item__meta">
-                          {it.category} ·{' '}
-                          {it.priceFrom
-                            ? `from $${it.priceFrom} + GST (indicative)`
-                            : 'Price on enquiry'}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        className="quote-item__remove"
-                        onClick={() => removeItem(it.id)}
-                        aria-label={`Remove ${it.name}`}
-                      >
-                        <Trash2 size={18} strokeWidth={1.7} aria-hidden="true" />
-                      </button>
-                    </div>
-
-                    <div
-                      className="quote-item__dims"
-                      role="group"
-                      aria-label={`${it.name} dimensions in millimetres`}
-                    >
-                      {DIM_KEYS.map((k) => (
-                        <label key={k} className="quote-item__dim">
-                          <span className="quote-item__dim-label">{k.toUpperCase()}</span>
-                          <input
-                            type="number"
-                            inputMode="numeric"
-                            min="0"
-                            placeholder={placeholder(it.standardDims, k)}
-                            value={it.dims[k]}
-                            onChange={(e) =>
-                              updateItem(it.id, { dims: { ...it.dims, [k]: e.target.value } })
-                            }
-                          />
-                        </label>
-                      ))}
-                      <span className="quote-item__dim-unit" aria-hidden="true">
-                        mm
-                      </span>
-                    </div>
-
-                    <label className="quote-item__qty">
-                      <span>Qty</span>
-                      <input
-                        type="number"
-                        min="1"
-                        value={it.qty}
-                        onChange={(e) =>
-                          updateItem(it.id, { qty: Math.max(1, Number(e.target.value) || 1) })
-                        }
-                      />
-                    </label>
-
-                    <label className="quote-item__notes">
-                      <span className="quote-item__notes-label">Notes</span>
-                      <textarea
-                        rows={2}
-                        placeholder="Anything specific — mounting, colour, cut-outs…"
-                        value={it.notes}
-                        onChange={(e) => updateItem(it.id, { notes: e.target.value })}
-                      />
-                    </label>
-                  </li>
+                  <QuoteLineItem key={it.id} it={it} />
                 ))}
               </ul>
             )}

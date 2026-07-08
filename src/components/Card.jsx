@@ -59,6 +59,8 @@ export default function Card({
         category: quoteCategory,
         priceFrom: quote.priceFrom ?? null,
         standardDims: quote.standardDims ?? '',
+        img,
+        imgAlt,
       }
     : null
   // "View details" opens the detail drawer with everything the card already

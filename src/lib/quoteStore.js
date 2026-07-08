@@ -56,6 +56,8 @@ export function addItem(descriptor) {
     category: descriptor.category,
     priceFrom: descriptor.priceFrom ?? null,
     standardDims: descriptor.standardDims ?? '',
+    img: descriptor.img ?? null,
+    imgAlt: descriptor.imgAlt ?? '',
     dims: { w: '', h: '', d: '' },
     qty: 1,
     notes: '',
