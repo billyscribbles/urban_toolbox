@@ -84,6 +84,8 @@
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
+  gap: 10px;
+  font-family: inherit;
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.11em;
@@ -92,6 +94,7 @@
   border: 1.5px solid var(--color-accent);
   padding: 12px 22px;
   background: transparent;
+  cursor: pointer;
   transition:
     background-color var(--transition-fast),
     color var(--transition-fast);
@@ -99,6 +102,32 @@
 
 .navbar__cta:hover {
   background: var(--color-accent);
+}
+
+/* Cart-style count folded into the CTA — only shown once items are added.
+   Filled accent on the outlined button; inverts on hover when the button fills. */
+.navbar__cta-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  font-size: 0.8rem;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--color-white);
+  background: var(--color-accent);
+  border-radius: var(--radius-full);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.navbar__cta:hover .navbar__cta-count,
+.navbar__mobile-cta:hover .navbar__cta-count {
+  color: var(--color-accent);
+  background: var(--color-white);
 }
 
 /* --------------------------------------------------------- hamburger */
@@ -163,6 +192,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
+  font-family: inherit;
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.11em;
@@ -170,6 +201,8 @@
   color: #fff;
   border: 1.5px solid var(--color-accent);
   padding: 14px 22px;
+  background: transparent;
+  cursor: pointer;
 }
 
 .navbar__mobile-cta:hover {
@@ -224,42 +257,4 @@
   .navbar__logo-sub {
     display: none;
   }
-}
-
-/* --------------------------------------------------------- quote badge */
-
-.navbar__quote {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 14px;
-  font: inherit;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--color-accent);
-  background: var(--color-accent-soft);
-  border: 1px solid var(--color-accent);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: background var(--transition-fast);
-}
-.navbar__quote:hover {
-  background: var(--color-accent);
-  color: var(--color-white);
-}
-.navbar__quote-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 5px;
-  font-size: 0.8rem;
-  color: var(--color-white);
-  background: var(--color-accent);
-  border-radius: var(--radius-full);
-}
-.navbar__quote:hover .navbar__quote-count {
-  color: var(--color-accent);
-  background: var(--color-white);
 }

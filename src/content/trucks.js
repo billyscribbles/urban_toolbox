@@ -15,7 +15,6 @@ export const trucks = {
       label: 'Tool Boxes',
       heading: 'Truck Tool Boxes',
       sub: 'Full-height side-opening and gullwing boxes that sit on the headboard or behind the cab.',
-      columns: 3,
       products: [
         {
           title: '1400 × 550 × 800mm',
@@ -67,7 +66,6 @@ export const trucks = {
       label: 'Under-Tray Tool Boxes',
       heading: 'Under-Tray Tool Boxes',
       sub: 'Tapered boxes that mount between the chassis rails, under the tray floor.',
-      columns: 2,
       products: [
         {
           title: '1700mm Under-Tray',

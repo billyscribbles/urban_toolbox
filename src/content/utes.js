@@ -17,7 +17,6 @@ export const utes = {
       label: 'Trays',
       heading: 'Ute Trays',
       sub: 'Four tray styles — built to your wheelbase (adjustable 300–480mm) and finished in silver anodised or powder-coat black/white.',
-      columns: 2,
       products: [
         {
           title: 'Tray A',
@@ -54,7 +53,6 @@ export const utes = {
       label: 'Toolboxes',
       heading: 'Ute Toolboxes',
       sub: 'Tray-top chests and drawer boxes in aluminium checkerplate or powder-coated flat plate.',
-      columns: 3,
       products: [
         {
           title: '1200 × 500 × 500mm',
@@ -126,7 +124,6 @@ export const utes = {
       label: 'Canopies',
       heading: 'Canopies',
       sub: 'Walk-in tourer canopies with internal shelving and drawer systems.',
-      columns: 2,
       products: [
         {
           title: 'Tourer Canopy',
@@ -163,7 +160,6 @@ export const utes = {
       label: 'Service Canopies',
       heading: 'Service Canopies',
       sub: 'Walk-in service bodies with gullwing wing-doors, internal shelving and lockable drawers — wheelbase-adjustable to suit your cab-chassis.',
-      columns: 2,
       products: [
         {
           title: 'Service Body',
@@ -179,7 +175,6 @@ export const utes = {
       label: 'Accessories',
       heading: 'Accessories',
       sub: 'Bolt-on extras to finish your tray, canopy or service body.',
-      columns: 3,
       products: [
         {
           title: 'Slider Drawer',

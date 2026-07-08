@@ -204,7 +204,8 @@ describe('Navbar quote badge', () => {
         <Navbar />
       </MemoryRouter>,
     )
-    expect(screen.queryByRole('button', { name: /open your quote/i })).toBeNull()
+    // Empty: the CTA is a plain link to the form, so there's no quote button yet.
+    expect(screen.queryByRole('button', { name: /get a quote/i })).toBeNull()
 
     act(() => {
       addItem({
@@ -220,8 +221,9 @@ describe('Navbar quote badge', () => {
         <Navbar />
       </MemoryRouter>,
     )
-    // Badge appears in both desktop and mobile navs.
-    expect(screen.getAllByRole('button', { name: /open your quote/i })).toHaveLength(2)
+    // With items, the CTA becomes a tray-opening button with a count — desktop + mobile.
+    const cta = screen.getAllByRole('button', { name: /get a quote, 1 item/i })
+    expect(cta).toHaveLength(2)
   })
 })
 

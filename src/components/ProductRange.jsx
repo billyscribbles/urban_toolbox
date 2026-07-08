@@ -4,8 +4,10 @@ import CtaBand from './CtaBand.jsx'
 import './ProductRange.css'
 
 // Section-driven product page. Renders a page hero, a sticky pill sub-nav built
-// from each section's { id, label }, then one Card grid per section. Shared by
-// the Utes and Trucks ranges — the content file is the only thing that differs.
+// from each section's { id, label }, then one Card grid per section. Every
+// section renders a fixed 3-per-row grid so product cards stay consistent
+// site-wide. Shared by the Utes and Trucks ranges — the content file is the
+// only thing that differs.
 export default function ProductRange({ data }) {
   const { header, sections } = data
   return (
@@ -33,7 +35,7 @@ export default function ProductRange({ data }) {
               <h2 className="h2 h2--md">{s.heading}</h2>
               {s.sub && <p className="section-head__sub">{s.sub}</p>}
             </div>
-            <div className={`grid grid--${s.columns || 3}`}>
+            <div className="grid grid--3">
               {s.products.map((p) => (
                 <Card
                   key={p.title}
@@ -41,8 +43,8 @@ export default function ProductRange({ data }) {
                   imgAlt={p.imgAlt}
                   title={p.title}
                   body={p.body}
-                  height={s.columns === 2 ? 260 : 240}
-                  titleSize={s.columns === 2 ? 22 : 20}
+                  height={240}
+                  titleSize={22}
                   pad={26}
                   alt
                   quote={p.quote}

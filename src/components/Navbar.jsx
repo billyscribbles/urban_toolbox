@@ -5,6 +5,42 @@ import { useQuote, openQuote } from '../lib/quoteStore.js'
 import SmartLink from './SmartLink.jsx'
 import './Navbar.css'
 
+// One conversion control that folds the old "Quote [n]" tray pill into the
+// primary CTA. Empty → link straight to the quote form. Has items → a button
+// that opens the review tray (which then sends on to the form). The count badge
+// only appears once something's been added, so the empty state reads as a plain
+// "Get a Quote" button.
+function QuoteCta({ cta, count, className, onNavigate }) {
+  const label = (
+    <>
+      {cta.label}
+      {count > 0 && <span className="navbar__cta-count">{count}</span>}
+    </>
+  )
+
+  if (count > 0) {
+    return (
+      <button
+        type="button"
+        className={className}
+        onClick={() => {
+          openQuote()
+          onNavigate?.()
+        }}
+        aria-label={`${cta.label}, ${count} item${count === 1 ? '' : 's'} in your list`}
+      >
+        {label}
+      </button>
+    )
+  }
+
+  return (
+    <SmartLink to={cta.href} className={className} onClick={onNavigate}>
+      {label}
+    </SmartLink>
+  )
+}
+
 function Brand({ brand }) {
   if (brand.logoSrc) {
     return <img src={brand.logoSrc} alt={brand.name} className="navbar__logo-img" />
@@ -41,17 +77,6 @@ export default function Navbar() {
     setMenuOpen(false)
   }, [pathname])
 
-  const quoteBadge = quoteCount > 0 && (
-    <button
-      type="button"
-      className="navbar__quote"
-      onClick={openQuote}
-      aria-label={`Open your quote, ${quoteCount} item${quoteCount === 1 ? '' : 's'}`}
-    >
-      Quote <span className="navbar__quote-count">{quoteCount}</span>
-    </button>
-  )
-
   return (
     <header className="navbar">
       <div className="navbar__inner container">
@@ -72,10 +97,7 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {quoteBadge}
-        <SmartLink to={cta.href} className="navbar__cta">
-          {cta.label}
-        </SmartLink>
+        <QuoteCta cta={cta} count={quoteCount} className="navbar__cta" />
 
         <button
           className={`navbar__hamburger${menuOpen ? ' open' : ''}`}
@@ -101,10 +123,12 @@ export default function Navbar() {
             {l.label}
           </NavLink>
         ))}
-        {quoteBadge}
-        <SmartLink to={cta.href} className="navbar__mobile-cta" onClick={() => setMenuOpen(false)}>
-          {cta.label}
-        </SmartLink>
+        <QuoteCta
+          cta={cta}
+          count={quoteCount}
+          className="navbar__mobile-cta"
+          onNavigate={() => setMenuOpen(false)}
+        />
       </nav>
     </header>
   )

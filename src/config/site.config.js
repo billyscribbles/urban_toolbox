@@ -15,8 +15,9 @@ export const site = {
     logoSrc: null,
   },
 
+  // Home is intentionally omitted — the logo links back to it, so the bar stays
+  // uncluttered. Footer keeps an explicit Home link for completeness.
   nav: [
-    { label: 'Home', to: '/' },
     { label: 'Caravan Toolboxes', to: '/caravan-toolboxes' },
     { label: 'Utes', to: '/utes' },
     { label: 'Trucks', to: '/trucks' },
