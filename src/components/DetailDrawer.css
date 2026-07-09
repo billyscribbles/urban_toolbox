@@ -65,12 +65,22 @@
   margin: -22px -22px 20px;
   background: var(--color-off-white);
 }
+.detail-drawer__media--white {
+  background: var(--color-white);
+}
 .detail-drawer__img {
   display: block;
   width: 100%;
   height: auto;
   aspect-ratio: 4 / 3;
+  object-position: center;
+}
+.detail-drawer__media--cover .detail-drawer__img {
   object-fit: cover;
+}
+.detail-drawer__media--contain .detail-drawer__img {
+  object-fit: contain;
+  padding: 14px;
 }
 .detail-drawer__price {
   display: flex;

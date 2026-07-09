@@ -49,6 +49,9 @@ export default function Card({
   quote,
   quoteCategory,
   build,
+  imageFit,
+  imageTone,
+  imagePosition,
 }) {
   const { items } = useQuote()
   const inQuote = quote ? items.some((i) => i.id === quote.id) : false
@@ -61,6 +64,9 @@ export default function Card({
         standardDims: quote.standardDims ?? '',
         img,
         imgAlt,
+        imageFit,
+        imageTone,
+        imagePosition,
       }
     : null
   // "View details" opens the detail drawer with everything the card already
@@ -71,6 +77,9 @@ export default function Card({
       title,
       img,
       imgAlt,
+      imageFit,
+      imageTone,
+      imagePosition,
       category: quoteCategory,
       priceFrom: quote?.priceFrom ?? null,
       specs: parseSpecs(body),
@@ -79,15 +88,20 @@ export default function Card({
     })
   }
   const style = { '--card-title': `${titleSize}px`, '--card-pad': `${pad}px` }
+  const resolvedImageFit = imageFit || (img?.match(/\.(png|svg)$/i) ? 'contain' : 'cover')
+  const resolvedImageTone = imageTone || (resolvedImageFit === 'contain' ? 'white' : 'photo')
+  const mediaClassName = `card__media card__media--${resolvedImageFit} card__media--${resolvedImageTone}`
+  const imageStyle = imagePosition ? { objectPosition: imagePosition } : undefined
   const inner = (
     <>
-      <div className="card__media" style={{ height }}>
+      <div className={mediaClassName} style={{ height }}>
         {img ? (
           <img
             className={`card__img${to ? '' : ' zoomable'}`}
             src={img}
             alt={imgAlt || title}
             loading="lazy"
+            style={imageStyle}
           />
         ) : (
           <Placeholder label={ph} sub={phSub} height={height} />

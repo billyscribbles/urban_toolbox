@@ -19,6 +19,9 @@ export default function WhatWeBuild() {
               phSub={s.phSub}
               img={s.img}
               imgAlt={s.imgAlt}
+              imageFit={s.imageFit}
+              imageTone={s.imageTone}
+              imagePosition={s.imagePosition}
               title={s.title}
               body={s.body}
               cta={s.cta}

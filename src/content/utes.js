@@ -175,6 +175,8 @@ export const utes = {
       label: 'Accessories',
       heading: 'Accessories',
       sub: 'Bolt-on extras to finish your tray, canopy or service body.',
+      imageFit: 'contain',
+      imageTone: 'white',
       products: [
         {
           title: 'Slider Drawer',

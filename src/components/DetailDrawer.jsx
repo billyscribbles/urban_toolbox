@@ -46,6 +46,11 @@ export default function DetailDrawer() {
   const fade = reduce
     ? {}
     : { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
+  const imageFit = product?.imageFit || (product?.img?.match(/\.(png|svg)$/i) ? 'contain' : 'cover')
+  const imageTone = product?.imageTone || (imageFit === 'contain' ? 'white' : 'photo')
+  const imagePosition = product?.imagePosition
+    ? { objectPosition: product.imagePosition }
+    : undefined
 
   return (
     <AnimatePresence>
@@ -82,11 +87,14 @@ export default function DetailDrawer() {
 
             <div className="detail-drawer__scroll">
               {product.img && (
-                <div className="detail-drawer__media">
+                <div
+                  className={`detail-drawer__media detail-drawer__media--${imageFit} detail-drawer__media--${imageTone}`}
+                >
                   <img
                     className="detail-drawer__img"
                     src={product.img}
                     alt={product.imgAlt || product.title}
+                    style={imagePosition}
                   />
                 </div>
               )}

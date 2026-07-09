@@ -41,6 +41,9 @@ export default function ProductRange({ data }) {
                   key={p.title}
                   img={p.img}
                   imgAlt={p.imgAlt}
+                  imageFit={p.imageFit || s.imageFit}
+                  imageTone={p.imageTone || s.imageTone}
+                  imagePosition={p.imagePosition || s.imagePosition}
                   title={p.title}
                   body={p.body}
                   height={240}

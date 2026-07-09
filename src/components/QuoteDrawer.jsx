@@ -26,10 +26,11 @@ function QuoteLineItem({ it }) {
       <div className="quote-item__head">
         {it.img ? (
           <img
-            className="quote-item__thumb"
+            className={`quote-item__thumb quote-item__thumb--${it.imageFit || (it.img.match(/\.(png|svg)$/i) ? 'contain' : 'cover')}`}
             src={it.img}
             alt={it.imgAlt || it.name}
             loading="lazy"
+            style={it.imagePosition ? { objectPosition: it.imagePosition } : undefined}
           />
         ) : (
           <span className="quote-item__thumb quote-item__thumb--empty" aria-hidden="true" />

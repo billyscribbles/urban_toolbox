@@ -29,6 +29,9 @@ export default function CaravanPage() {
               phSub={p.phSub}
               img={p.img}
               imgAlt={p.imgAlt}
+              imageFit={p.imageFit}
+              imageTone={p.imageTone}
+              imagePosition={p.imagePosition}
               title={p.title}
               body={p.body}
               height={240}
