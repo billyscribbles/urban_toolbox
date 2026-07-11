@@ -11,10 +11,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Node 24: on Node 20/22 the Yarn PnP loader can't resolve jsdom's ESM
+      # imports from inside the zip cache, so the Vitest suite fails to boot.
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Enable Corepack
         run: corepack enable
