@@ -1,20 +1,79 @@
 .fab-service {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-white);
   border: 1px solid var(--color-border-light);
-  padding: 34px;
   /* Offset so legacy #laser-cutting / #folding anchor jumps clear the
      sticky navbar instead of hiding the heading beneath it. */
   scroll-margin-top: 96px;
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.fab-service:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
+}
+
+/* Photo header. The head is unclipped so the icon badge can straddle the
+   photo's bottom edge; only the media inside it hides the zoom overflow. */
+.fab-service__head {
+  position: relative;
+}
+
+.fab-service__media {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  background: var(--color-dark);
+}
+
+.fab-service__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+
+.fab-service:hover .fab-service__img {
+  transform: scale(1.05);
+}
+
+/* Scrim: darkens the lower photo so the badge and the card edge read cleanly
+   against the shop-floor imagery. */
+.fab-service__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 45%,
+    color-mix(in srgb, var(--color-dark) 55%, transparent) 100%
+  );
 }
 
 .fab-service__icon {
+  position: absolute;
+  left: 24px;
+  bottom: 0;
+  transform: translateY(50%);
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  border: 1.5px solid var(--color-accent);
-  color: var(--color-accent);
-  margin-bottom: 22px;
+  width: 52px;
+  height: 52px;
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.fab-service__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 46px 32px 34px;
 }
 
 .fab-service__title {
@@ -31,13 +90,44 @@
   font-size: 15px;
   line-height: 1.6;
   color: var(--color-gray-muted);
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
+/* Spec points sit on a hairline at the foot of the card, pinned to the bottom
+   so the three cards line up regardless of body length. */
 .fab-service__points {
-  list-style: disc;
-  padding-left: 18px;
-  color: var(--color-gray-muted);
+  list-style: none;
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border-light);
+  color: var(--color-ink-muted);
   font-size: 14px;
-  line-height: 1.9;
+}
+
+.fab-service__points li {
+  position: relative;
+  padding-left: 18px;
+  line-height: 1.5;
+}
+
+.fab-service__points li + li {
+  margin-top: 9px;
+}
+
+.fab-service__points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 6px;
+  height: 6px;
+  background: var(--color-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fab-service__img,
+  .fab-service:hover .fab-service__img {
+    transition: none;
+    transform: none;
+  }
 }

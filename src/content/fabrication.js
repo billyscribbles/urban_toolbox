@@ -10,6 +10,8 @@ export const fabrication = {
       // anchor also serves the legacy /laser-cutting redirect (see App.jsx).
       anchor: 'laser-cutting',
       icon: 'Crosshair',
+      img: '/images/fab-laser-cutting.jpg',
+      imgAlt: 'CNC laser cutting head cutting a pattern into a steel sheet, sparks flying',
       title: 'Laser Cutting',
       body: 'Flawless precision, clean edges and quick turnaround. Custom patterns, logos and intricate designs cut to spec.',
       points: ['Custom designs & logos', 'Fast & accurate', 'Prototyping & production'],
@@ -18,6 +20,8 @@ export const fabrication = {
       // anchor also serves the legacy /folding redirect (see App.jsx).
       anchor: 'folding',
       icon: 'Spline',
+      img: '/images/fab-folding.jpg',
+      imgAlt: 'Press brake tooling folding a sheet of steel to a sharp bend',
       title: 'Folding',
       body: 'Accurate bends with sharp, clean lines. From simple bends to complex shapes across various thicknesses.',
       points: ['Aluminium, steel & more', 'Tight-tolerance bends', 'Scalable production'],
@@ -25,6 +29,8 @@ export const fabrication = {
     {
       anchor: 'custom-fabrication',
       icon: 'Wrench',
+      img: '/images/fab-welding.jpg',
+      imgAlt: 'Welder MIG welding a steel box-section frame in the workshop',
       title: 'Custom Fabrication',
       body: 'Cutting, welding, bending and assembly to create strong, reliable products for any application.',
       points: ['Sheet metal fabrication', 'Structural fabrication', 'Prototype & production runs'],
