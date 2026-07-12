@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Check, ArrowRight } from 'lucide-react'
+import Img from './Img.jsx'
 import Placeholder from './Placeholder.jsx'
 import QuoteButton from './QuoteButton.jsx'
 import { useQuote } from '../lib/quoteStore.js'
@@ -96,11 +97,10 @@ export default function Card({
     <>
       <div className={mediaClassName} style={{ height }}>
         {img ? (
-          <img
+          <Img
             className={`card__img${to ? '' : ' zoomable'}`}
             src={img}
             alt={imgAlt || title}
-            loading="lazy"
             style={imageStyle}
           />
         ) : (

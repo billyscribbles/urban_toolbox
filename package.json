@@ -9,6 +9,7 @@
     "build:analyze": "ANALYZE=true vite build",
     "preview": "vite preview",
     "start": "node server.js",
+    "images": "node scripts/gen-images.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",

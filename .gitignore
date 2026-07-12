@@ -17,3 +17,6 @@ dist-ssr
 
 # scraped reference data (temp)
 .firecrawl
+
+# Lighthouse CI reports (generated locally by `lhci autorun`)
+.lighthouseci

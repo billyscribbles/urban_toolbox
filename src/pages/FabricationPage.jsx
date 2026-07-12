@@ -1,5 +1,6 @@
 import { Crosshair, Spline, Wrench } from 'lucide-react'
 import SEO from '../lib/seo.jsx'
+import Img from '../components/Img.jsx'
 import PageHero from '../components/PageHero.jsx'
 import FeatureGrid from '../components/FeatureGrid.jsx'
 import CtaBand from '../components/CtaBand.jsx'
@@ -30,14 +31,7 @@ export default function FabricationPage() {
               <div className="fab-service" id={s.anchor} key={s.title}>
                 <div className="fab-service__head">
                   <div className="fab-service__media">
-                    <img
-                      className="fab-service__img"
-                      src={s.img}
-                      alt={s.imgAlt}
-                      loading="lazy"
-                      width="1400"
-                      height="788"
-                    />
+                    <Img className="fab-service__img" src={s.img} alt={s.imgAlt} />
                   </div>
                   <span className="fab-service__icon" aria-hidden="true">
                     <Icon size={22} strokeWidth={1.7} />

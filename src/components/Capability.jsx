@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { capability } from '../content/capability.js'
 import Eyebrow from './Eyebrow.jsx'
+import Img from './Img.jsx'
 import Placeholder from './Placeholder.jsx'
 import './Capability.css'
 
@@ -10,11 +11,11 @@ export default function Capability() {
     <section className="section">
       <div className="container capability__grid">
         {capability.photo.img ? (
-          <img
+          <Img
             className="capability__img zoomable"
             src={capability.photo.img}
             alt={capability.photo.imgAlt}
-            loading="lazy"
+            sizes="(max-width: 900px) 100vw, 50vw"
           />
         ) : (
           <Placeholder label={capability.photo.label} sub={capability.photo.sub} height={380} />

@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
 import { applyTheme } from './lib/applyTheme.js'
 import { initAnalytics, initGtm } from './lib/analytics.js'
+import './fonts.css'
 import './index.css'
 import App from './App.jsx'
 

@@ -1,0 +1,86 @@
+/* Self-hosted fonts (latin subsets, pulled from Google's CDN by hand and
+   committed to public/fonts).
+ *
+ * Why self-hosted rather than the Google Fonts stylesheet: served from Google,
+ * the faces arrived after first paint, so every headline and nav item reflowed
+ * when the real font swapped in — worth ~0.17 of cumulative layout shift on the
+ * home page, which is most of the Lighthouse performance gap. From our own
+ * origin they need no extra DNS/TLS handshake and can be preloaded in
+ * index.html, so they land before the first paint and nothing moves.
+ *
+ * Keep the family names in step with theme.config.js fonts. */
+
+/* Display — headings. Anton ships a single weight.
+ *
+ * `optional`, not `swap`: Anton is heavily condensed, so a late swap re-wraps
+ * every headline and resizes the block around it — that one reflow was the
+ * whole of the home page's 0.16 layout shift. `optional` tells the browser to
+ * either use Anton from the first paint or not at all this load, so the
+ * headline can never move. It's preloaded in index.html (12 KB, same origin),
+ * so in practice it wins that race and renders as Anton; only a genuinely slow
+ * first visit falls back, and the cached font is there from then on. */
+@font-face {
+  font-family: 'Anton';
+  font-style: normal;
+  font-weight: 400;
+  font-display: optional;
+  src: url('/fonts/anton-400.woff2') format('woff2');
+}
+
+/* Body / UI / nav. */
+@font-face {
+  font-family: 'Barlow';
+  font-style: normal;
+  font-weight: 400;
+  font-display: optional;
+  src: url('/fonts/barlow-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Barlow';
+  font-style: normal;
+  font-weight: 500;
+  font-display: optional;
+  src: url('/fonts/barlow-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Barlow';
+  font-style: normal;
+  font-weight: 600;
+  font-display: optional;
+  src: url('/fonts/barlow-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Barlow';
+  font-style: normal;
+  font-weight: 700;
+  font-display: optional;
+  src: url('/fonts/barlow-700.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Barlow';
+  font-style: normal;
+  font-weight: 800;
+  font-display: optional;
+  src: url('/fonts/barlow-800.woff2') format('woff2');
+}
+
+/* Mono — placeholder labels, step numbers. */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: optional;
+  src: url('/fonts/jetbrains-mono-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: optional;
+  src: url('/fonts/jetbrains-mono-500.woff2') format('woff2');
+}

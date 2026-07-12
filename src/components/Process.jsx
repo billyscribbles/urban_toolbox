@@ -1,5 +1,6 @@
 import { howItWorks } from '../content/howItWorks.js'
 import Eyebrow from './Eyebrow.jsx'
+import Img from './Img.jsx'
 import Placeholder from './Placeholder.jsx'
 import './Process.css'
 
@@ -18,11 +19,10 @@ export default function Process() {
             <div className="process__step" key={step.number}>
               <div className="process__media">
                 {step.img ? (
-                  <img
+                  <Img
                     className="process__img zoomable"
                     src={step.img}
                     alt={step.imgAlt || step.title}
-                    loading="lazy"
                   />
                 ) : (
                   <Placeholder label={step.ph} dark />
