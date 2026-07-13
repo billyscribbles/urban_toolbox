@@ -52,6 +52,26 @@
   color: var(--color-accent);
 }
 
+/* Photo-count chip: only shown when a product carries extra angles, so the
+   card hints that View details has more to look at. Sits opposite the
+   "in your quote" badge to keep both readable at once. */
+.card__count {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-white);
+  background: rgba(0, 0, 0, 0.62);
+  border-radius: var(--radius-sm);
+}
+
 .card__img {
   display: block;
   width: 100%;

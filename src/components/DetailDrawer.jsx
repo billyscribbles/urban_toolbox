@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { X } from 'lucide-react'
 import { useDetail, closeDetail } from '../lib/detailStore.js'
@@ -19,6 +19,15 @@ export default function DetailDrawer() {
   const { product, isOpen } = useDetail()
   const reduce = useReducedMotion()
   const closeRef = useRef(null)
+  // Products that ship extra angles carry an `images` array; the rest render a
+  // single photo. Track which one the thumbnail strip has selected, and start
+  // back at the first shot every time a different product opens the drawer.
+  const [shot, setShot] = useState(0)
+  const gallery = product?.images?.length > 1 ? product.images : null
+
+  useEffect(() => {
+    setShot(0)
+  }, [product?.title])
 
   useEffect(() => {
     if (!isOpen) return
@@ -92,10 +101,33 @@ export default function DetailDrawer() {
                 >
                   <img
                     className="detail-drawer__img"
-                    src={product.img}
-                    alt={product.imgAlt || product.title}
+                    src={gallery ? gallery[shot].src : product.img}
+                    alt={
+                      gallery ? gallery[shot].alt || product.title : product.imgAlt || product.title
+                    }
                     style={imagePosition}
                   />
+                </div>
+              )}
+
+              {gallery && (
+                <div
+                  className="detail-drawer__thumbs"
+                  role="group"
+                  aria-label={`${product.title} photos`}
+                >
+                  {gallery.map((g, i) => (
+                    <button
+                      key={g.src}
+                      type="button"
+                      className={`detail-drawer__thumb${i === shot ? ' is-active' : ''}`}
+                      aria-label={`Show photo ${i + 1} of ${gallery.length}`}
+                      aria-current={i === shot}
+                      onClick={() => setShot(i)}
+                    >
+                      <img src={g.src} alt="" />
+                    </button>
+                  ))}
                 </div>
               )}
 

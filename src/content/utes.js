@@ -27,8 +27,24 @@ export const utes = {
         },
         {
           title: 'Tray B',
-          img: '/images/ute-tray-b.jpg',
-          imgAlt: 'Tray B heavy-duty ute tray fitted to a dual-cab with under-tray boxes',
+          img: '/images/ute-tray-b.png',
+          imgAlt: 'Tray B heavy-duty ute tray with mesh headboard and under-tray toolboxes',
+          // Extra angles show up as a thumbnail strip in the detail drawer.
+          // The first entry is the card photo, so it leads the gallery too.
+          images: [
+            {
+              src: '/images/ute-tray-b.png',
+              alt: 'Tray B front three-quarter view showing the mesh headboard and under-tray drawers',
+            },
+            {
+              src: '/images/ute-tray-b-2.png',
+              alt: 'Tray B rear three-quarter view with the drop-side down and tailgate latches visible',
+            },
+            {
+              src: '/images/ute-tray-b-3.png',
+              alt: 'Tray B rear view showing the full-width mesh headboard and under-tray toolbox',
+            },
+          ],
           body: 'Heavy-duty tray with mesh headboard and under-tray toolboxes · powder-coat black',
           quote: { id: 'tray-b', priceFrom: null, standardDims: '' },
         },

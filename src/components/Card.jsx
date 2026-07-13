@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Check, ArrowRight } from 'lucide-react'
+import { Check, ArrowRight, Images } from 'lucide-react'
 import Img from './Img.jsx'
 import Placeholder from './Placeholder.jsx'
 import QuoteButton from './QuoteButton.jsx'
@@ -39,6 +39,7 @@ export default function Card({
   phSub,
   img,
   imgAlt,
+  images,
   title,
   body,
   cta,
@@ -78,6 +79,7 @@ export default function Card({
       title,
       img,
       imgAlt,
+      images,
       imageFit,
       imageTone,
       imagePosition,
@@ -109,6 +111,13 @@ export default function Card({
         {inQuote && (
           <span className="card__badge">
             <Check size={14} strokeWidth={3} aria-hidden="true" /> In your quote
+          </span>
+        )}
+        {images?.length > 1 && (
+          <span className="card__count">
+            <Images size={13} strokeWidth={2} aria-hidden="true" />
+            <span aria-hidden="true">{images.length}</span>
+            <span className="sr-only">{images.length} photos — open View details to see them</span>
           </span>
         )}
       </div>
