@@ -37,9 +37,14 @@ svg {
 
 /* <Img> wraps its <img> in a <picture> to offer a WebP source. `display:
    contents` keeps that wrapper out of the layout entirely, so the <img> still
-   sizes against the media box its parent's CSS styles (.card__media etc). */
+   sizes against the media box its parent's CSS styles (.card__media etc).
+   That also promotes the <source> to a layout box, so it has to be hidden —
+   otherwise it becomes a phantom flex/grid item beside the <img>. */
 .picture {
   display: contents;
+}
+.picture > source {
+  display: none;
 }
 ::selection {
   background: var(--color-accent);
