@@ -1,14 +1,14 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { useEffect, useLayoutEffect, lazy, Suspense } from 'react'
+import { useEffect, useLayoutEffect, useState, lazy, Suspense } from 'react'
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
 import Lightbox from './components/Lightbox.jsx'
-import QuoteDrawer from './components/QuoteDrawer.jsx'
-import DetailDrawer from './components/DetailDrawer.jsx'
 import Home from './pages/Home.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import RouteFallback from './components/RouteFallback.jsx'
 import { trackPageview } from './lib/analytics.js'
+import { useQuote } from './lib/quoteStore.js'
+import { useDetail } from './lib/detailStore.js'
 
 // Retry lazy imports once, then force a reload if the chunk is gone.
 // Prevents white-pages on stale tabs after a redeploy.
@@ -30,6 +30,34 @@ function lazyWithRetry(factory) {
 
 if (typeof window !== 'undefined') {
   window.addEventListener('load', () => sessionStorage.removeItem(RELOAD_KEY))
+}
+
+// The quote and detail drawers pull in framer-motion, which is otherwise the
+// single biggest chunk on the home route's critical path. Nothing above the
+// fold needs it, and the SPA can't paint the LCP hero until its JS arrives, so
+// keeping motion out of the initial bundle is the main lever on LCP. Each
+// drawer is mounted the first time it opens, then stays mounted so its exit
+// animation still runs — see DeferredDrawers below.
+const QuoteDrawer = lazyWithRetry(() => import('./components/QuoteDrawer.jsx'))
+const DetailDrawer = lazyWithRetry(() => import('./components/DetailDrawer.jsx'))
+
+// Latches each drawer's chunk in on its first open, without ever unmounting it
+// again (so framer-motion's AnimatePresence keeps handling the slide-out). The
+// set-state-during-render is the sanctioned "adjust state when a prop changes"
+// pattern — it's guarded, so it runs once per drawer and doesn't loop.
+function DeferredDrawers() {
+  const { isOpen: quoteOpen } = useQuote()
+  const { isOpen: detailOpen } = useDetail()
+  const [quoteMounted, setQuoteMounted] = useState(false)
+  const [detailMounted, setDetailMounted] = useState(false)
+  if (quoteOpen && !quoteMounted) setQuoteMounted(true)
+  if (detailOpen && !detailMounted) setDetailMounted(true)
+  return (
+    <Suspense fallback={null}>
+      {quoteMounted && <QuoteDrawer />}
+      {detailMounted && <DetailDrawer />}
+    </Suspense>
+  )
 }
 
 const CategoryOverview = lazyWithRetry(() => import('./pages/CategoryOverview.jsx'))
@@ -148,8 +176,7 @@ export default function App() {
       </div>
       <Footer />
       <Lightbox />
-      <QuoteDrawer />
-      <DetailDrawer />
+      <DeferredDrawers />
     </BrowserRouter>
   )
 }
