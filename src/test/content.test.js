@@ -9,9 +9,8 @@ import { howItWorks } from '../content/howItWorks.js'
 import { testimonials } from '../content/testimonials.js'
 import { faq } from '../content/faq.js'
 import { legal } from '../content/legal.js'
-import { caravan } from '../content/caravan.js'
-import { utes } from '../content/utes.js'
-import { trucks } from '../content/trucks.js'
+import { catalog } from '../data/catalog.js'
+import { getCategoryBySlug, isLeaf } from '../lib/catalog.js'
 
 describe('content — section copy contract', () => {
   it('hero has a headline and a primary CTA', () => {
@@ -74,9 +73,35 @@ describe('content — section copy contract', () => {
   })
 })
 
-describe('caravan products — quote descriptor contract', () => {
+describe('catalog — category tree contract', () => {
+  it('has the two top categories with children', () => {
+    const slugs = catalog.categories.map((c) => c.slug)
+    expect(slugs).toContain('toolboxes')
+    expect(slugs).toContain('accessories')
+    for (const top of catalog.categories) {
+      expect(top.children.length).toBeGreaterThan(0)
+    }
+  })
+
+  it('every node has an id, label and slug; slugs are globally unique', () => {
+    const slugs = []
+    const walk = (nodes) => {
+      for (const n of nodes) {
+        expect(n.id).toMatch(/^[a-z0-9-]+$/)
+        expect(n.label).toBeTruthy()
+        expect(n.slug).toBeTruthy()
+        slugs.push(n.slug)
+        if (n.children) walk(n.children)
+      }
+    }
+    walk(catalog.categories)
+    expect(new Set(slugs).size).toBe(slugs.length)
+  })
+})
+
+describe('catalog — product contract', () => {
   it('every product carries a quote object with an id and dims', () => {
-    for (const p of caravan.products) {
+    for (const p of catalog.products) {
       expect(p.quote).toBeTruthy()
       expect(p.quote.id).toMatch(/^[a-z0-9-]+$/)
       expect(typeof p.quote.standardDims).toBe('string')
@@ -84,19 +109,30 @@ describe('caravan products — quote descriptor contract', () => {
     }
   })
 
-  it('quote ids are unique across the caravan range', () => {
-    const ids = caravan.products.map((p) => p.quote.id)
-    expect(new Set(ids).size).toBe(ids.length)
+  it('specs and features are arrays with the right shape', () => {
+    for (const p of catalog.products) {
+      expect(Array.isArray(p.specs)).toBe(true)
+      expect(Array.isArray(p.features)).toBe(true)
+      for (const s of p.specs) {
+        expect(s.label).toBeTruthy()
+        expect(typeof s.value).toBe('string')
+      }
+      for (const f of p.features) expect(typeof f).toBe('string')
+    }
   })
 
-  it('quote ids are globally unique across caravan, utes and trucks', () => {
-    const ids = [
-      ...caravan.products,
-      ...utes.sections.flatMap((s) => s.products),
-      ...trucks.sections.flatMap((s) => s.products),
-    ]
-      .filter((p) => p.quote)
-      .map((p) => p.quote.id)
+  it('every product categoryId resolves to a real LEAF category', () => {
+    for (const p of catalog.products) {
+      const node = getCategoryBySlug(p.categoryId)
+      expect(node, `categoryId "${p.categoryId}" (product ${p.id})`).toBeTruthy()
+      expect(isLeaf(node), `categoryId "${p.categoryId}" must be a leaf`).toBe(true)
+    }
+  })
+
+  it('product ids and quote ids are globally unique', () => {
+    const ids = catalog.products.map((p) => p.id)
+    const quoteIds = catalog.products.map((p) => p.quote.id)
     expect(new Set(ids).size).toBe(ids.length)
+    expect(new Set(quoteIds).size).toBe(quoteIds.length)
   })
 })
