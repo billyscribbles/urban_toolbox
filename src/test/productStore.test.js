@@ -2,6 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { productRows } from './fixtures/productRows.js'
 import { categories } from '../data/categories.js'
 
+// Hoisted so the vi.mock factory below (itself hoisted above imports) can
+// close over it — lets the "ready" test assert loadProducts filtered on the
+// right column/value, not just that .eq() was called with something.
+const { eqMock } = vi.hoisted(() => ({ eqMock: vi.fn() }))
+
 vi.mock('../lib/supabaseClient.js', () => ({
   isConfigured: () => true,
   publicPhotoUrl: (p) => `https://cdn.test/${p}`,
@@ -9,11 +14,14 @@ vi.mock('../lib/supabaseClient.js', () => ({
     Promise.resolve({
       from: () => ({
         select: () => ({
-          eq: () => ({
-            order: () => ({
-              order: () => Promise.resolve({ data: productRows, error: null }),
-            }),
-          }),
+          eq: (...args) => {
+            eqMock(...args)
+            return {
+              order: () => ({
+                order: () => Promise.resolve({ data: productRows, error: null }),
+              }),
+            }
+          },
         }),
       }),
     }),
@@ -65,5 +73,8 @@ describe('loadProducts', () => {
     expect(getStatus()).toBe('ready')
     expect(getProducts()).toHaveLength(2)
     expect(getProducts()[0].quote.id).toBeDefined()
+    // Hidden products must never reach the public storefront — assert the
+    // exact filter, not just that .eq() was called with something.
+    expect(eqMock).toHaveBeenCalledWith('hidden', false)
   })
 })

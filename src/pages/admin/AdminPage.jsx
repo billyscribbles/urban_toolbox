@@ -61,7 +61,7 @@ export default function AdminPage() {
                 width="28"
                 height="28"
               />
-              <span className="admin-topbar__name">Urban Toolbox — Admin</span>
+              <span className="admin-topbar__name">{`${site.brand.name} — Admin`}</span>
             </div>
             <div className="admin-topbar__actions">
               <Link className="admin-topbar__link" to="/">
