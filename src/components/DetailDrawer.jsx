@@ -156,16 +156,13 @@ export default function DetailDrawer() {
                 </dl>
               )}
 
-              {product.build?.items?.length > 0 && (
-                <div className="detail-drawer__build">
-                  <h3 className="detail-drawer__build-heading">
-                    {product.build.heading || 'Built in'}
-                  </h3>
-                  <ul className="detail-drawer__build-list">
-                    {product.build.items.map((it) => (
-                      <li key={it.title} className="detail-drawer__build-item">
-                        <span className="detail-drawer__build-title">{it.title}</span>
-                        <span className="detail-drawer__build-body">{it.body}</span>
+              {product.features?.length > 0 && (
+                <div className="detail-drawer__features">
+                  <h3 className="detail-drawer__features-heading">Features</h3>
+                  <ul className="detail-drawer__features-list">
+                    {product.features.map((f) => (
+                      <li key={f} className="detail-drawer__features-item">
+                        {f}
                       </li>
                     ))}
                   </ul>
