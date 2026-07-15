@@ -5,9 +5,9 @@ import { publicPhotoUrl } from '../../lib/supabaseClient.js'
 import { formatPrice } from '../../lib/pricing.js'
 import { deleteProduct } from '../../lib/adminApi.js'
 
-// Flat, filterable table of every product. Delete is two-step (Delete ->
+// Full-width, filterable table of every product. Delete is two-step (Delete ->
 // Confirm) instead of window.confirm so nothing blocks the tab.
-export default function ProductList({ rows, onEdit, onNew, onChanged }) {
+export default function ProductList({ rows, loading, onEdit, onNew, onChanged }) {
   const [q, setQ] = useState('')
   const [cat, setCat] = useState('')
   const [confirmId, setConfirmId] = useState(null)
@@ -83,85 +83,112 @@ export default function ProductList({ rows, onEdit, onNew, onChanged }) {
         </p>
       )}
 
-      {visible.length === 0 ? (
-        <p className="admin__empty">No products match.</p>
+      {loading ? (
+        <div className="admin-card">
+          <ul className="admin-skel" aria-hidden="true">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <li key={i} className="admin-skel__row" />
+            ))}
+          </ul>
+        </div>
+      ) : rows.length === 0 ? (
+        <div className="admin-empty">
+          <p className="admin-empty__title">No products yet</p>
+          <p className="admin-empty__sub">Add your first catalogue product to get started.</p>
+          <button type="button" className="admin__primary" style={{ marginTop: 0 }} onClick={onNew}>
+            <Plus size={15} strokeWidth={2.5} aria-hidden="true" /> Add your first product
+          </button>
+        </div>
+      ) : visible.length === 0 ? (
+        <p className="admin__empty">No products match your search.</p>
       ) : (
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th scope="col">
-                <span className="sr-only">Photo</span>
-              </th>
-              <th scope="col">Product</th>
-              <th scope="col" className="admin-table__hide-sm">
-                Category
-              </th>
-              <th scope="col">Price</th>
-              <th scope="col">Discount</th>
-              <th scope="col">
-                <span className="sr-only">Actions</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {visible.map((row) => (
-              <tr key={row.id}>
-                <td>
-                  {thumb(row) ? (
-                    <img className="admin-table__thumb" src={thumb(row)} alt="" />
-                  ) : (
-                    <span className="admin-table__thumb" aria-hidden="true" />
-                  )}
-                </td>
-                <td>
-                  {row.title}{' '}
-                  {row.featured && (
-                    <Star size={13} strokeWidth={2} aria-label="Featured" fill="currentColor" />
-                  )}
-                </td>
-                <td className="admin-table__hide-sm">
-                  {leafLabel.get(row.category_id) ?? row.category_id}
-                </td>
-                <td>{row.price == null ? '—' : formatPrice(Number(row.price))}</td>
-                <td>{row.discount_pct ? `${Number(row.discount_pct)}%` : '—'}</td>
-                <td>
-                  <div className="admin-photos__buttons">
-                    <button type="button" className="admin__ghost" onClick={() => onEdit(row)}>
-                      <Pencil size={13} strokeWidth={2} aria-hidden="true" /> Edit
-                    </button>
-                    {confirmId === row.id ? (
-                      <>
+        <div className="admin-card">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th scope="col">
+                  <span className="sr-only">Photo</span>
+                </th>
+                <th scope="col">Product</th>
+                <th scope="col" className="admin-table__hide-sm">
+                  Category
+                </th>
+                <th scope="col">Price</th>
+                <th scope="col">Status</th>
+                <th scope="col">
+                  <span className="sr-only">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {visible.map((row) => (
+                <tr key={row.id}>
+                  <td>
+                    {thumb(row) ? (
+                      <img className="admin-table__thumb" src={thumb(row)} alt="" />
+                    ) : (
+                      <span className="admin-table__thumb" aria-hidden="true" />
+                    )}
+                  </td>
+                  <td className="admin-table__title">{row.title}</td>
+                  <td className="admin-table__hide-sm">
+                    {leafLabel.get(row.category_id) ?? row.category_id}
+                  </td>
+                  <td>{row.price == null ? '—' : formatPrice(Number(row.price))}</td>
+                  <td>
+                    <div className="admin-badges">
+                      {row.featured && (
+                        <span className="admin-badge admin-badge--featured">
+                          <Star size={12} strokeWidth={2} fill="currentColor" aria-hidden="true" />{' '}
+                          Featured
+                        </span>
+                      )}
+                      {row.discount_pct ? (
+                        <span className="admin-badge admin-badge--off">
+                          {Number(row.discount_pct)}% off
+                        </span>
+                      ) : null}
+                    </div>
+                  </td>
+                  <td>
+                    <div className="admin-photos__buttons">
+                      <button type="button" className="admin__ghost" onClick={() => onEdit(row)}>
+                        <Pencil size={13} strokeWidth={2} aria-hidden="true" /> Edit
+                      </button>
+                      {confirmId === row.id ? (
+                        <>
+                          <button
+                            type="button"
+                            className="admin__danger"
+                            disabled={busyId === row.id}
+                            onClick={() => onDelete(row)}
+                          >
+                            {busyId === row.id ? 'Deleting…' : 'Confirm delete'}
+                          </button>
+                          <button
+                            type="button"
+                            className="admin__ghost"
+                            onClick={() => setConfirmId(null)}
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      ) : (
                         <button
                           type="button"
                           className="admin__danger"
-                          disabled={busyId === row.id}
-                          onClick={() => onDelete(row)}
+                          onClick={() => setConfirmId(row.id)}
                         >
-                          {busyId === row.id ? 'Deleting…' : 'Confirm delete'}
+                          Delete
                         </button>
-                        <button
-                          type="button"
-                          className="admin__ghost"
-                          onClick={() => setConfirmId(null)}
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    ) : (
-                      <button
-                        type="button"
-                        className="admin__danger"
-                        onClick={() => setConfirmId(row.id)}
-                      >
-                        Delete
-                      </button>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   )

@@ -100,7 +100,7 @@ const listRows = [
 ]
 
 describe('ProductList', () => {
-  it('renders a row per product with price and discount', () => {
+  it('renders a row per product with price and status badges', () => {
     render(
       <MemoryRouter>
         <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
@@ -108,7 +108,26 @@ describe('ProductList', () => {
     )
     expect(screen.getByText('Whale Tail Lock')).toBeInTheDocument()
     expect(screen.getByText('$450')).toBeInTheDocument()
-    expect(screen.getByText('15%')).toBeInTheDocument()
+    expect(screen.getByText(/15% off/i)).toBeInTheDocument()
+    expect(screen.getByText(/featured/i)).toBeInTheDocument()
+  })
+
+  it('shows a skeleton while loading', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <ProductList rows={[]} loading onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
+      </MemoryRouter>,
+    )
+    expect(container.querySelector('.admin-skel')).not.toBeNull()
+  })
+
+  it('shows a friendly empty state with a create CTA when there are no products', () => {
+    render(
+      <MemoryRouter>
+        <ProductList rows={[]} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
+      </MemoryRouter>,
+    )
+    expect(screen.getByRole('button', { name: /add your first product/i })).toBeInTheDocument()
   })
 
   it('filters by title search', async () => {
