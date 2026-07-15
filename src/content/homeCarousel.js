@@ -4,6 +4,10 @@
 //
 // Contract (src/test/content.test.js): every `to` must resolve to a real
 // catalog category slug, and every `img` must exist under public/.
+//
+// `imgAlt` is the asset's human-readable description, kept in content only —
+// the component renders alt="" on purpose (the visible label already names
+// the link; a non-empty alt would double-announce it to screen readers).
 export const homeCarousel = [
   {
     label: 'Under Tray Toolboxes',

@@ -9,9 +9,10 @@
   overflow: hidden;
 }
 
-/* Two copies of the track sit side by side; sliding the belt by exactly one
-   track width (-50% of the belt) then looping is what makes the marquee
-   seamless. */
+/* Four copies of the track sit side by side (TRACK_COUNT in the component);
+   sliding the belt by exactly one track width (-25% of the belt) then looping
+   is what makes the marquee seamless. The extra copies keep the belt wider
+   than any real viewport so its tail never scrolls into view as a blank gap. */
 .cat-carousel__belt {
   display: flex;
   width: max-content;
@@ -29,7 +30,7 @@
     transform: translateX(0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translateX(-25%);
   }
 }
 
