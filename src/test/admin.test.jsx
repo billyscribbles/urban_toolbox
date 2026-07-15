@@ -96,3 +96,41 @@ describe('ProductList', () => {
     expect(screen.queryByText('Job Site Box')).toBeNull()
   })
 })
+
+const { default: ProductEditor } = await import('../pages/admin/ProductEditor.jsx')
+const { saveProduct } = await import('../lib/adminApi.js')
+
+describe('ProductEditor', () => {
+  it('blocks save with inline errors when title is empty', async () => {
+    render(<ProductEditor row={null} rows={[]} onDone={() => {}} onCancel={() => {}} />)
+    await userEvent.click(screen.getByRole('button', { name: /save product/i }))
+    expect(await screen.findByText(/title is required/i)).toBeInTheDocument()
+    expect(saveProduct).not.toHaveBeenCalled()
+  })
+
+  it('rejects a discount without a price', async () => {
+    render(<ProductEditor row={null} rows={[]} onDone={() => {}} onCancel={() => {}} />)
+    await userEvent.type(screen.getByLabelText(/^title/i), 'Test Box')
+    await userEvent.selectOptions(screen.getByLabelText(/category/i), 'locks')
+    await userEvent.type(screen.getByLabelText(/discount/i), '15')
+    await userEvent.click(screen.getByRole('button', { name: /save product/i }))
+    expect(await screen.findByText(/set a price before/i)).toBeInTheDocument()
+  })
+
+  it('saves a valid new product with generated id and slug', async () => {
+    const onDone = vi.fn()
+    render(<ProductEditor row={null} rows={[]} onDone={onDone} onCancel={() => {}} />)
+    await userEvent.type(screen.getByLabelText(/^title/i), 'Whale Lock MkII')
+    await userEvent.selectOptions(screen.getByLabelText(/category/i), 'locks')
+    await userEvent.click(screen.getByRole('button', { name: /save product/i }))
+    expect(saveProduct).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'whale-lock-mkii',
+        slug: 'whale-lock-mkii',
+        categoryId: 'locks',
+      }),
+      { isNew: true },
+    )
+    expect(onDone).toHaveBeenCalled()
+  })
+})
