@@ -29,7 +29,7 @@ brand — no brand-token changes.
 
 1. **Both hero panels link to `/toolboxes`.** The catalog has no separate
    caravan category (`/caravan-toolboxes` and `/utes` already redirect to
-   `/toolboxes`). The two panels are two *audiences* for one range.
+   `/toolboxes`). The two panels are two _audiences_ for one range.
 2. **`Process` and `CategoryCarousel` are dropped from the home composition.**
    Component files stay in the repo; they are just no longer imported by
    `Home.jsx`.
@@ -50,16 +50,16 @@ FinalCta           photo-backed, two buttons (Quote / View Work)
 
 ## Components
 
-| Component | File(s) | Notes |
-|---|---|---|
-| `SplitHero` | `SplitHero.jsx` + `.css` | Grid of two `HeroPanel`s + centre divider control (`//`, `aria-hidden`). |
-| `HeroPanel` | `HeroPanel.jsx` | `Img` bg (`object-fit:cover`), scrim, eyebrow/heading/desc/CTA lower-left. Hover: image scale 1.04, scrim lightens, arrow nudge — `hover:hover` + reduced-motion gated. |
-| `TrustBar` | `TrustBar.jsx` + `.css` (reshape) | Dark strip → light 4-cell band, vertical dividers, green outline icons. |
-| `IntroSection` | `IntroSection.jsx` + `.css` | Eyebrow + h2 + paragraph. |
-| `CategoryFeature` | `CategoryFeature.jsx` + `.css` | Big photo one side, copy the other, alternating via `reverse` prop. Rendered twice. |
-| `FabricationSection` | `FabricationSection.jsx` + `.css` | Dark band; workshop photo + 3 capability blurbs + CTA. Uses `capability.js`. |
-| `ProjectGallery` | `ProjectGallery.jsx` + `.css` | Photo grid, minimal overlay labels, reuses existing `Lightbox`. |
-| `FinalCta` | `FinalCta.jsx` + `.css` | Photo-backed band, two square buttons. |
+| Component            | File(s)                           | Notes                                                                                                                                                                   |
+| -------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SplitHero`          | `SplitHero.jsx` + `.css`          | Grid of two `HeroPanel`s + centre divider control (`//`, `aria-hidden`).                                                                                                |
+| `HeroPanel`          | `HeroPanel.jsx`                   | `Img` bg (`object-fit:cover`), scrim, eyebrow/heading/desc/CTA lower-left. Hover: image scale 1.04, scrim lightens, arrow nudge — `hover:hover` + reduced-motion gated. |
+| `TrustBar`           | `TrustBar.jsx` + `.css` (reshape) | Dark strip → light 4-cell band, vertical dividers, green outline icons.                                                                                                 |
+| `IntroSection`       | `IntroSection.jsx` + `.css`       | Eyebrow + h2 + paragraph.                                                                                                                                               |
+| `CategoryFeature`    | `CategoryFeature.jsx` + `.css`    | Big photo one side, copy the other, alternating via `reverse` prop. Rendered twice.                                                                                     |
+| `FabricationSection` | `FabricationSection.jsx` + `.css` | Dark band; workshop photo + 3 capability blurbs + CTA. Uses `capability.js`.                                                                                            |
+| `ProjectGallery`     | `ProjectGallery.jsx` + `.css`     | Photo grid, minimal overlay labels, reuses existing `Lightbox`.                                                                                                         |
+| `FinalCta`           | `FinalCta.jsx` + `.css`           | Photo-backed band, two square buttons.                                                                                                                                  |
 
 ## Content files
 

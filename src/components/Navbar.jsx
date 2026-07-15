@@ -93,6 +93,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false) // mobile hamburger
   const [openMenu, setOpenMenu] = useState(null) // desktop dropdown slug
   const [openSection, setOpenSection] = useState(null) // mobile accordion slug
+  const [scrolled, setScrolled] = useState(false) // past the top of the page
   const { pathname } = useLocation()
   const { brand, nav, cta } = site
   const { items } = useQuote()
@@ -103,12 +104,31 @@ export default function Navbar() {
   // Resolve each nav item to its dropdown panel once (a null panel = flat link).
   const navItems = nav.map((l) => ({ ...l, panel: l.menu ? getMegaMenu(l.menu) : null }))
 
+  // The home page has a full-bleed dark hero behind the bar, so the navbar
+  // rides transparent over it and only fills in once the user scrolls (or
+  // opens the mobile menu). Every other route keeps the solid bar.
+  const overHero = pathname === '/'
+  const transparent = overHero && !scrolled && !menuOpen
+
   // Close every menu whenever the route changes.
   useEffect(() => {
     setMenuOpen(false)
     setOpenMenu(null)
     setOpenSection(null)
   }, [pathname])
+
+  // Track whether the page has scrolled past the top, but only on routes that
+  // ride transparent over a hero — elsewhere the bar is always solid.
+  useEffect(() => {
+    if (!overHero) {
+      setScrolled(false)
+      return
+    }
+    const onScroll = () => setScrolled(window.scrollY > 12)
+    onScroll() // sync on mount / when returning to an already-scrolled home
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [overHero])
 
   // Esc closes an open dropdown; pointerdown outside the nav closes it too.
   useEffect(() => {
@@ -137,7 +157,7 @@ export default function Navbar() {
       }
 
   return (
-    <header className="navbar">
+    <header className={`navbar${transparent ? ' navbar--transparent' : ''}`}>
       <div className="navbar__inner container">
         <Link to="/" className="navbar__logo" aria-label={brand.name}>
           <Brand brand={brand} />

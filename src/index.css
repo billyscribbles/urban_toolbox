@@ -12,6 +12,17 @@
   padding: 0;
 }
 
+/* Height of the fixed top bar — shared so the home hero can slide up under the
+   transparent navbar. Kept in sync with .navbar__inner's height below. */
+:root {
+  --navbar-h: 78px;
+}
+@media (max-width: 700px) {
+  :root {
+    --navbar-h: 60px;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
@@ -96,8 +107,10 @@ select {
 .h2 {
   font-family: var(--font-display);
   font-size: clamp(32px, 4.4vw, 44px);
-  line-height: 1.02;
-  letter-spacing: 0.02em;
+  line-height: 1.08;
+  /* Manrope ExtraBold is a wide face — large headings read cleaner with tight,
+     near-zero tracking (the condensed Anton wanted the extra 0.02em). */
+  letter-spacing: -0.01em;
   text-transform: uppercase;
   color: var(--color-ink-strong);
   font-weight: 400;

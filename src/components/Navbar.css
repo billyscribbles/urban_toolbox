@@ -2,8 +2,42 @@
   position: sticky;
   top: 0;
   z-index: 60;
-  background: var(--color-dark);
+  background-color: var(--color-dark);
   border-bottom: 1px solid var(--color-border-dark);
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base);
+}
+
+/* Home only: ride fully transparent over the dark hero until the page scrolls,
+   with every mark turned white for contrast against the photo. */
+.navbar--transparent {
+  background-color: transparent;
+  border-bottom-color: transparent;
+}
+
+/* Hovering the bar fills it solid black (the light text stays readable). The
+   tagline swaps to accent green to match the solid/scrolled bar. */
+.navbar--transparent:hover {
+  background-color: var(--color-dark);
+  border-bottom-color: var(--color-border-dark);
+}
+
+.navbar--transparent:hover .navbar__logo-sub {
+  color: var(--color-accent);
+}
+
+.navbar--transparent .navbar__link,
+.navbar--transparent .navbar__mega-toggle {
+  color: #fff;
+}
+
+.navbar--transparent .navbar__logo-sub {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.navbar--transparent .navbar__cta {
+  border-color: #fff;
 }
 
 .navbar__inner {
@@ -43,17 +77,23 @@
 
 .navbar__logo-word {
   font-family: var(--font-display);
-  color: #fff;
+  /* Soft off-white rather than a harsh pure white, plus a gentle shadow so the
+     word lifts cleanly off the hero photo in transparent mode. */
+  color: #f4f3ef;
   font-size: 22px;
   letter-spacing: 0.05em;
+  text-shadow: 0 2px 12px rgba(13, 13, 13, 0.55);
 }
 
 .navbar__logo-sub {
+  /* Slightly larger tagline with easier tracking and a soft shadow. Accent
+     green on the solid black bar; softened to white over the hero photo. */
   color: var(--color-accent);
-  font-size: 9px;
-  letter-spacing: 0.26em;
+  font-size: 10px;
+  letter-spacing: 0.2em;
   font-weight: 600;
-  margin-top: 5px;
+  margin-top: 6px;
+  text-shadow: 0 1px 10px rgba(13, 13, 13, 0.55);
 }
 
 /* ------------------------------------------------------------ nav links */

@@ -8,28 +8,30 @@
     <meta name="theme-color" content="#0d0d0d" />
 
     <!-- Preload the LCP hero image so it paints fast. Must mirror the widths and
-         sizes HeroSplit.jsx renders, or the browser preloads a file the page
-         never uses. Non-WebP browsers ignore this and fetch the JPEG fallback.
-         Listed before the fonts on purpose: same-priority preloads are fetched
-         in document order, and the hero is what LCP is waiting on. -->
+         sizes the left HeroPanel renders (see SplitHero.jsx / HeroPanel.jsx), or
+         the browser preloads a file the page never uses. Non-WebP browsers
+         ignore this and fetch the JPEG fallback. Listed before the fonts on
+         purpose: same-priority preloads are fetched in document order, and the
+         hero is what LCP is waiting on. -->
     <link
       rel="preload"
       as="image"
       type="image/webp"
       href="/brand/hero-caravan-1600.webp"
       imagesrcset="/brand/hero-caravan-800.webp 800w, /brand/hero-caravan-1600.webp 1600w"
-      imagesizes="(max-width: 760px) 50vw, 30vw"
+      imagesizes="(max-width: 760px) 100vw, 50vw"
       fetchpriority="high"
     />
 
     <!-- Fonts are self-hosted (see src/fonts.css). Preload the three faces that
-         paint above the fold — Anton for the H1, Barlow 400/700 for body and
-         nav. They are declared `font-display: optional`, so winning this race is
-         what decides whether the page renders in the brand fonts at all; the
-         remaining weights load on demand from the @font-face rules. -->
-    <link rel="preload" as="font" type="font/woff2" href="/fonts/anton-400.woff2" crossorigin />
-    <link rel="preload" as="font" type="font/woff2" href="/fonts/barlow-400.woff2" crossorigin />
-    <link rel="preload" as="font" type="font/woff2" href="/fonts/barlow-700.woff2" crossorigin />
+         paint above the fold — Manrope 800 for the display headings, 700 for the
+         hero eyebrow / nav, 400 for body copy. They are declared
+         `font-display: optional`, so winning this race is what decides whether
+         the page renders in Manrope at all; the remaining weights load on demand
+         from the @font-face rules. -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/manrope-800.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/manrope-700.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/manrope-400.woff2" crossorigin />
 
     <!-- Fallback SEO — runtime Helmet (src/lib/seo.jsx) overrides these per page.
          og-image.png is a 1200x630 raster; social platforms do not render SVG. -->

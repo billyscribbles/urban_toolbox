@@ -11,3 +11,4 @@ Task 6: complete (549777b prettier fix; lint/format/test 67/67/build PASS; Light
 Task 7 (user revision mid-flight): dark-panel hero per Billy's new mock — IN PROGRESS
 Task 7: complete (commit 0f6eb03 dark-panel hero revision per Billy's mock; gate re-run PASS: format/build/Lighthouse 100-96-100)
 Task 7 gate re-check + final review fix: marquee 4-track fix for >1708px viewports (commit pending)
+Task 7 FINAL: complete (commit 986d3bd; gate PASS — lint/format/test 67/67/build; Lighthouse perf 100 / a11y 96 / SEO 100; wide-viewport gap fix verified exposedGap=0 @2560px). Whole-branch review clean apart from triaged Minors.

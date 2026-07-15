@@ -32,12 +32,16 @@ export const theme = {
     accent: '#5c8a2f',
     'accent-hover': '#4d7527',
     'accent-soft': '#e6f0dc',
+
+    // Warm sand — used only for the hero eyebrows (editorial reference look).
+    sand: '#c4a477',
   },
   fonts: {
-    // Display / headings — uppercase, single heavy weight.
-    display: "'Anton', 'Arial Narrow', sans-serif",
-    // Body / UI / nav.
-    body: "'Barlow', system-ui, -apple-system, sans-serif",
+    // Display / headings — Manrope ExtraBold (the 'Manrope Display' face is
+    // pinned to the 800 weight; see src/fonts.css).
+    display: "'Manrope Display', 'Manrope', system-ui, sans-serif",
+    // Body / UI / nav — Manrope, real weights.
+    body: "'Manrope', system-ui, -apple-system, sans-serif",
     // Mono — placeholder labels, step numbers.
     mono: "'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace",
   },
