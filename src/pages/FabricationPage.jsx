@@ -14,7 +14,7 @@ export default function FabricationPage() {
     <main>
       <SEO
         title="Fabrication"
-        description="Laser cutting, folding and custom metal fabrication in Dandenong South. Send us your design and we'll make it come to life — prototype to production."
+        description="Laser cutting, folding and custom fabrication in Dandenong South. Send us your design and we'll make it come to life — prototype to production."
         path="/fabrication"
       />
       <PageHero

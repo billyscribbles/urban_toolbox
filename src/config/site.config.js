@@ -6,7 +6,7 @@ export const site = {
     name: 'Urban Toolboxes',
     logoText: 'URBAN TOOLBOXES',
     tagline:
-      'Custom aluminium caravan toolboxes, ute accessories and metal fabrication — designed and built in Dandenong South.',
+      'Custom aluminium caravan toolboxes, ute accessories and fabrication — designed and built in Dandenong South.',
     // Circular building-bars logo mark shown beside the wordmark in the Navbar/Footer.
     logoMark: '/brand/logo-mark.png',
     // Short line rendered under the wordmark (mirrors the badge lockup).
@@ -89,7 +89,7 @@ export const site = {
     defaultTitle: 'Urban Toolboxes — Custom Aluminium Caravan & Ute Toolboxes',
     titleTemplate: '%s · Urban Toolboxes',
     description:
-      'Australian-made custom aluminium caravan toolboxes, ute accessories and metal fabrication — designed and built in Dandenong South, Victoria.',
+      'Australian-made custom aluminium caravan toolboxes, ute accessories and fabrication — designed and built in Dandenong South, Victoria.',
     siteUrl: import.meta.env.VITE_SITE_URL || 'https://urbantoolboxes.com.au',
     // 1200x630 branded card — social platforms ignore SVG.
     ogImage: '/brand/og-image.jpg',

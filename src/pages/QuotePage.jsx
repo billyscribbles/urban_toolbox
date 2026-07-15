@@ -119,7 +119,7 @@ export default function QuotePage() {
     <main>
       <SEO
         title="Get a Quote"
-        description="Request a free, no-obligation quote for a custom aluminium caravan toolbox, ute accessories or metal fabrication — built in Dandenong South, Victoria."
+        description="Request a free, no-obligation quote for a custom aluminium caravan toolbox, ute accessories or fabrication — built in Dandenong South, Victoria."
         path="/quote"
       />
       <PageHero

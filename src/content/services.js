@@ -35,7 +35,7 @@ export const services = {
       cta: 'Explore',
       to: '/fabrication',
       ph: 'PRODUCT SHOT',
-      phSub: 'metal fabrication',
+      phSub: 'custom fabrication',
       img: '/images/fabrication.jpg',
       imgAlt: 'Aluminium sheet metal being fabricated in the Dandenong South workshop',
     },

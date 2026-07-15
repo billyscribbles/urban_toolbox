@@ -1,6 +1,6 @@
 export const fabrication = {
   header: {
-    eyebrow: 'Custom metal fabrication',
+    eyebrow: 'Custom fabrication',
     title: 'Fabrication',
     intro:
       "Send us your design and we'll make it come to life. High-quality laser cutting, folding and custom fabrication with the precision and turnaround your project needs.",
@@ -33,7 +33,7 @@ export const fabrication = {
       imgAlt: 'Welder MIG welding a steel box-section frame in the workshop',
       title: 'Custom Fabrication',
       body: 'Cutting, welding, bending and assembly to create strong, reliable products for any application.',
-      points: ['Sheet metal fabrication', 'Structural fabrication', 'Prototype & production runs'],
+      points: ['Sheet metal work', 'Structural fabrication', 'Prototype & production runs'],
     },
   ],
   why: {

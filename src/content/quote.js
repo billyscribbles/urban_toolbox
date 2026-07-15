@@ -26,7 +26,7 @@ export const quote = {
       label: 'What can we build for you?',
       type: 'select',
       required: true,
-      options: ['Caravan toolbox', 'Ute accessories', 'Metal fabrication', 'Something else'],
+      options: ['Caravan toolbox', 'Ute accessories', 'Fabrication', 'Something else'],
     },
     {
       name: 'message',
