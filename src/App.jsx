@@ -32,9 +32,8 @@ if (typeof window !== 'undefined') {
   window.addEventListener('load', () => sessionStorage.removeItem(RELOAD_KEY))
 }
 
-const CaravanPage = lazyWithRetry(() => import('./pages/CaravanPage.jsx'))
-const UtesPage = lazyWithRetry(() => import('./pages/UtesPage.jsx'))
-const TrucksPage = lazyWithRetry(() => import('./pages/TrucksPage.jsx'))
+const CategoryOverview = lazyWithRetry(() => import('./pages/CategoryOverview.jsx'))
+const CategoryPage = lazyWithRetry(() => import('./pages/CategoryPage.jsx'))
 const FabricationPage = lazyWithRetry(() => import('./pages/FabricationPage.jsx'))
 const AboutPage = lazyWithRetry(() => import('./pages/AboutPage.jsx'))
 const QuotePage = lazyWithRetry(() => import('./pages/QuotePage.jsx'))
@@ -94,9 +93,23 @@ export default function App() {
           <Suspense fallback={<RouteFallback />}>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/caravan-toolboxes" element={<CaravanPage />} />
-              <Route path="/utes" element={<UtesPage />} />
-              <Route path="/trucks" element={<TrucksPage />} />
+
+              {/* Data-driven catalog. Toolboxes has an overview of its
+                  subcategories, each of which is its own CategoryPage; Accessories
+                  is flattened, so its single page renders every leaf as a
+                  section. Both are driven entirely by src/data/catalog.js. */}
+              <Route
+                path="/toolboxes"
+                element={
+                  <CategoryOverview
+                    slug="toolboxes"
+                    intro="Custom aluminium toolboxes for utes, trucks and trailers — under-tray, top-opening, side-opening, truck boxes, dog boxes and canopies. Built to order in Dandenong South."
+                  />
+                }
+              />
+              <Route path="/toolboxes/:subSlug" element={<CategoryPage />} />
+              <Route path="/accessories" element={<CategoryPage slug="accessories" />} />
+
               <Route path="/fabrication" element={<FabricationPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/quote" element={<QuotePage />} />
@@ -105,13 +118,22 @@ export default function App() {
               <Route path="/privacy" element={<LegalPage type="privacy" />} />
               <Route path="/terms" element={<LegalPage type="terms" />} />
 
+              {/* Legacy product routes retired in the catalog restructure —
+                  redirected to their nearest new home so inbound links and search
+                  rankings survive. */}
+              <Route path="/caravan-toolboxes" element={<Navigate to="/toolboxes" replace />} />
+              <Route path="/utes" element={<Navigate to="/toolboxes" replace />} />
+              <Route
+                path="/trucks"
+                element={<Navigate to="/toolboxes/truck-toolboxes" replace />}
+              />
+
               {/* Legacy URLs from the previous GoDaddy site — kept alive so
                   existing search rankings and inbound links don't 404 after
                   migration. laser-cutting & folding were separate pages that are
-                  now sections of /fabrication; photos had no equivalent. The
-                  ute-accessories page became the broader /utes range. */}
-              <Route path="/ute-accessories" element={<Navigate to="/utes" replace />} />
-              <Route path="/ute-accesories" element={<Navigate to="/utes" replace />} />
+                  now sections of /fabrication; photos had no equivalent. */}
+              <Route path="/ute-accessories" element={<Navigate to="/accessories" replace />} />
+              <Route path="/ute-accesories" element={<Navigate to="/accessories" replace />} />
               <Route
                 path="/laser-cutting"
                 element={<Navigate to="/fabrication#laser-cutting" replace />}
