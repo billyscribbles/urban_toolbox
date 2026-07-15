@@ -8,63 +8,45 @@
   min-height: calc(100svh - 79px);
 }
 
-/* Near-black panel under everything; the photo is clipped to a diagonal wedge
-   on the right, so the panel IS the left side of the composition. A faint
-   sheen runs parallel to the seam so the panel reads as lit, not flat. */
+/* Dark stage. A faint off-axis sheen lifts the flat black so the panel reads
+   as lit rather than dead. */
 .hero-split {
   position: relative;
-  /* Grow to fill the fold above the carousel strip. */
   flex: 1 1 auto;
   min-height: 520px;
   display: flex;
   align-items: center;
   overflow: hidden;
-  background: linear-gradient(118deg, var(--color-dark) 55%, rgba(38, 38, 36, 1) 100%);
+  background:
+    radial-gradient(120% 80% at 18% 0%, rgba(92, 138, 47, 0.14) 0%, rgba(92, 138, 47, 0) 46%),
+    var(--color-dark);
 }
 
-.hero-split__media {
-  position: absolute;
-  inset: 0;
-}
-
-/* Feature photo, clipped so its left edge is the diagonal seam — top edge
-   ~46% across, bottom edge ~36%, the same lean as the reference. */
-.hero-split__img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  display: block;
-  clip-path: polygon(46% 0, 100% 0, 100% 100%, 36% 100%);
-}
-
+/* Text on the left (a little narrower), showcase cards on the right. */
 .hero-split__inner {
   position: relative;
   width: 100%;
-  padding-top: 56px;
-  padding-bottom: 56px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 72px);
+  padding-top: clamp(44px, 7vh, 88px);
+  padding-bottom: clamp(44px, 7vh, 88px);
 }
 
 .hero-split__content {
-  max-width: 560px;
+  max-width: 460px;
 }
 
 .hero-split__title {
   font-family: var(--font-display);
-  font-size: clamp(36px, 4.4vw, 60px);
+  font-size: clamp(38px, 4.6vw, 64px);
   line-height: 0.95;
   letter-spacing: 0.01em;
   text-transform: uppercase;
   color: var(--color-off-white);
-  margin: 0 0 14px;
+  margin: 0 0 16px;
   font-weight: 400;
-  /* Soft dark halo keeps the headline crisp if it crosses the seam onto the
-     photo at narrow desktop widths. */
-  text-shadow:
-    0 1px 2px rgba(13, 13, 13, 0.85),
-    0 0 18px rgba(13, 13, 13, 0.55);
 }
 
 /* Green accent line under the headline. */
@@ -77,10 +59,6 @@
   color: var(--color-accent);
   font-weight: 400;
   margin: 0 0 30px;
-  text-shadow:
-    0 1px 2px rgba(13, 13, 13, 0.9),
-    0 0 14px rgba(13, 13, 13, 0.7),
-    0 0 4px rgba(13, 13, 13, 0.6);
 }
 
 /* Outlined CTA on the dark panel: transparent with a green border, filling
@@ -97,6 +75,89 @@
   color: #fff;
 }
 
+/* Two squared showcase cards. */
+.hero-split__cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(14px, 1.6vw, 22px);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.hero-card {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--color-border-dark-2);
+  border-radius: var(--radius-sm);
+  background: #111110;
+}
+
+.hero-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--transition-base);
+}
+
+/* Scrim behind the label so it stays legible over any photo. */
+.hero-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(13, 13, 13, 0.78) 0%,
+    rgba(13, 13, 13, 0.28) 30%,
+    rgba(13, 13, 13, 0) 52%
+  );
+  pointer-events: none;
+}
+
+.hero-card__label {
+  position: absolute;
+  left: 16px;
+  bottom: 14px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-body);
+  font-size: clamp(12px, 1.1vw, 14px);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-off-white);
+}
+
+/* Small green marker keys the label to the brand accent. */
+.hero-card__label::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: var(--color-accent);
+  flex: 0 0 auto;
+}
+
+@media (hover: hover) {
+  .hero-card:hover .hero-card__img {
+    transform: scale(1.045);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-card__img {
+    transition: none;
+  }
+  .hero-card:hover .hero-card__img {
+    transform: none;
+  }
+}
+
 /* Navbar shrinks to 60px at ≤700px — match the fold offset so the carousel
    strip still lands flush on the bottom edge of the screen. */
 @media (max-width: 700px) {
@@ -106,22 +167,28 @@
   }
 }
 
-/* Phones: the diagonal doesn't read at narrow widths — the dark text panel
-   sits on top and the photo fills the bottom half, unclipped. */
+/* Phones: stack the text over the two cards. Cards stay side by side (they're
+   small) unless the screen is very narrow. */
 @media (max-width: 760px) {
   .hero-split {
-    min-height: 580px;
-    align-items: flex-start;
-  }
-  .hero-split__media {
-    inset: 46% 0 0 0;
-  }
-  .hero-split__img {
-    clip-path: none;
-    object-position: center;
+    min-height: 0;
   }
   .hero-split__inner {
+    grid-template-columns: 1fr;
+    gap: clamp(24px, 6vw, 36px);
     padding-top: 40px;
     padding-bottom: 40px;
+  }
+  .hero-split__content {
+    max-width: none;
+  }
+  .hero-split__tagline {
+    margin-bottom: 24px;
+  }
+}
+
+@media (max-width: 380px) {
+  .hero-split__cards {
+    grid-template-columns: 1fr;
   }
 }

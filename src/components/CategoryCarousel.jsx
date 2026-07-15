@@ -43,10 +43,12 @@ export default function CategoryCarousel() {
 
   return (
     <nav className="cat-carousel" aria-label="Product categories">
-      <div className="cat-carousel__viewport">
-        <div className="cat-carousel__belt">
-          {track(false, 'visible')}
-          {Array.from({ length: TRACK_COUNT - 1 }, (_, i) => track(true, `dup-${i}`))}
+      <div className="container">
+        <div className="cat-carousel__viewport">
+          <div className="cat-carousel__belt">
+            {track(false, 'visible')}
+            {Array.from({ length: TRACK_COUNT - 1 }, (_, i) => track(true, `dup-${i}`))}
+          </div>
         </div>
       </div>
     </nav>

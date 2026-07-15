@@ -16,14 +16,18 @@ import { catalog } from '../data/catalog.js'
 import { getCategoryBySlug, isLeaf } from '../lib/catalog.js'
 
 describe('content — section copy contract', () => {
-  it('hero has a headline, tagline, CTA, and a hero photo on disk', () => {
+  it('hero has a headline, tagline, CTA, and two showcase photos on disk', () => {
     expect(hero.headline).toBeTruthy()
     expect(hero.headlineLine2).toBeTruthy()
     expect(hero.tagline).toBeTruthy()
     expect(hero.cta.label).toBeTruthy()
     expect(hero.cta.to).toMatch(/^\//)
-    expect(hero.media.photo.img).toMatch(/^\/brand\/hero-/)
-    expect(existsSync(join(process.cwd(), 'public', hero.media.photo.img))).toBe(true)
+    expect(hero.showcase).toHaveLength(2)
+    for (const card of hero.showcase) {
+      expect(card.label).toBeTruthy()
+      expect(card.img).toMatch(/^\/brand\/hero-/)
+      expect(existsSync(join(process.cwd(), 'public', card.img))).toBe(true)
+    }
   })
 
   it('stats is a non-empty array of { value, label }', () => {

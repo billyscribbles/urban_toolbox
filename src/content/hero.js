@@ -1,8 +1,7 @@
-// Home hero. Dark, image-led: a near-black content panel on the left meets a
-// single moody feature photo on the right along a diagonal seam (see
-// HeroSplit.jsx/.css). Text stays minimal — uppercase two-line H1, green
-// tagline, one outlined CTA. The category carousel below the hero carries the
-// rest of the wayfinding.
+// Home hero. Dark panel on the left carries the headline, green tagline and a
+// single outlined CTA; on the right, two squared showcase cards — a caravan
+// build and a ute build — frame the two things the brand makes. The category
+// carousel below the hero carries the rest of the wayfinding.
 export const hero = {
   headline: 'Custom Caravan',
   headlineLine2: 'Toolboxes',
@@ -10,12 +9,18 @@ export const hero = {
   tagline: 'Built to work. Ready to roam.',
   // Single outlined CTA into the toolbox range.
   cta: { label: 'Explore Toolboxes', to: '/toolboxes' },
-  // The photo renders decoratively (empty alt) — the H1 carries the meaning.
-  // `alt` is kept in content as the human-readable description of the asset.
-  media: {
-    photo: {
-      img: '/brand/hero-caravan-toolbox.jpg',
-      alt: 'Black aluminium checkerplate toolbox mounted on a caravan drawbar in a dark workshop',
+  // Two showcase cards. `label` names each build (shown in the card footer);
+  // `alt` describes the photo for assistive tech.
+  showcase: [
+    {
+      img: '/brand/hero-caravan.jpg',
+      label: 'Caravan Builds',
+      alt: 'White caravan with a black aluminium checkerplate toolbox mounted on the drawbar',
     },
-  },
+    {
+      img: '/brand/hero-ute.jpg',
+      label: 'Ute Builds',
+      alt: 'Black dual-cab ute fitted with aluminium canopy toolboxes on the tray',
+    },
+  ],
 }
