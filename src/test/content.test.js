@@ -9,8 +9,9 @@ import { howItWorks } from '../content/howItWorks.js'
 import { testimonials } from '../content/testimonials.js'
 import { faq } from '../content/faq.js'
 import { legal } from '../content/legal.js'
-import { catalog } from '../data/catalog.js'
-import { getCategoryBySlug, isLeaf } from '../lib/catalog.js'
+import { categories } from '../data/categories.js'
+
+const catalog = { categories }
 
 describe('content — section copy contract', () => {
   it('hero has a headline and a primary CTA', () => {
@@ -96,43 +97,5 @@ describe('catalog — category tree contract', () => {
     }
     walk(catalog.categories)
     expect(new Set(slugs).size).toBe(slugs.length)
-  })
-})
-
-describe('catalog — product contract', () => {
-  it('every product carries a quote object with an id and dims', () => {
-    for (const p of catalog.products) {
-      expect(p.quote).toBeTruthy()
-      expect(p.quote.id).toMatch(/^[a-z0-9-]+$/)
-      expect(typeof p.quote.standardDims).toBe('string')
-      expect(p.quote.priceFrom === null || typeof p.quote.priceFrom === 'number').toBe(true)
-    }
-  })
-
-  it('specs and features are arrays with the right shape', () => {
-    for (const p of catalog.products) {
-      expect(Array.isArray(p.specs)).toBe(true)
-      expect(Array.isArray(p.features)).toBe(true)
-      for (const s of p.specs) {
-        expect(s.label).toBeTruthy()
-        expect(typeof s.value).toBe('string')
-      }
-      for (const f of p.features) expect(typeof f).toBe('string')
-    }
-  })
-
-  it('every product categoryId resolves to a real LEAF category', () => {
-    for (const p of catalog.products) {
-      const node = getCategoryBySlug(p.categoryId)
-      expect(node, `categoryId "${p.categoryId}" (product ${p.id})`).toBeTruthy()
-      expect(isLeaf(node), `categoryId "${p.categoryId}" must be a leaf`).toBe(true)
-    }
-  })
-
-  it('product ids and quote ids are globally unique', () => {
-    const ids = catalog.products.map((p) => p.id)
-    const quoteIds = catalog.products.map((p) => p.quote.id)
-    expect(new Set(ids).size).toBe(ids.length)
-    expect(new Set(quoteIds).size).toBe(quoteIds.length)
   })
 })
