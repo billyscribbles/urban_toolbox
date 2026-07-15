@@ -76,6 +76,8 @@ export default function ProductRange({ data, status = 'ready', onRetry }) {
                     pad={26}
                     alt
                     quote={p.quote}
+                    price={p.price}
+                    discountPct={p.discountPct}
                     quoteCategory={header.title}
                     specs={p.specs}
                     features={p.features}

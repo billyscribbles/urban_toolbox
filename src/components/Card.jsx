@@ -2,10 +2,10 @@ import { Link } from 'react-router-dom'
 import { Check, ArrowRight, Images } from 'lucide-react'
 import Img from './Img.jsx'
 import Placeholder from './Placeholder.jsx'
+import PriceTag from './PriceTag.jsx'
 import QuoteButton from './QuoteButton.jsx'
 import { useQuote } from '../lib/quoteStore.js'
 import { openDetail } from '../lib/detailStore.js'
-import { formatPrice } from '../lib/pricing.js'
 import './Card.css'
 
 // Product / category card: striped photo slot over a heading and body. With a
@@ -28,6 +28,8 @@ export default function Card({
   titleSize = 24,
   pad = 28,
   quote,
+  price,
+  discountPct,
   quoteCategory,
   specs,
   features,
@@ -65,6 +67,8 @@ export default function Card({
       imagePosition,
       category: quoteCategory,
       priceFrom: quote?.priceFrom ?? null,
+      price: price ?? quote?.priceFrom ?? null,
+      discountPct: discountPct ?? null,
       specs,
       features,
       quoteItem,
@@ -108,16 +112,7 @@ export default function Card({
         {quote && (
           <>
             <div className="card__price">
-              {quote.priceFrom != null ? (
-                <>
-                  <span className="card__price-amount">
-                    <span className="card__price-from">from</span> {formatPrice(quote.priceFrom)}
-                  </span>
-                  <span className="card__price-gst">+ GST</span>
-                </>
-              ) : (
-                <span className="card__price-enquire">Enquire for pricing</span>
-              )}
+              <PriceTag price={price ?? quote.priceFrom} discountPct={discountPct} />
             </div>
             <div className="card__actions">
               <QuoteButton item={quoteItem} />

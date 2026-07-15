@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { X } from 'lucide-react'
 import { useDetail, closeDetail } from '../lib/detailStore.js'
-import { formatPrice } from '../lib/pricing.js'
+import PriceTag from './PriceTag.jsx'
 import QuoteButton from './QuoteButton.jsx'
 import './DetailDrawer.css'
 
@@ -128,17 +128,10 @@ export default function DetailDrawer() {
               )}
 
               <div className="detail-drawer__price">
-                {product.priceFrom != null ? (
-                  <>
-                    <span className="detail-drawer__price-amount">
-                      <span className="detail-drawer__price-from">from</span>{' '}
-                      {formatPrice(product.priceFrom)}
-                    </span>
-                    <span className="detail-drawer__price-gst">+ GST</span>
-                  </>
-                ) : (
-                  <span className="detail-drawer__price-enquire">Enquire for pricing</span>
-                )}
+                <PriceTag
+                  price={product.price ?? product.priceFrom}
+                  discountPct={product.discountPct}
+                />
               </div>
 
               {product.specs?.length > 0 && (
