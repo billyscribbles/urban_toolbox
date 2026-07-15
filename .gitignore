@@ -20,3 +20,6 @@ dist-ssr
 
 # Lighthouse CI reports (generated locally by `lhci autorun`)
 .lighthouseci
+
+# Local git worktrees created by Claude Code
+.claude/worktrees/
