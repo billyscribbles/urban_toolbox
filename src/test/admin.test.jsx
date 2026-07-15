@@ -17,6 +17,7 @@ vi.mock('../lib/adminApi.js', () => ({
   fetchAdminProducts: vi.fn(async () => []),
   saveProduct: vi.fn(async () => ({ error: null })),
   deleteProduct: vi.fn(),
+  setProductHidden: vi.fn(async () => {}),
   uploadPhotos: vi.fn(),
   deletePhoto: vi.fn(),
   swapPhotoPositions: vi.fn(),
@@ -86,6 +87,7 @@ const listRows = [
     price: 45,
     discount_pct: null,
     featured: false,
+    hidden: true,
     product_images: [],
   },
   {
@@ -95,6 +97,7 @@ const listRows = [
     price: 450,
     discount_pct: 15,
     featured: true,
+    hidden: false,
     product_images: [{ storage_path: 'products/b/x.jpg', alt: '', position: 0 }],
   },
 ]
@@ -140,10 +143,38 @@ describe('ProductList', () => {
     expect(screen.getByText('Whale Tail Lock')).toBeInTheDocument()
     expect(screen.queryByText('Job Site Box')).toBeNull()
   })
+
+  it('shows total / visible / hidden stats', () => {
+    render(
+      <MemoryRouter>
+        <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
+      </MemoryRouter>,
+    )
+    const total = screen.getByTestId('stat-total')
+    const visible = screen.getByTestId('stat-visible')
+    const hidden = screen.getByTestId('stat-hidden')
+    expect(total).toHaveTextContent('2')
+    expect(visible).toHaveTextContent('1')
+    expect(hidden).toHaveTextContent('1')
+  })
+
+  it('toggles visibility from the row eye button', async () => {
+    const user = userEvent.setup()
+    const onChanged = vi.fn()
+    render(
+      <MemoryRouter>
+        <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={onChanged} />
+      </MemoryRouter>,
+    )
+    // The hidden row (Whale Tail Lock) offers a "Show" action; the visible row offers "Hide".
+    await user.click(screen.getByRole('button', { name: /show whale tail lock/i }))
+    expect(setProductHidden).toHaveBeenCalledWith('a', false)
+    await waitFor(() => expect(onChanged).toHaveBeenCalled())
+  })
 })
 
 const { default: ProductEditor } = await import('../pages/admin/ProductEditor.jsx')
-const { saveProduct, watchSession } = await import('../lib/adminApi.js')
+const { saveProduct, watchSession, setProductHidden } = await import('../lib/adminApi.js')
 
 describe('ProductEditor', () => {
   it('blocks save with inline errors when title is empty', async () => {

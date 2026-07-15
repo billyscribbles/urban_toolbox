@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react'
-import { Pencil, Plus, Star } from 'lucide-react'
+import { Eye, EyeOff, Pencil, Plus, Star } from 'lucide-react'
 import { getTree, getLeaves } from '../../lib/catalog.js'
 import { publicPhotoUrl } from '../../lib/supabaseClient.js'
 import { formatPrice } from '../../lib/pricing.js'
-import { deleteProduct } from '../../lib/adminApi.js'
+import { deleteProduct, setProductHidden } from '../../lib/adminApi.js'
 
 // Full-width, filterable table of every product. Delete is two-step (Delete ->
 // Confirm) instead of window.confirm so nothing blocks the tab.
@@ -12,6 +12,7 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
   const [cat, setCat] = useState('')
   const [confirmId, setConfirmId] = useState(null)
   const [busyId, setBusyId] = useState(null)
+  const [togglingId, setTogglingId] = useState(null)
   const [error, setError] = useState('')
 
   const leaves = useMemo(() => getTree().flatMap((t) => getLeaves(t)), [])
@@ -36,13 +37,51 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
     }
   }
 
+  async function onToggleHidden(row) {
+    setTogglingId(row.id)
+    setError('')
+    try {
+      await setProductHidden(row.id, !row.hidden)
+      onChanged()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setTogglingId(null)
+    }
+  }
+
   function thumb(row) {
     const first = [...(row.product_images ?? [])].sort((a, b) => a.position - b.position)[0]
     return first ? publicPhotoUrl(first.storage_path) : null
   }
 
+  const total = rows.length
+  const hiddenCount = rows.filter((r) => r.hidden).length
+  const visibleCount = total - hiddenCount
+
   return (
     <div>
+      <div className="admin-stats">
+        <div className="admin-stat">
+          <span className="admin-stat__num" data-testid="stat-total">
+            {total}
+          </span>
+          <span className="admin-stat__label">Total</span>
+        </div>
+        <div className="admin-stat">
+          <span className="admin-stat__num" data-testid="stat-visible">
+            {visibleCount}
+          </span>
+          <span className="admin-stat__label">Visible</span>
+        </div>
+        <div className="admin-stat">
+          <span className="admin-stat__num" data-testid="stat-hidden">
+            {hiddenCount}
+          </span>
+          <span className="admin-stat__label">Hidden</span>
+        </div>
+      </div>
+
       <div className="admin-toolbar">
         <label className="sr-only" htmlFor="admin-search">
           Search products
@@ -122,7 +161,7 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
             </thead>
             <tbody>
               {visible.map((row) => (
-                <tr key={row.id}>
+                <tr key={row.id} className={row.hidden ? 'admin-table__row--hidden' : undefined}>
                   <td>
                     {thumb(row) ? (
                       <img className="admin-table__thumb" src={thumb(row)} alt="" />
@@ -148,10 +187,27 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
                           {Number(row.discount_pct)}% off
                         </span>
                       ) : null}
+                      {row.hidden && (
+                        <span className="admin-badge admin-badge--hidden">Hidden</span>
+                      )}
                     </div>
                   </td>
                   <td>
                     <div className="admin-photos__buttons">
+                      <button
+                        type="button"
+                        className="admin__ghost"
+                        disabled={togglingId === row.id}
+                        aria-pressed={!row.hidden}
+                        aria-label={row.hidden ? `Show ${row.title}` : `Hide ${row.title}`}
+                        onClick={() => onToggleHidden(row)}
+                      >
+                        {row.hidden ? (
+                          <EyeOff size={14} strokeWidth={2} aria-hidden="true" />
+                        ) : (
+                          <Eye size={14} strokeWidth={2} aria-hidden="true" />
+                        )}
+                      </button>
                       <button type="button" className="admin__ghost" onClick={() => onEdit(row)}>
                         <Pencil size={13} strokeWidth={2} aria-hidden="true" /> Edit
                       </button>
