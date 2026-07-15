@@ -24,7 +24,7 @@ export const fabrication = {
       imgAlt: 'Press brake tooling folding a sheet of steel to a sharp bend',
       title: 'Folding',
       body: 'Accurate bends with sharp, clean lines. From simple bends to complex shapes across various thicknesses.',
-      points: ['Aluminium, steel & more', 'Tight-tolerance bends', 'Scalable production'],
+      points: ['Clean, sharp bends', 'Any thickness', 'Simple to complex'],
     },
     {
       anchor: 'custom-fabrication',
@@ -33,7 +33,7 @@ export const fabrication = {
       imgAlt: 'Welder MIG welding a steel box-section frame in the workshop',
       title: 'Custom Fabrication',
       body: 'Cutting, welding, bending and assembly to create strong, reliable products for any application.',
-      points: ['Sheet metal work', 'Structural fabrication', 'Prototype & production runs'],
+      points: ['Built to your spec', 'Strong & reliable', 'Cut, weld & assemble'],
     },
   ],
   why: {
