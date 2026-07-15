@@ -103,9 +103,7 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
   }
 
   return (
-    <form className="admin-editor" onSubmit={onSubmit} noValidate>
-      <h2 className="admin__title">{isNew ? 'New product' : `Edit — ${row.title}`}</h2>
-
+    <form className="admin-editor editor-tray__form" onSubmit={onSubmit} noValidate>
       <label className="admin__label" htmlFor="pe-title">
         Title
       </label>

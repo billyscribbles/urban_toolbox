@@ -134,3 +134,29 @@ describe('ProductEditor', () => {
     expect(onDone).toHaveBeenCalled()
   })
 })
+
+const { default: EditorTray } = await import('../pages/admin/EditorTray.jsx')
+
+describe('EditorTray', () => {
+  it('renders a labelled dialog for a new product and closes via Escape', async () => {
+    const user = userEvent.setup()
+    const onCancel = vi.fn()
+    render(<EditorTray editing="new" rows={[]} onDone={() => {}} onCancel={onCancel} />)
+    expect(screen.getByRole('dialog', { name: /new product/i })).toBeInTheDocument()
+    // The form is hosted inside the tray.
+    expect(screen.getByRole('button', { name: /save product/i })).toBeInTheDocument()
+    await user.keyboard('{Escape}')
+    expect(onCancel).toHaveBeenCalled()
+  })
+
+  it('labels the dialog with the product title when editing', () => {
+    const row = { id: 'x', title: 'Job Site Box', category_id: 'locks', product_images: [] }
+    render(<EditorTray editing={row} rows={[row]} onDone={() => {}} onCancel={() => {}} />)
+    expect(screen.getByRole('dialog', { name: /edit — job site box/i })).toBeInTheDocument()
+  })
+
+  it('renders nothing when editing is null', () => {
+    render(<EditorTray editing={null} rows={[]} onDone={() => {}} onCancel={() => {}} />)
+    expect(screen.queryByRole('dialog')).toBeNull()
+  })
+})
