@@ -35,7 +35,7 @@ export const about = {
     {
       icon: 'Phone',
       title: 'Call Us',
-      phones: ['0405 970 059', '0451 065 592'],
+      phones: ['0405 970 059'],
     },
     {
       icon: 'Mail',

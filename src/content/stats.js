@@ -2,6 +2,6 @@
 // `value` is the bold title, `label` the small subtitle.
 export const stats = [
   { value: 'Australian Made', label: 'Proudly local, Dandenong South' },
-  { value: 'Built to Last', label: 'Premium marine-grade materials' },
+  { value: 'Built to Last', label: 'Premium, durable materials' },
   { value: 'Custom Built', label: 'Made for your exact needs' },
 ]

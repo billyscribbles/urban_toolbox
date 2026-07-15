@@ -67,7 +67,6 @@ export const site = {
   contact: {
     email: 'sales@urbantoolboxes.com.au',
     phone: '0405 970 059',
-    phoneAlt: '0451 065 592',
     location: '23/10 Assembly Drive, Dandenong South VIC 3175',
     hours: 'Mon–Fri 8:00am – 4:30pm',
     mapUrl:
