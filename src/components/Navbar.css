@@ -16,15 +16,15 @@
   border-bottom-color: transparent;
 }
 
-/* Hovering the bar fills it accent green; the light logo/links/tagline stay
-   white for contrast against the green. */
+/* Hovering the bar fills it solid black; the tagline swaps to accent green to
+   match the solid/scrolled bar. */
 .navbar--transparent:hover {
-  background-color: var(--color-accent);
-  border-bottom-color: transparent;
+  background-color: var(--color-dark);
+  border-bottom-color: var(--color-border-dark);
 }
 
 .navbar--transparent:hover .navbar__logo-sub {
-  color: #fff;
+  color: var(--color-accent);
 }
 
 .navbar--transparent .navbar__link,
@@ -132,7 +132,10 @@
   transition: color var(--transition-fast);
 }
 
-.navbar__link:hover,
+.navbar__link:hover {
+  color: var(--color-accent);
+}
+
 .navbar__link.active {
   color: #fff;
 }
