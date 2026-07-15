@@ -11,6 +11,7 @@ import { howItWorks } from '../content/howItWorks.js'
 import { testimonials } from '../content/testimonials.js'
 import { faq } from '../content/faq.js'
 import { legal } from '../content/legal.js'
+import { homeCarousel } from '../content/homeCarousel.js'
 import { catalog } from '../data/catalog.js'
 import { getCategoryBySlug, isLeaf } from '../lib/catalog.js'
 
@@ -76,6 +77,21 @@ describe('content — section copy contract', () => {
         expect(section.heading).toBeTruthy()
         expect(section.body).toBeTruthy()
       }
+    }
+  })
+
+  it('homeCarousel tiles route to real categories and their images exist', () => {
+    expect(homeCarousel.length).toBeGreaterThanOrEqual(5)
+    for (const tile of homeCarousel) {
+      expect(tile.label).toBeTruthy()
+      expect(tile.imgAlt).toBeTruthy()
+      // Route must be a real category page: /accessories or /toolboxes/<slug>.
+      const slug = tile.to.replace(/^\//, '').split('/').pop()
+      expect(getCategoryBySlug(slug), `no category for route ${tile.to}`).toBeTruthy()
+      expect(
+        existsSync(join(process.cwd(), 'public', tile.img)),
+        `missing image ${tile.img}`
+      ).toBe(true)
     }
   })
 })
