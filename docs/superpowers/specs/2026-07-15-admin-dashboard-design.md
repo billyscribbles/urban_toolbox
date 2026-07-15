@@ -14,44 +14,44 @@ discount is set.
 
 ## Decisions made during brainstorming
 
-| Decision | Choice |
-| --- | --- |
-| Backend | Supabase (Postgres + Storage + Auth), live runtime reads |
+| Decision      | Choice                                                                                                                       |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Backend       | Supabase (Postgres + Storage + Auth), live runtime reads                                                                     |
 | Price display | Public prices; discount renders as ~~original~~ discounted + "Save N%" badge; `null` price still shows "Enquire for pricing" |
-| Admin scope | Full product CRUD; category tree stays fixed in code (products movable between existing leaves) |
-| Photos | Multi-photo gallery per product; position 0 is the card thumbnail; client-side resize/compress before upload |
-| Users | Single admin account (Billy), lean utilitarian UI |
-| Publishing | Instant — storefront fetches from Supabase at runtime, cached per session |
+| Admin scope   | Full product CRUD; category tree stays fixed in code (products movable between existing leaves)                              |
+| Photos        | Multi-photo gallery per product; position 0 is the card thumbnail; client-side resize/compress before upload                 |
+| Users         | Single admin account (Billy), lean utilitarian UI                                                                            |
+| Publishing    | Instant — storefront fetches from Supabase at runtime, cached per session                                                    |
 
 ## 1. Database schema
 
 ### `products`
 
-| Column | Type | Notes |
-| --- | --- | --- |
-| `id` | text PK | Keeps existing ids (`ute-under-tray-boxes-1`); new products get slugified-title-based ids |
-| `category_id` | text NOT NULL | Must equal a leaf id in the code-side category tree (validated app-side) |
-| `title` | text NOT NULL | |
-| `slug` | text UNIQUE NOT NULL | Auto-generated from title for new products |
-| `summary` | text | |
-| `specs` | jsonb DEFAULT `[]` | `[{ label, value }]` — same shape as today |
-| `features` | jsonb DEFAULT `[]` | `string[]` |
-| `price` | numeric(10,2) NULL | `null` → "Enquire for pricing" |
-| `discount_pct` | numeric NULL, CHECK 0 < x < 100 | `null` → no discount |
-| `standard_dims` | text | Replaces `quote.standardDims` |
-| `featured` | boolean DEFAULT false | |
-| `sort_order` | integer DEFAULT 0 | Display order within a leaf |
-| `created_at` / `updated_at` | timestamptz | `updated_at` via trigger |
+| Column                      | Type                            | Notes                                                                                     |
+| --------------------------- | ------------------------------- | ----------------------------------------------------------------------------------------- |
+| `id`                        | text PK                         | Keeps existing ids (`ute-under-tray-boxes-1`); new products get slugified-title-based ids |
+| `category_id`               | text NOT NULL                   | Must equal a leaf id in the code-side category tree (validated app-side)                  |
+| `title`                     | text NOT NULL                   |                                                                                           |
+| `slug`                      | text UNIQUE NOT NULL            | Auto-generated from title for new products                                                |
+| `summary`                   | text                            |                                                                                           |
+| `specs`                     | jsonb DEFAULT `[]`              | `[{ label, value }]` — same shape as today                                                |
+| `features`                  | jsonb DEFAULT `[]`              | `string[]`                                                                                |
+| `price`                     | numeric(10,2) NULL              | `null` → "Enquire for pricing"                                                            |
+| `discount_pct`              | numeric NULL, CHECK 0 < x < 100 | `null` → no discount                                                                      |
+| `standard_dims`             | text                            | Replaces `quote.standardDims`                                                             |
+| `featured`                  | boolean DEFAULT false           |                                                                                           |
+| `sort_order`                | integer DEFAULT 0               | Display order within a leaf                                                               |
+| `created_at` / `updated_at` | timestamptz                     | `updated_at` via trigger                                                                  |
 
 ### `product_images`
 
-| Column | Type | Notes |
-| --- | --- | --- |
-| `id` | uuid PK default gen | |
-| `product_id` | text FK → products ON DELETE CASCADE | |
-| `storage_path` | text NOT NULL | Path in the `product-photos` bucket |
-| `alt` | text | Defaults to product title on upload |
-| `position` | integer NOT NULL | 0 = card thumbnail; rest = detail-drawer gallery |
+| Column         | Type                                 | Notes                                            |
+| -------------- | ------------------------------------ | ------------------------------------------------ |
+| `id`           | uuid PK default gen                  |                                                  |
+| `product_id`   | text FK → products ON DELETE CASCADE |                                                  |
+| `storage_path` | text NOT NULL                        | Path in the `product-photos` bucket              |
+| `alt`          | text                                 | Defaults to product title on upload              |
+| `position`     | integer NOT NULL                     | 0 = card thumbnail; rest = detail-drawer gallery |
 
 ### Storage
 

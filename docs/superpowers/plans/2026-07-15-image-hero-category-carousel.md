@@ -24,10 +24,12 @@
 ### Task 1: Generate and commit the two hero photos
 
 **Files:**
+
 - Create: `public/brand/hero-caravan-left.jpg` (+ generated `-800.webp` / `-1600.webp`)
 - Create: `public/brand/hero-ute-right.jpg` (+ generated `-800.webp` / `-1600.webp`)
 
 **Interfaces:**
+
 - Produces: the two image paths `/brand/hero-caravan-left.jpg` and `/brand/hero-ute-right.jpg` that Task 2's content file references. Filenames MUST start with `hero-` (the derivative script only processes `^hero-` files in `public/brand`).
 
 **Note:** This task is asset generation, not code — no TDD cycle. It must run in the **main session** (the image-gen MCP tools live there). If you are a subagent and cannot reach `mcp__image-gen__generate_image` via ToolSearch, STOP and report back so the orchestrator does this task inline.
@@ -53,6 +55,7 @@ Save/copy to `public/brand/hero-ute-right.jpg`.
 Read both files (they render as images). Reject and regenerate any with: warped geometry on the caravan/ute, text-like artefacts, mismatched lighting direction, or a subject centred where the seam will cut it (left photo's subject must sit left-of-centre, right photo's right-of-centre).
 
 Fallback if generation quality disappoints after 2–3 attempts per side: copy existing assets instead —
+
 ```bash
 cp public/brand/hero-caravan.jpg public/brand/hero-caravan-left.jpg
 cp public/brand/hero-caravan-toolbox.jpg public/brand/hero-ute-right.jpg
@@ -63,10 +66,13 @@ cp public/brand/hero-caravan-toolbox.jpg public/brand/hero-ute-right.jpg
 ```bash
 cd /Users/billyhuynh/Github/urban_toolbox && yarn images
 ```
+
 Expected: prints generated files including `hero-caravan-left-800.webp`, `hero-caravan-left-1600.webp`, `hero-ute-right-800.webp`, `hero-ute-right-1600.webp`. Verify:
+
 ```bash
 ls public/brand/ | grep -E "hero-(caravan-left|ute-right)"
 ```
+
 Expected: 6 files (2 originals + 4 webp).
 
 - [ ] **Step 5: Commit**
@@ -83,37 +89,44 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 ### Task 2: Reshape `hero.js` content to the two-image contract
 
 **Files:**
+
 - Modify: `src/content/hero.js` (full rewrite in place)
 - Test: `src/test/content.test.js` (replace the existing `hero has a headline and a primary CTA` test)
 
 **Interfaces:**
+
 - Consumes: image paths from Task 1.
 - Produces: `hero = { headline, headlineLine2, tagline, media: { left: { img, alt }, right: { img, alt } } }` — the exact shape Task 3's component renders. `subheadline`, `eyebrow`, `primaryCta`, `secondaryCta`, and `media.slides` are GONE.
 
 - [ ] **Step 1: Replace the hero contract test**
 
 In `src/test/content.test.js`, replace the block:
+
 ```js
-  it('hero has a headline and a primary CTA', () => {
-    expect(hero.headline).toBeTruthy()
-    expect(hero.primaryCta.label).toBeTruthy()
-    expect(hero.primaryCta.to).toBeTruthy()
-  })
+it('hero has a headline and a primary CTA', () => {
+  expect(hero.headline).toBeTruthy()
+  expect(hero.primaryCta.label).toBeTruthy()
+  expect(hero.primaryCta.to).toBeTruthy()
+})
 ```
+
 with:
+
 ```js
-  it('hero has a headline, tagline, and two hero photos on disk', () => {
-    expect(hero.headline).toBeTruthy()
-    expect(hero.headlineLine2).toBeTruthy()
-    expect(hero.tagline).toBeTruthy()
-    for (const side of ['left', 'right']) {
-      const { img } = hero.media[side]
-      expect(img).toMatch(/^\/brand\/hero-/)
-      expect(existsSync(join(process.cwd(), 'public', img))).toBe(true)
-    }
-  })
+it('hero has a headline, tagline, and two hero photos on disk', () => {
+  expect(hero.headline).toBeTruthy()
+  expect(hero.headlineLine2).toBeTruthy()
+  expect(hero.tagline).toBeTruthy()
+  for (const side of ['left', 'right']) {
+    const { img } = hero.media[side]
+    expect(img).toMatch(/^\/brand\/hero-/)
+    expect(existsSync(join(process.cwd(), 'public', img))).toBe(true)
+  }
+})
 ```
+
 Add to the imports at the top of the file:
+
 ```js
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
@@ -127,6 +140,7 @@ Expected: FAIL — `hero.media.left` is undefined (current file has `media.slide
 - [ ] **Step 3: Rewrite `src/content/hero.js`**
 
 Full new contents:
+
 ```js
 // Home hero. Image-led: two photos fill the hero and meet on a diagonal seam
 // (caravan left, ute right — see HeroSplit.jsx/.css). Text is deliberately
@@ -172,18 +186,21 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 ### Task 3: Rework `HeroSplit` — diagonal two-image layout, minimal text
 
 **Files:**
+
 - Modify: `src/components/HeroSplit.jsx` (full rewrite)
 - Modify: `src/components/HeroSplit.css` (full rewrite)
 - Modify: `index.html:15-23` (LCP preload)
 - Test: `src/test/a11y.test.jsx` (existing Home axe test — no edits expected, must pass)
 
 **Interfaces:**
+
 - Consumes: `hero` shape from Task 2.
 - Produces: `<HeroSplit />` (default export, no props) rendered by `src/pages/Home.jsx` — unchanged call-site.
 
 - [ ] **Step 1: Rewrite `src/components/HeroSplit.jsx`**
 
 Full new contents:
+
 ```jsx
 import { hero } from '../content/hero.js'
 import Img from './Img.jsx'
@@ -246,6 +263,7 @@ export default function HeroSplit() {
 - [ ] **Step 2: Rewrite `src/components/HeroSplit.css`**
 
 Full new contents:
+
 ```css
 /* Hero + category carousel together fill exactly one viewport (below the 79px
    sticky navbar): the hero grows to fill, so the carousel strip lands flush on
@@ -387,17 +405,19 @@ Full new contents:
 - [ ] **Step 3: Update the LCP preload in `index.html`**
 
 Replace the existing hero preload `<link>` (the `href`/`imagesrcset`/`imagesizes` attributes) with:
+
 ```html
-    <link
-      rel="preload"
-      as="image"
-      type="image/webp"
-      href="/brand/hero-caravan-left-1600.webp"
-      imagesrcset="/brand/hero-caravan-left-800.webp 800w, /brand/hero-caravan-left-1600.webp 1600w"
-      imagesizes="100vw"
-      fetchpriority="high"
-    />
+<link
+  rel="preload"
+  as="image"
+  type="image/webp"
+  href="/brand/hero-caravan-left-1600.webp"
+  imagesrcset="/brand/hero-caravan-left-800.webp 800w, /brand/hero-caravan-left-1600.webp 1600w"
+  imagesizes="100vw"
+  fetchpriority="high"
+/>
 ```
+
 Keep the surrounding comment; the widths/sizes now mirror `LEFT_SIZES` in `HeroSplit.jsx`.
 
 - [ ] **Step 4: Run the full test suite**
@@ -423,32 +443,35 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 ### Task 4: `homeCarousel.js` content file + contract test
 
 **Files:**
+
 - Create: `src/content/homeCarousel.js`
 - Test: `src/test/content.test.js` (append one test to the existing describe block)
 
 **Interfaces:**
+
 - Consumes: `getCategoryBySlug` from `src/lib/catalog.js` (test only).
 - Produces: `homeCarousel` — array of `{ label, img, imgAlt, to }` that Task 5's `CategoryCarousel` maps over.
 
 - [ ] **Step 1: Write the failing contract test**
 
 Append inside the `describe('content — section copy contract', ...)` block in `src/test/content.test.js`:
+
 ```js
-  it('homeCarousel tiles route to real categories and their images exist', () => {
-    expect(homeCarousel.length).toBeGreaterThanOrEqual(5)
-    for (const tile of homeCarousel) {
-      expect(tile.label).toBeTruthy()
-      expect(tile.imgAlt).toBeTruthy()
-      // Route must be a real category page: /accessories or /toolboxes/<slug>.
-      const slug = tile.to.replace(/^\//, '').split('/').pop()
-      expect(getCategoryBySlug(slug), `no category for route ${tile.to}`).toBeTruthy()
-      expect(
-        existsSync(join(process.cwd(), 'public', tile.img)),
-        `missing image ${tile.img}`
-      ).toBe(true)
-    }
-  })
+it('homeCarousel tiles route to real categories and their images exist', () => {
+  expect(homeCarousel.length).toBeGreaterThanOrEqual(5)
+  for (const tile of homeCarousel) {
+    expect(tile.label).toBeTruthy()
+    expect(tile.imgAlt).toBeTruthy()
+    // Route must be a real category page: /accessories or /toolboxes/<slug>.
+    const slug = tile.to.replace(/^\//, '').split('/').pop()
+    expect(getCategoryBySlug(slug), `no category for route ${tile.to}`).toBeTruthy()
+    expect(existsSync(join(process.cwd(), 'public', tile.img)), `missing image ${tile.img}`).toBe(
+      true,
+    )
+  }
+})
 ```
+
 Add to the imports: `import { homeCarousel } from '../content/homeCarousel.js'` (the `existsSync`/`join`/`getCategoryBySlug` imports already exist after Task 2).
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -459,6 +482,7 @@ Expected: FAIL — cannot resolve `../content/homeCarousel.js`.
 - [ ] **Step 3: Create `src/content/homeCarousel.js`**
 
 Full contents:
+
 ```js
 // Home category carousel — the tile strip under the hero. One tile per
 // mid-level product family, each linking to its category page. Images are
@@ -531,25 +555,28 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 ### Task 5: `CategoryCarousel` component + Home integration
 
 **Files:**
+
 - Create: `src/components/CategoryCarousel.jsx`
 - Create: `src/components/CategoryCarousel.css`
 - Modify: `src/pages/Home.jsx`
 - Test: `src/test/components.test.jsx` (append a describe block)
 
 **Interfaces:**
+
 - Consumes: `homeCarousel` from Task 4; `Img` component; router `<Link>`.
 - Produces: `<CategoryCarousel />` (default export, no props). Home renders it inside `.hero-fold` after `<HeroSplit />`; `<TrustBar />` moves after `<WhatWeBuild />`.
 
 - [ ] **Step 1: Write the failing component test**
 
 Append to `src/test/components.test.jsx` (match the file's existing render/imports pattern — it renders components inside `MemoryRouter`/`HelmetProvider` as its other suites do):
+
 ```jsx
 describe('CategoryCarousel', () => {
   it('renders every tile as a link once for keyboard/AT users', () => {
     render(
       <MemoryRouter>
         <CategoryCarousel />
-      </MemoryRouter>
+      </MemoryRouter>,
     )
     for (const tile of homeCarousel) {
       // The duplicated marquee track is aria-hidden, so each label is
@@ -561,6 +588,7 @@ describe('CategoryCarousel', () => {
   })
 })
 ```
+
 Add imports: `CategoryCarousel` from `../components/CategoryCarousel.jsx`, `homeCarousel` from `../content/homeCarousel.js` (plus `MemoryRouter`/`render`/`screen` if not already imported in that file).
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -571,6 +599,7 @@ Expected: FAIL — cannot resolve `../components/CategoryCarousel.jsx`.
 - [ ] **Step 3: Create `src/components/CategoryCarousel.jsx`**
 
 Full contents:
+
 ```jsx
 import { Link } from 'react-router-dom'
 import { homeCarousel } from '../content/homeCarousel.js'
@@ -625,6 +654,7 @@ export default function CategoryCarousel() {
 - [ ] **Step 4: Create `src/components/CategoryCarousel.css`**
 
 Full contents:
+
 ```css
 /* Light category strip under the hero — the fold's bottom band. */
 .cat-carousel {
@@ -734,6 +764,7 @@ Full contents:
 - [ ] **Step 5: Update `src/pages/Home.jsx`**
 
 Full new contents:
+
 ```jsx
 import SEO from '../lib/seo.jsx'
 import HeroSplit from '../components/HeroSplit.jsx'
@@ -786,9 +817,11 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 ### Task 6: Full verification gate
 
 **Files:**
+
 - No new files; fixes only if the gate finds problems.
 
 **Interfaces:**
+
 - Consumes: everything above.
 
 - [ ] **Step 1: Lint + format**
