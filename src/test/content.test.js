@@ -2,6 +2,8 @@
 // renders. Rewriting copy for a new client is fine; breaking the shape
 // (a missing key, an object where an array is expected) fails here.
 import { describe, it, expect } from 'vitest'
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 import { hero } from '../content/hero.js'
 import { stats } from '../content/stats.js'
 import { services } from '../content/services.js'
@@ -9,15 +11,26 @@ import { howItWorks } from '../content/howItWorks.js'
 import { testimonials } from '../content/testimonials.js'
 import { faq } from '../content/faq.js'
 import { legal } from '../content/legal.js'
+import { homeCarousel } from '../content/homeCarousel.js'
 import { categories } from '../data/categories.js'
+import { getCategoryBySlug } from '../lib/catalog.js'
 
+// Products now live in Supabase (their contract is covered by productStore.test.js
+// against fixtures/productRows.js); only the static category tree remains here.
 const catalog = { categories }
 
 describe('content — section copy contract', () => {
-  it('hero has a headline and a primary CTA', () => {
-    expect(hero.headline).toBeTruthy()
-    expect(hero.primaryCta.label).toBeTruthy()
-    expect(hero.primaryCta.to).toBeTruthy()
+  it('hero has two panels, each with copy, a CTA and a photo on disk', () => {
+    expect(hero.panels).toHaveLength(2)
+    for (const panel of hero.panels) {
+      expect(panel.eyebrow).toBeTruthy()
+      expect(panel.heading).toBeTruthy()
+      expect(panel.description).toBeTruthy()
+      expect(panel.cta.label).toBeTruthy()
+      expect(panel.cta.to).toMatch(/^\//)
+      expect(panel.img).toMatch(/^\/brand\/hero-/)
+      expect(existsSync(join(process.cwd(), 'public', panel.img))).toBe(true)
+    }
   })
 
   it('stats is a non-empty array of { value, label }', () => {
@@ -70,6 +83,20 @@ describe('content — section copy contract', () => {
         expect(section.heading).toBeTruthy()
         expect(section.body).toBeTruthy()
       }
+    }
+  })
+
+  it('homeCarousel tiles route to real categories and their images exist', () => {
+    expect(homeCarousel.length).toBeGreaterThanOrEqual(5)
+    for (const tile of homeCarousel) {
+      expect(tile.label).toBeTruthy()
+      expect(tile.imgAlt).toBeTruthy()
+      // Route must be a real category page: /accessories or /toolboxes/<slug>.
+      const slug = tile.to.replace(/^\//, '').split('/').pop()
+      expect(getCategoryBySlug(slug), `no category for route ${tile.to}`).toBeTruthy()
+      expect(existsSync(join(process.cwd(), 'public', tile.img)), `missing image ${tile.img}`).toBe(
+        true,
+      )
     }
   })
 })

@@ -1,29 +1,31 @@
-// Home hero. Bright, light layout: a white content panel on the left over a
-// single full-bleed feature photo that fills the right. The H1 renders as two
-// uppercase ink lines, followed by a green tagline line, then the body copy.
-//
-// `media.slides` is the hero photo set. A single slide shows static; add a
-// second and the component crossfades between them on a timer (and holds still
-// for visitors with reduced-motion enabled).
+// Home hero — a full-bleed 50/50 photo split, styled after the editorial
+// reference: warm-sand eyebrow, a single-word title-case heading, a short
+// description and one small white pill CTA per side, over a dark-scrimmed photo.
+// Both panels funnel into the single toolbox range (the catalog has no separate
+// caravan category). Images live under /brand/hero-* with 800/1600 webp
+// derivatives.
 export const hero = {
-  eyebrow: 'Premium Caravan Toolboxes',
-  headline: 'Custom Caravan',
-  headlineLine2: 'Toolboxes',
-  // Green accent line under the headline.
-  tagline: 'Built to work. Ready to roam.',
-  subheadline:
-    'Precision-engineered aluminium toolboxes, built tough for the harshest conditions and every adventure.',
-  // Both CTAs are internal routes — primary goes to the quote form.
-  primaryCta: { label: 'Get a Quote', to: '/quote' },
-  secondaryCta: { label: 'View Range', to: '/caravan-toolboxes' },
-  media: {
-    slides: [
-      {
-        img: '/brand/hero-caravan-toolbox.jpg',
-        // Object-position is controlled in CSS per breakpoint (anchored right on
-        // desktop, centred on mobile), so no inline `pos` override here.
-        alt: 'Custom Urban Toolboxes checkerplate toolbox mounted on a caravan drawbar',
-      },
-    ],
-  },
+  // Decorative label inside the circular centre divider (aria-hidden).
+  centerLabel: '//',
+  panels: [
+    {
+      key: 'caravan',
+      eyebrow: 'Built for adventure',
+      heading: 'Caravans',
+      description:
+        'Premium caravan storage and toolboxes, built for comfort, freedom and the long haul.',
+      cta: { label: 'Explore Caravans', to: '/toolboxes' },
+      img: '/brand/hero-caravan.jpg',
+      alt: 'Off-road caravan beside a lake at sunset, black aluminium checkerplate toolboxes on the drawbar',
+    },
+    {
+      key: 'ute',
+      eyebrow: 'Tough. Reliable. Ready.',
+      heading: 'Utes',
+      description: 'Tough, custom-built ute storage engineered to work as hard as you do.',
+      cta: { label: 'Explore Utes', to: '/toolboxes' },
+      img: '/brand/hero-ute.jpg',
+      alt: 'Grey dual-cab 4x4 ute in the desert fitted with black aluminium tray toolboxes and a roof rack',
+    },
+  ],
 }

@@ -5,7 +5,9 @@ import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Navbar from '../components/Navbar.jsx'
+import CategoryCarousel from '../components/CategoryCarousel.jsx'
 import { site } from '../config/site.config.js'
+import { homeCarousel } from '../content/homeCarousel.js'
 
 const renderNavbar = () =>
   render(
@@ -31,5 +33,22 @@ describe('Navbar — renders brand + nav from site.config', () => {
   it('renders the CTA label from config', () => {
     renderNavbar()
     expect(screen.getAllByText(site.cta.label).length).toBeGreaterThan(0)
+  })
+})
+
+describe('CategoryCarousel', () => {
+  it('renders every tile as a link once for keyboard/AT users', () => {
+    render(
+      <MemoryRouter>
+        <CategoryCarousel />
+      </MemoryRouter>,
+    )
+    for (const tile of homeCarousel) {
+      // The duplicated marquee track is aria-hidden, so each label is
+      // accessible exactly once.
+      const links = screen.getAllByRole('link', { name: new RegExp(tile.label, 'i') })
+      expect(links).toHaveLength(1)
+      expect(links[0]).toHaveAttribute('href', tile.to)
+    }
   })
 })

@@ -10,62 +10,57 @@
  *
  * Keep the family names in step with theme.config.js fonts. */
 
-/* Display — headings. Anton ships a single weight.
- *
- * `optional`, not `swap`: Anton is heavily condensed, so a late swap re-wraps
- * every headline and resizes the block around it — that one reflow was the
- * whole of the home page's 0.16 layout shift. `optional` tells the browser to
- * either use Anton from the first paint or not at all this load, so the
- * headline can never move. It's preloaded in index.html (12 KB, same origin),
- * so in practice it wins that race and renders as Anton; only a genuinely slow
- * first visit falls back, and the cached font is there from then on. */
+/* Body / UI / nav — Manrope, real weights 400–800. */
 @font-face {
-  font-family: 'Anton';
+  font-family: 'Manrope';
   font-style: normal;
   font-weight: 400;
   font-display: optional;
-  src: url('/fonts/anton-400.woff2') format('woff2');
-}
-
-/* Body / UI / nav. */
-@font-face {
-  font-family: 'Barlow';
-  font-style: normal;
-  font-weight: 400;
-  font-display: optional;
-  src: url('/fonts/barlow-400.woff2') format('woff2');
+  src: url('/fonts/manrope-400.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: 'Barlow';
+  font-family: 'Manrope';
   font-style: normal;
   font-weight: 500;
   font-display: optional;
-  src: url('/fonts/barlow-500.woff2') format('woff2');
+  src: url('/fonts/manrope-500.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: 'Barlow';
+  font-family: 'Manrope';
   font-style: normal;
   font-weight: 600;
   font-display: optional;
-  src: url('/fonts/barlow-600.woff2') format('woff2');
+  src: url('/fonts/manrope-600.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: 'Barlow';
+  font-family: 'Manrope';
   font-style: normal;
   font-weight: 700;
   font-display: optional;
-  src: url('/fonts/barlow-700.woff2') format('woff2');
+  src: url('/fonts/manrope-700.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: 'Barlow';
+  font-family: 'Manrope';
   font-style: normal;
   font-weight: 800;
   font-display: optional;
-  src: url('/fonts/barlow-800.woff2') format('woff2');
+  src: url('/fonts/manrope-800.woff2') format('woff2');
+}
+
+/* Display — headings. A dedicated family pinned to the ExtraBold (800) file
+   across the whole weight range, so every heading that reads var(--font-display)
+   renders Manrope ExtraBold regardless of the font-weight the old Anton rules
+   left in place (Anton was a single weight, so most set font-weight: 400). */
+@font-face {
+  font-family: 'Manrope Display';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: optional;
+  src: url('/fonts/manrope-800.woff2') format('woff2');
 }
 
 /* Mono — placeholder labels, step numbers. */

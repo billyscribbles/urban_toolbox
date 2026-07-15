@@ -30,7 +30,9 @@ const TARGETS = [
   { dir: 'public/images', widths: [400, 800] },
   // readdirSync is non-recursive, so the catalog subfolder needs its own entry.
   { dir: 'public/images/catalog', widths: [400, 800] },
-  { dir: 'public/brand', widths: [800, 1600], only: /^hero-/ },
+  // The hero is full-bleed and the LCP image — it carries fine checkerplate
+  // detail that q68 visibly softens, so encode it at a higher quality.
+  { dir: 'public/brand', widths: [800, 1600], only: /^hero-/, quality: 90 },
 ]
 
 function sourceWidth(file) {
@@ -41,7 +43,8 @@ function sourceWidth(file) {
 let made = 0
 let skipped = 0
 
-for (const { dir, widths, only } of TARGETS) {
+for (const { dir, widths, only, quality } of TARGETS) {
+  const q = quality ?? QUALITY
   const abs = join(ROOT, dir)
   if (!existsSync(abs)) continue
 
@@ -65,13 +68,9 @@ for (const { dir, widths, only } of TARGETS) {
         continue
       }
 
-      execFileSync(
-        'cwebp',
-        ['-q', String(QUALITY), '-resize', String(target), '0', src, '-o', out],
-        {
-          stdio: 'ignore',
-        },
-      )
+      execFileSync('cwebp', ['-q', String(q), '-resize', String(target), '0', src, '-o', out], {
+        stdio: 'ignore',
+      })
       made++
     }
   }
