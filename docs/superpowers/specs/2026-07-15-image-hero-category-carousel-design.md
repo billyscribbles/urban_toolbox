@@ -125,3 +125,15 @@ product photo above an uppercase label. Tiles are `<Link>`s.
   scrollable row; 375/768/1280px layouts clean; every carousel tile navigates.
 - Full gate: `yarn lint && yarn format:check && yarn test && yarn build`,
   Lighthouse thresholds (perf ≥ 90, SEO ≥ 95, a11y ≥ 90).
+
+## 6. Revision — 2026-07-15 (Billy's follow-up mock)
+
+Billy supplied a second mock mid-build; it supersedes sections 1–2 above:
+
+- The left side is a **near-black panel** (not a second photo) holding the
+  headline, green tagline, and a single outlined **"Explore Toolboxes →"** CTA
+  (`hero.cta`), meeting one moody feature photo (`hero.media.photo`,
+  `/brand/hero-caravan-toolbox.jpg`) on the same diagonal seam.
+- `hero.media` shape is now `{ photo: { img, alt } }`; the generated-pair
+  approach and the `hero-caravan-left`/`hero-ute-right` assets were dropped.
+- Carousel tiles gain thin vertical dividers, per the mock.

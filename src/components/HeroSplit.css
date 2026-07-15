@@ -8,13 +8,18 @@
   min-height: calc(100svh - 79px);
 }
 
+/* Near-black panel under everything; the photo is clipped to a diagonal wedge
+   on the right, so the panel IS the left side of the composition. A faint
+   sheen runs parallel to the seam so the panel reads as lit, not flat. */
 .hero-split {
   position: relative;
   /* Grow to fill the fold above the carousel strip. */
   flex: 1 1 auto;
   min-height: 520px;
+  display: flex;
+  align-items: center;
   overflow: hidden;
-  background: var(--color-ink-strong);
+  background: linear-gradient(118deg, var(--color-dark) 55%, rgba(38, 38, 36, 1) 100%);
 }
 
 .hero-split__media {
@@ -22,42 +27,17 @@
   inset: 0;
 }
 
+/* Feature photo, clipped so its left edge is the diagonal seam — top edge
+   ~46% across, bottom edge ~36%, the same lean as the reference. */
 .hero-split__img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
-}
-
-/* Caravan photo underlays the whole hero, anchored left so the drawbar
-   toolbox stays in frame as the seam eats the right side. */
-.hero-split__img--left {
-  object-position: left center;
-}
-
-/* Ute photo sits on top, clipped to a right-hand wedge. The seam leans the
-   same way as the reference: further right at the top, further left at the
-   bottom. */
-.hero-split__img--right {
-  object-position: right center;
-  clip-path: polygon(55% 0, 100% 0, 100% 100%, 40% 100%);
-}
-
-/* Corner scrim: darkens the top-left area behind the text block so the
-   headline reads over the photo, clearing quickly to keep the imagery
-   dominant. */
-.hero-split__scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    118deg,
-    rgba(13, 13, 13, 0.62) 0%,
-    rgba(13, 13, 13, 0.42) 22%,
-    rgba(13, 13, 13, 0.14) 38%,
-    rgba(13, 13, 13, 0) 52%
-  );
+  clip-path: polygon(46% 0, 100% 0, 100% 100%, 36% 100%);
 }
 
 .hero-split__inner {
@@ -80,8 +60,8 @@
   color: var(--color-off-white);
   margin: 0 0 14px;
   font-weight: 400;
-  /* Soft dark halo keeps the headline crisp where it crosses the white caravan
-     body once the corner scrim has faded out. */
+  /* Soft dark halo keeps the headline crisp if it crosses the seam onto the
+     photo at narrow desktop widths. */
   text-shadow:
     0 1px 2px rgba(13, 13, 13, 0.85),
     0 0 18px rgba(13, 13, 13, 0.55);
@@ -96,13 +76,25 @@
   text-transform: uppercase;
   color: var(--color-accent);
   font-weight: 400;
-  margin: 0;
-  /* Stronger dark halo than the H1 — green-on-white goes muddy over the
-     caravan's tyre-track graphics without it. */
+  margin: 0 0 30px;
   text-shadow:
     0 1px 2px rgba(13, 13, 13, 0.9),
     0 0 14px rgba(13, 13, 13, 0.7),
     0 0 4px rgba(13, 13, 13, 0.6);
+}
+
+/* Outlined CTA on the dark panel: transparent with a green border, filling
+   green on hover/focus. */
+.hero-split__cta {
+  background: transparent;
+  color: var(--color-off-white);
+  border-color: var(--color-accent);
+}
+
+.hero-split__cta:hover,
+.hero-split__cta:focus-visible {
+  background: var(--color-accent);
+  color: #fff;
 }
 
 /* Navbar shrinks to 60px at ≤700px — match the fold offset so the carousel
@@ -114,33 +106,22 @@
   }
 }
 
-/* Phones: the diagonal doesn't read at narrow widths — stack the two photos
-   vertically (caravan top, ute bottom) with the text over the top image. */
+/* Phones: the diagonal doesn't read at narrow widths — the dark text panel
+   sits on top and the photo fills the bottom half, unclipped. */
 @media (max-width: 760px) {
   .hero-split {
-    min-height: 560px;
+    min-height: 580px;
+    align-items: flex-start;
   }
-  .hero-split__img--left {
-    inset: 0 0 50% 0;
-    height: 50%;
-    object-position: center;
+  .hero-split__media {
+    inset: 46% 0 0 0;
   }
-  .hero-split__img--right {
-    inset: 50% 0 0 0;
-    height: 50%;
+  .hero-split__img {
     clip-path: none;
     object-position: center;
   }
-  .hero-split__scrim {
-    background: linear-gradient(
-      180deg,
-      rgba(13, 13, 13, 0.6) 0%,
-      rgba(13, 13, 13, 0.32) 30%,
-      rgba(13, 13, 13, 0) 48%
-    );
-  }
   .hero-split__inner {
-    padding-top: 34px;
-    padding-bottom: 34px;
+    padding-top: 40px;
+    padding-bottom: 40px;
   }
 }

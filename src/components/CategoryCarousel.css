@@ -40,10 +40,13 @@
   padding: 0;
 }
 
+/* Thin divider between tiles (border on every tile keeps the duplicated
+   track's spacing uniform, so the marquee loop stays seamless). */
 .cat-carousel__tile {
   flex: 0 0 auto;
-  width: 200px;
-  margin: 0 22px;
+  width: 244px;
+  padding: 0 22px;
+  border-right: 1px solid rgba(13, 13, 13, 0.12);
 }
 
 .cat-carousel__link {
@@ -91,8 +94,8 @@
 
 @media (max-width: 700px) {
   .cat-carousel__tile {
-    width: 150px;
-    margin: 0 14px;
+    width: 178px;
+    padding: 0 14px;
   }
   .cat-carousel__img {
     height: 92px;

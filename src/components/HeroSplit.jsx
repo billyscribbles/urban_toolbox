@@ -1,45 +1,34 @@
+import { Link } from 'react-router-dom'
 import { hero } from '../content/hero.js'
 import Img from './Img.jsx'
 import './HeroSplit.css'
 
-// Both photos paint above the fold. The derivative pipeline commits 800/1600
-// webp files for every `public/brand/hero-*` original.
+// The photo paints above the fold and is the LCP element; the preload in
+// index.html must stay in step with these widths and sizes. The derivative
+// pipeline commits 800/1600 webp files for every `public/brand/hero-*`
+// original.
 const HERO_WIDTHS = [800, 1600]
-// The left photo is the LCP element and underlays the full hero on desktop;
-// the preload in index.html must stay in step with these widths and sizes.
-const LEFT_SIZES = '100vw'
-// The right photo is clipped to roughly the right half by the diagonal seam.
-const RIGHT_SIZES = '(max-width: 760px) 100vw, 65vw'
+const PHOTO_SIZES = '(max-width: 760px) 100vw, 70vw'
 
-// Home hero: image-led. The caravan photo fills the hero; the ute photo sits
-// on top clipped to a diagonal wedge on the right, so the two meet on a
-// slanted seam. Text is a small block top-left — H1 + green tagline, no CTAs.
-// On phones the diagonal doesn't read, so the photos stack vertically instead.
+// Home hero: dark and image-led. A near-black panel holds the text on the
+// left; the feature photo fills the right and is clipped so the two meet on a
+// slanted seam, like the reference design. On phones the diagonal doesn't
+// read, so the panel and photo stack vertically instead.
 export default function HeroSplit() {
-  const { left, right } = hero.media
+  const { photo } = hero.media
   return (
     <section className="hero-split">
       <div className="hero-split__media" aria-hidden="true">
         <Img
-          className="hero-split__img hero-split__img--left"
-          src={left.img}
+          className="hero-split__img"
+          src={photo.img}
           alt=""
           widths={HERO_WIDTHS}
-          sizes={LEFT_SIZES}
+          sizes={PHOTO_SIZES}
           loading="eager"
           fetchPriority="high"
         />
-        <Img
-          className="hero-split__img hero-split__img--right"
-          src={right.img}
-          alt=""
-          widths={HERO_WIDTHS}
-          sizes={RIGHT_SIZES}
-          loading="eager"
-        />
       </div>
-
-      <div className="hero-split__scrim" aria-hidden="true" />
 
       <div className="container hero-split__inner">
         <div className="hero-split__content">
@@ -49,6 +38,11 @@ export default function HeroSplit() {
             {hero.headlineLine2}
           </h1>
           {hero.tagline && <p className="hero-split__tagline">{hero.tagline}</p>}
+          {hero.cta && (
+            <Link to={hero.cta.to} className="btn hero-split__cta">
+              {hero.cta.label} →
+            </Link>
+          )}
         </div>
       </div>
     </section>
