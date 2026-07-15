@@ -74,54 +74,107 @@
 }
 
 /* The caravan is a moody sunset shot — lift it so it reads as bright as the
-   daytime ute panel and the drawbar toolbox stays clearly visible. */
+   daytime ute panel, and lean gently warm to keep the golden-hour mood. */
 .hero-panel--caravan .hero-panel__img {
-  filter: brightness(1.16) contrast(1.02);
+  filter: brightness(1.16) contrast(1.02) saturate(1.06);
 }
 
-/* Localised scrim: an ellipse anchored to the bottom-left, behind the text
-   lockup only. It fades out well before the centre/right of the panel so the
-   product (toolbox) stays bright and clearly visible. */
+/* The ute side stays a touch cooler and cleaner so the two halves read as warm
+   vs. cool without either looking colour-graded. */
+.hero-panel--ute .hero-panel__img {
+  filter: brightness(1.02) contrast(1.02) saturate(0.94);
+}
+
+/* Readability scrim, layered: a bottom-left ellipse anchored behind the text
+   lockup, plus a gentle full-width bottom fade so the paragraph and button stay
+   legible. Both taper out before the centre/right so the product stays bright. */
 .hero-panel::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    95% 130% at 12% 88%,
-    rgba(13, 13, 13, 0.9) 0%,
-    rgba(13, 13, 13, 0.6) 30%,
-    rgba(13, 13, 13, 0.2) 50%,
-    rgba(13, 13, 13, 0) 68%
-  );
+  background:
+    radial-gradient(
+      92% 128% at 12% 90%,
+      rgba(13, 13, 13, 0.92) 0%,
+      rgba(13, 13, 13, 0.62) 30%,
+      rgba(13, 13, 13, 0.22) 50%,
+      rgba(13, 13, 13, 0) 68%
+    ),
+    linear-gradient(
+      to top,
+      rgba(13, 13, 13, 0.5) 0%,
+      rgba(13, 13, 13, 0.16) 22%,
+      rgba(13, 13, 13, 0) 42%
+    );
   pointer-events: none;
+}
+
+/* A whisper of temperature per side, layered over the scrim — warm sand on the
+   caravan, cool steel on the ute. Kept very low so the photos stay realistic. */
+.hero-panel--caravan::after {
+  background:
+    radial-gradient(
+      92% 128% at 12% 90%,
+      rgba(13, 13, 13, 0.92) 0%,
+      rgba(13, 13, 13, 0.62) 30%,
+      rgba(13, 13, 13, 0.22) 50%,
+      rgba(13, 13, 13, 0) 68%
+    ),
+    linear-gradient(to top, rgba(13, 13, 13, 0.5) 0%, rgba(13, 13, 13, 0) 42%),
+    linear-gradient(120deg, rgba(196, 164, 119, 0.1) 0%, rgba(196, 164, 119, 0) 46%);
+}
+
+.hero-panel--ute::after {
+  background:
+    radial-gradient(
+      92% 128% at 12% 90%,
+      rgba(13, 13, 13, 0.92) 0%,
+      rgba(13, 13, 13, 0.62) 30%,
+      rgba(13, 13, 13, 0.22) 50%,
+      rgba(13, 13, 13, 0) 68%
+    ),
+    linear-gradient(to top, rgba(13, 13, 13, 0.5) 0%, rgba(13, 13, 13, 0) 42%),
+    linear-gradient(240deg, rgba(120, 150, 180, 0.09) 0%, rgba(120, 150, 180, 0) 46%);
 }
 
 .hero-panel__body {
   position: relative;
   z-index: 1;
-  max-width: 460px;
-  padding: clamp(28px, 4vw, 64px);
-  padding-bottom: clamp(40px, 6vh, 80px);
+  max-width: 480px;
+  padding: clamp(32px, 4.4vw, 76px);
+  padding-bottom: clamp(48px, 7vh, 96px);
   /* Keeps the words crisp where the scrim thins, without darkening the photo. */
   text-shadow: 0 2px 14px rgba(13, 13, 13, 0.4);
 }
 
 .hero-panel__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--color-sand);
-  margin: 0 0 14px;
+  margin: 0 0 22px;
+}
+
+/* Small lead rule before the eyebrow word, for a more composed label. */
+.hero-panel__eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: currentcolor;
+  opacity: 0.7;
 }
 
 /* Single-word, title-case heading — Manrope ExtraBold (the display face). */
 .hero-panel__heading {
   font-family: var(--font-display);
-  font-size: clamp(52px, 8vw, 108px);
-  line-height: 0.98;
-  letter-spacing: -0.02em;
+  font-size: clamp(56px, 8.2vw, 112px);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
   font-weight: 800;
   color: #fff;
   margin: 0;
@@ -129,34 +182,42 @@
 
 .hero-panel__desc {
   font-size: clamp(15px, 1.4vw, 18px);
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--color-off-white);
-  margin: 18px 0 28px;
-  max-width: 34ch;
+  margin: 24px 0 36px;
+  max-width: 32ch;
+  text-wrap: pretty;
 }
 
 /* Small white pill CTA. */
 .hero-panel__cta {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 13px 24px;
+  gap: 12px;
+  padding: 15px 28px;
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-ink-strong);
   background: #fff;
   border-radius: var(--radius-full);
+  box-shadow: 0 10px 30px -12px rgba(13, 13, 13, 0.55);
   text-shadow: none;
   transition:
     background-color var(--transition-fast),
-    color var(--transition-fast);
+    transform var(--transition-fast),
+    box-shadow var(--transition-base);
 }
 
 .hero-panel__cta:hover {
   background: var(--color-off-white);
+  box-shadow: 0 14px 34px -12px rgba(13, 13, 13, 0.6);
+}
+
+.hero-panel__cta:active {
+  transform: translateY(1px);
 }
 
 .hero-panel__arrow {
@@ -177,7 +238,8 @@
   pointer-events: none;
 }
 
-/* The subtle seam: a low-opacity vertical line the full height of the hero. */
+/* The subtle seam: a single low-opacity hairline down the centre of the hero,
+   tapering to nothing top and bottom. */
 .split-hero__divider::before {
   content: '';
   position: absolute;
@@ -187,7 +249,7 @@
   background: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0.16) 50%,
     rgba(255, 255, 255, 0) 100%
   );
 }
@@ -197,16 +259,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 54px;
-  height: 54px;
+  width: 60px;
+  height: 60px;
   border-radius: var(--radius-full);
-  background: var(--color-dark);
-  border: 1px solid var(--color-border-dark-2);
-  color: #fff;
+  /* Refined glass disc: translucent dark fill with a light edge and soft ring,
+     so it reads as a considered control rather than a solid black dot. */
+  background: rgba(13, 13, 13, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow:
+    0 8px 28px -10px rgba(13, 13, 13, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.92);
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
-  letter-spacing: -0.04em;
+  letter-spacing: 0.02em;
 }
 
 /* ------------------------------------------------------------------ hover */

@@ -9,11 +9,14 @@
     border-color var(--transition-base);
 }
 
-/* Home only: ride fully transparent over the dark hero until the page scrolls,
-   with every mark turned white for contrast against the photo. */
+/* Home only: over the dark hero the bar becomes a single frosted-glass band —
+   a low-opacity dark fill blurred across its whole width (not a gradient) — with
+   a faint hairline defining its bottom edge and every mark turned white. */
 .navbar--transparent {
-  background-color: transparent;
-  border-bottom-color: transparent;
+  background-color: rgba(13, 13, 13, 0.4);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom-color: rgba(255, 255, 255, 0.16);
 }
 
 /* Hovering the bar fills it solid black; the tagline swaps to accent green to
@@ -23,17 +26,15 @@
   border-bottom-color: var(--color-border-dark);
 }
 
-.navbar--transparent:hover .navbar__logo-sub {
-  color: var(--color-accent);
-}
-
 .navbar--transparent .navbar__link,
 .navbar--transparent .navbar__mega-toggle {
   color: #fff;
 }
 
+/* Tagline stays accent green over the hero (matching the solid bar), kept
+   legible by the scrim and its own soft shadow. */
 .navbar--transparent .navbar__logo-sub {
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--color-accent);
 }
 
 .navbar--transparent .navbar__cta {
@@ -41,11 +42,13 @@
 }
 
 .navbar__inner {
+  position: relative;
+  z-index: 1;
   height: 78px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 28px;
 }
 
 /* ---------------------------------------------------------------- brand */
@@ -245,23 +248,29 @@
   align-items: center;
   gap: 10px;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
-  letter-spacing: 0.11em;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
   color: #fff;
   border: 1.5px solid var(--color-accent);
-  padding: 12px 22px;
+  border-radius: var(--radius-sm);
+  padding: 12px 24px;
   background: transparent;
   cursor: pointer;
   transition:
     background-color var(--transition-fast),
-    color var(--transition-fast);
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .navbar__cta:hover {
   background: var(--color-accent);
   border-color: var(--color-accent);
+}
+
+.navbar__cta:active {
+  transform: translateY(1px);
 }
 
 /* Over the hero the CTA border is white; on hover it fills green, so match the
@@ -430,6 +439,7 @@
   text-transform: uppercase;
   color: #fff;
   border: 1.5px solid var(--color-accent);
+  border-radius: var(--radius-sm);
   padding: 14px 22px;
   background: transparent;
   cursor: pointer;

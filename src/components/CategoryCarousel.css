@@ -1,28 +1,28 @@
-/* White category rail under the hero — the fold's bottom band. Full-bleed: the
-   moving rail spans the whole viewport edge to edge, with the mask below fading
-   the cards in and out at the screen edges. */
+/* Slim category rail — the bottom band of the hero fold. A compact full-bleed
+   marquee that reads as a quiet navigator, not a hero of its own. */
 .cat-carousel {
+  flex-shrink: 0;
   background: var(--color-white);
   border-top: 1px solid var(--color-border-light);
-  padding: clamp(8px, 1.2vw, 14px) 0;
+  padding: clamp(8px, 1.2vh, 14px) 0;
 }
 
-/* Edge fades ease the cards in and out at the container's edges instead of
-   ending on a hard clip. */
+/* Edge fades ease the cards in and out at the viewport edges instead of ending
+   on a hard clip. */
 .cat-carousel__viewport {
   overflow: hidden;
   -webkit-mask-image: linear-gradient(
     90deg,
     transparent 0,
-    #000 56px,
-    #000 calc(100% - 56px),
+    #000 64px,
+    #000 calc(100% - 64px),
     transparent 100%
   );
   mask-image: linear-gradient(
     90deg,
     transparent 0,
-    #000 56px,
-    #000 calc(100% - 56px),
+    #000 64px,
+    #000 calc(100% - 64px),
     transparent 100%
   );
 }
@@ -34,7 +34,7 @@
 .cat-carousel__belt {
   display: flex;
   width: max-content;
-  animation: cat-carousel-marquee 45s linear infinite;
+  animation: cat-carousel-marquee 50s linear infinite;
 }
 
 /* Pointer hover or keyboard focus anywhere in the rail freezes it. */
@@ -59,21 +59,24 @@
   padding: 0;
 }
 
-/* Padding sets the gap between cards; the card (the link) sits inside it. */
+/* Padding sets the gap between cards; the card sits inside it. */
 .cat-carousel__tile {
   flex: 0 0 auto;
-  width: 224px;
-  padding: 6px 10px;
+  width: 208px;
+  padding: 8px;
 }
 
-/* The squared white card. */
-.cat-carousel__link {
+/* White card: light grey border, soft rounded corners and a very subtle shadow
+   — a premium product frame that stays compact. */
+.cat-carousel__card {
   display: flex;
   flex-direction: column;
+  height: 100%;
   text-decoration: none;
   background: var(--color-white);
   border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
   transition:
     border-color var(--transition-fast),
@@ -81,24 +84,36 @@
     transform var(--transition-base);
 }
 
-.cat-carousel__img {
-  width: 100%;
-  height: 210px;
-  object-fit: cover;
-  display: block;
+/* The product image fills the media area but is shown in full (no crop). The
+   media ground is white to match the product shots, so it reads as filling the
+   card seamlessly. */
+/* A perfect square that tracks the card width, with no padding — so the image,
+   contained (never cropped), renders as large as it can while fully fitting. */
+.cat-carousel__media {
+  aspect-ratio: 1 / 1;
+  background: var(--color-white);
+  overflow: hidden;
 }
 
-/* Titled footer, ruled off from the image. Fixed height with centered content
-   so one- and two-line labels share the same footer height across all cards. */
+.cat-carousel__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: transform var(--transition-base);
+}
+
+/* Titled footer, ruled off from the image, clean uppercase label. Fixed height
+   so one- and two-line labels share a footer height across all cards. */
 .cat-carousel__label {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 64px;
+  min-height: 50px;
   border-top: 1px solid var(--color-border-light);
-  padding: 12px 14px;
+  padding: 10px 12px;
   font-family: var(--font-body);
-  font-size: 12.5px;
+  font-size: 11.5px;
   font-weight: 600;
   letter-spacing: 0.09em;
   text-transform: uppercase;
@@ -107,15 +122,20 @@
   transition: color var(--transition-fast);
 }
 
-.cat-carousel__link:hover,
-.cat-carousel__link:focus-visible {
-  border-color: var(--color-accent);
+.cat-carousel__card:hover,
+.cat-carousel__card:focus-visible {
+  border-color: rgba(92, 138, 47, 0.5);
   box-shadow: var(--shadow-md);
   transform: translateY(-3px);
 }
 
-.cat-carousel__link:hover .cat-carousel__label,
-.cat-carousel__link:focus-visible .cat-carousel__label {
+.cat-carousel__card:hover .cat-carousel__img,
+.cat-carousel__card:focus-visible .cat-carousel__img {
+  transform: scale(1.04);
+}
+
+.cat-carousel__card:hover .cat-carousel__label,
+.cat-carousel__card:focus-visible .cat-carousel__label {
   color: var(--color-accent);
 }
 
@@ -134,8 +154,11 @@
   .cat-carousel__track[aria-hidden='true'] {
     display: none;
   }
-  .cat-carousel__link:hover,
-  .cat-carousel__link:focus-visible {
+  .cat-carousel__card:hover,
+  .cat-carousel__card:focus-visible {
+    transform: none;
+  }
+  .cat-carousel__card:hover .cat-carousel__img {
     transform: none;
   }
 }
@@ -143,13 +166,10 @@
 @media (max-width: 700px) {
   .cat-carousel__tile {
     width: 176px;
-  }
-  .cat-carousel__img {
-    height: 132px;
+    padding: 6px;
   }
   .cat-carousel__label {
-    min-height: 56px;
-    font-size: 11.5px;
-    padding: 10px 10px;
+    min-height: 46px;
+    font-size: 11px;
   }
 }

@@ -27,6 +27,7 @@ export const theme = {
     'border-light': '#eceae5',
     'border-dark': '#1e1e1e',
     'border-dark-2': '#262626',
+    'border-dark-3': '#333330',
 
     // The one accent — green, used sparingly.
     accent: '#5c8a2f',
@@ -47,15 +48,20 @@ export const theme = {
     // Mono — placeholder labels, step numbers.
     mono: "'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace",
   },
-  // Square, industrial surfaces — only the logo mark is round.
+  // Mostly square, industrial surfaces — the softer md/lg radii are reserved for
+  // the premium card surfaces (trust container, category tiles). Logo mark round.
   radii: {
     none: '0',
     sm: '4px',
+    md: '12px',
+    lg: '18px',
     full: '9999px',
   },
   shadows: {
     sm: '0 1px 2px rgba(13, 13, 13, 0.06)',
     md: '0 6px 24px rgba(13, 13, 13, 0.10)',
+    // Soft, slightly warm-tinted lift for the premium product tiles.
+    lg: '0 18px 44px -20px rgba(23, 20, 14, 0.28)',
   },
   transitions: {
     fast: '140ms ease',
