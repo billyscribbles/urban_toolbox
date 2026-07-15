@@ -79,14 +79,17 @@ function RouteChange() {
   return null
 }
 
-export default function App() {
+function AppBody() {
+  // The admin is a standalone full-screen dashboard — it owns the viewport, so
+  // the marketing Navbar/Footer and the storefront-only drawers don't render there.
+  const isAdmin = useLocation().pathname === '/admin'
   return (
-    <BrowserRouter>
+    <>
       <RouteChange />
       <a href="#main" className="skip-link">
         Skip to content
       </a>
-      <Navbar />
+      {!isAdmin && <Navbar />}
       {/* Skip-link target. Each routed page renders its own <main> landmark;
           this wrapper just gives the skip link a stable, focusable anchor. */}
       <div id="main" tabIndex={-1}>
@@ -150,10 +153,22 @@ export default function App() {
           </Suspense>
         </ErrorBoundary>
       </div>
-      <Footer />
-      <Lightbox />
-      <QuoteDrawer />
-      <DetailDrawer />
+      {!isAdmin && (
+        <>
+          <Footer />
+          <Lightbox />
+          <QuoteDrawer />
+          <DetailDrawer />
+        </>
+      )}
+    </>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppBody />
     </BrowserRouter>
   )
 }
