@@ -2,6 +2,8 @@
 // renders. Rewriting copy for a new client is fine; breaking the shape
 // (a missing key, an object where an array is expected) fails here.
 import { describe, it, expect } from 'vitest'
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 import { hero } from '../content/hero.js'
 import { stats } from '../content/stats.js'
 import { services } from '../content/services.js'
@@ -13,10 +15,15 @@ import { catalog } from '../data/catalog.js'
 import { getCategoryBySlug, isLeaf } from '../lib/catalog.js'
 
 describe('content — section copy contract', () => {
-  it('hero has a headline and a primary CTA', () => {
+  it('hero has a headline, tagline, and two hero photos on disk', () => {
     expect(hero.headline).toBeTruthy()
-    expect(hero.primaryCta.label).toBeTruthy()
-    expect(hero.primaryCta.to).toBeTruthy()
+    expect(hero.headlineLine2).toBeTruthy()
+    expect(hero.tagline).toBeTruthy()
+    for (const side of ['left', 'right']) {
+      const { img } = hero.media[side]
+      expect(img).toMatch(/^\/brand\/hero-/)
+      expect(existsSync(join(process.cwd(), 'public', img))).toBe(true)
+    }
   })
 
   it('stats is a non-empty array of { value, label }', () => {
