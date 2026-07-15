@@ -3,14 +3,15 @@
 // and never walk the raw catalog themselves. When the catalog moves to a database
 // behind an admin dashboard, only this module changes — callers keep their shape.
 
+import { categories } from '../data/categories.js'
 import { catalog } from '../data/catalog.js'
 
 export function getTree() {
-  return catalog.categories
+  return categories
 }
 
 export function getTopCategories() {
-  return catalog.categories
+  return categories
 }
 
 export function isLeaf(node) {
@@ -29,7 +30,7 @@ export function getCategoryBySlug(slug) {
     }
     return undefined
   }
-  return walk(catalog.categories)
+  return walk(categories)
 }
 
 // Ancestor chain (root → … → node) for breadcrumbs and active-nav state.
@@ -46,7 +47,7 @@ export function getCategoryPath(slug) {
     }
     return false
   }
-  walk(catalog.categories, [])
+  walk(categories, [])
   return path
 }
 
