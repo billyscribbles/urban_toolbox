@@ -11,8 +11,8 @@ export default function SplitHero() {
     <section className="split-hero" aria-label="Caravan and ute toolboxes">
       <h1 className="sr-only">Custom aluminium caravan and ute toolboxes</h1>
       <div className="split-hero__grid">
-        {hero.panels.map((panel) => (
-          <HeroPanel key={panel.key} panel={panel} />
+        {hero.panels.map((panel, index) => (
+          <HeroPanel key={panel.key} panel={panel} priority={index === 0} />
         ))}
       </div>
       <div className="split-hero__divider" aria-hidden="true">
