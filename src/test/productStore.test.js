@@ -9,8 +9,10 @@ vi.mock('../lib/supabaseClient.js', () => ({
     Promise.resolve({
       from: () => ({
         select: () => ({
-          order: () => ({
-            order: () => Promise.resolve({ data: productRows, error: null }),
+          eq: () => ({
+            order: () => ({
+              order: () => Promise.resolve({ data: productRows, error: null }),
+            }),
           }),
         }),
       }),

@@ -52,7 +52,8 @@ vi.mock('../lib/supabaseClient.js', () => ({
 }))
 vi.mock('../lib/productStore.js', () => ({ retryLoad: vi.fn() }))
 
-const { saveProduct, deletePhoto, deleteProduct } = await import('../lib/adminApi.js')
+const { saveProduct, deletePhoto, deleteProduct, setProductHidden } =
+  await import('../lib/adminApi.js')
 
 beforeEach(() => {
   calls.upserts.length = 0
@@ -123,5 +124,17 @@ describe('deleteProduct', () => {
     })
     expect(calls.removed).toHaveLength(6)
     expect(calls.deletes[0]).toMatchObject({ table: 'products', val: 'x' })
+  })
+})
+
+describe('setProductHidden', () => {
+  it('updates only the hidden flag for the given id', async () => {
+    await setProductHidden('x', true)
+    expect(calls.updates[0]).toMatchObject({
+      table: 'products',
+      patch: { hidden: true },
+      col: 'id',
+      val: 'x',
+    })
   })
 })

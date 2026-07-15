@@ -75,6 +75,7 @@ export async function loadProducts({ force = false } = {}) {
   const { data, error } = await supabase
     .from('products')
     .select('*, product_images(*)')
+    .eq('hidden', false)
     .order('sort_order', { ascending: true })
     .order('id', { ascending: true })
   if (error) {

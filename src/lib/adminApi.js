@@ -97,6 +97,14 @@ export async function saveProduct(p, { isNew } = {}) {
   return { error }
 }
 
+// Toggle a product's storefront visibility without touching any other field.
+export async function setProductHidden(id, hidden) {
+  const c = await client()
+  const { error } = await c.from('products').update({ hidden }).eq('id', id)
+  if (error) throw new Error(error.message)
+  retryLoad()
+}
+
 // The DB stores only the JPEG path; the WebP derivatives sit beside it with
 // the -400/-800 suffix (same contract as <Img> and scripts/gen-images.mjs).
 function storageFilesFor(image) {
