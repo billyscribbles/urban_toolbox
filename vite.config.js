@@ -24,9 +24,27 @@ export default defineConfig({
     cssCodeSplit: true,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          motion: ['framer-motion'],
+        // Function form (not the object form) so it's robust to Yarn PnP's
+        // virtual module paths. Order matters: framer-motion is matched first
+        // and isolated in its own chunk (only the lazy drawers import it), then
+        // everything React — including react/jsx-runtime — is pinned to vendor.
+        // If the JSX runtime were left to land in the motion chunk, the entry
+        // would statically import it and drag framer-motion onto the home
+        // route's critical path, hurting LCP even though nothing above the fold
+        // animates.
+        manualChunks(id) {
+          if (id.includes('framer-motion')) return 'motion'
+          if (
+            id.includes('/react/') ||
+            id.includes('/react-dom/') ||
+            id.includes('/react-router') ||
+            id.includes('/scheduler/') ||
+            id.includes('react-npm') ||
+            id.includes('react-dom-npm') ||
+            id.includes('react-router')
+          ) {
+            return 'vendor'
+          }
         },
       },
     },
