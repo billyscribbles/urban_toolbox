@@ -32,7 +32,11 @@ export default function PhotoManager({ productId, title, images, onImagesChange 
   function onFiles(e) {
     const files = [...e.target.files]
     if (!files.length) return
-    run(() => uploadPhotos(productId, files, sorted.length, title)).then(() => {
+    // Positions aren't renumbered on delete, so append after the current max
+    // rather than at `sorted.length` — otherwise a delete-then-upload reuses an
+    // existing position and two rows collide.
+    const nextPosition = sorted.length ? Math.max(...sorted.map((p) => p.position)) + 1 : 0
+    run(() => uploadPhotos(productId, files, nextPosition, title)).then(() => {
       if (fileRef.current) fileRef.current.value = ''
     })
   }
