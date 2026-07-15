@@ -10,7 +10,7 @@
 
 import { createServer } from 'node:http'
 import { readFile, stat } from 'node:fs/promises'
-import { gzipSync } from 'node:zlib'
+import { gzipSync, brotliCompressSync, constants as zlibConstants } from 'node:zlib'
 import { join, extname, normalize } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -50,8 +50,13 @@ const MIME = {
 
 // Text assets ship uncompressed otherwise — the JS bundle alone is a few
 // hundred KB of highly compressible source. Images and fonts are already
-// compressed, so gzipping them just burns CPU for nothing.
+// compressed, so compressing them just burns CPU for nothing.
 const COMPRESSIBLE = /^(text\/|application\/(javascript|json|xml|manifest))/
+// Brotli is ~15% smaller than gzip on our JS/CSS, which matters on the LCP
+// critical path under throttled connections (and to the Lighthouse gate).
+// Prefer it when the client advertises it, and fall back to gzip otherwise.
+// Max quality (11) is fine because responses are memoised — see below.
+const BROTLI_OPTS = { params: { [zlibConstants.BROTLI_PARAM_QUALITY]: 11 } }
 const compressed = new Map()
 
 function send(res, status, body, headers = {}) {
@@ -59,26 +64,30 @@ function send(res, status, body, headers = {}) {
   res.end(body)
 }
 
-// Gzip a file's bytes if the client accepts it and the type is worth it.
-// Responses are memoised by path: dist/ is immutable for the life of the
-// process, so each file is only ever compressed once.
-function maybeGzip(req, res, key, body, type, headers) {
-  const accepts = (req.headers['accept-encoding'] || '').includes('gzip')
-  if (!accepts || !COMPRESSIBLE.test(type)) return { body, headers }
+// Compress a file's bytes if the client accepts it and the type is worth it,
+// preferring Brotli over gzip. Responses are memoised by "path|encoding":
+// dist/ is immutable for the life of the process, so each file is only ever
+// compressed once per encoding.
+function maybeCompress(req, res, key, body, type, headers) {
+  if (!COMPRESSIBLE.test(type)) return { body, headers }
+  const accept = req.headers['accept-encoding'] || ''
+  const encoding = accept.includes('br') ? 'br' : accept.includes('gzip') ? 'gzip' : null
+  if (!encoding) return { body, headers }
 
-  let gz = compressed.get(key)
-  if (!gz) {
-    gz = gzipSync(body)
-    compressed.set(key, gz)
+  const cacheKey = `${key}|${encoding}`
+  let out = compressed.get(cacheKey)
+  if (!out) {
+    out = encoding === 'br' ? brotliCompressSync(body, BROTLI_OPTS) : gzipSync(body)
+    compressed.set(cacheKey, out)
   }
   res.setHeader('Vary', 'Accept-Encoding')
-  return { body: gz, headers: { ...headers, 'Content-Encoding': 'gzip' } }
+  return { body: out, headers: { ...headers, 'Content-Encoding': encoding } }
 }
 
 async function serveIndex(req, res) {
   try {
     const html = await readFile(join(DIST, 'index.html'))
-    const { body, headers } = maybeGzip(req, res, 'index.html', html, MIME['.html'], {
+    const { body, headers } = maybeCompress(req, res, 'index.html', html, MIME['.html'], {
       'Content-Type': MIME['.html'],
       'Cache-Control': 'no-cache',
     })
@@ -111,7 +120,7 @@ const server = createServer(async (req, res) => {
     const type = MIME[extname(filePath).toLowerCase()] || 'application/octet-stream'
     // Content-hashed assets are immutable; everything else must revalidate.
     const cache = filePath.startsWith(ASSETS) ? 'public, max-age=31536000, immutable' : 'no-cache'
-    const { body, headers } = maybeGzip(req, res, filePath, raw, type, {
+    const { body, headers } = maybeCompress(req, res, filePath, raw, type, {
       'Content-Type': type,
       'Cache-Control': cache,
     })
