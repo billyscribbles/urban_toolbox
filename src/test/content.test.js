@@ -88,10 +88,9 @@ describe('content — section copy contract', () => {
       // Route must be a real category page: /accessories or /toolboxes/<slug>.
       const slug = tile.to.replace(/^\//, '').split('/').pop()
       expect(getCategoryBySlug(slug), `no category for route ${tile.to}`).toBeTruthy()
-      expect(
-        existsSync(join(process.cwd(), 'public', tile.img)),
-        `missing image ${tile.img}`
-      ).toBe(true)
+      expect(existsSync(join(process.cwd(), 'public', tile.img)), `missing image ${tile.img}`).toBe(
+        true,
+      )
     }
   })
 })

@@ -73,15 +73,15 @@ component itself is unchanged).
 **Content:** a new `src/content/homeCarousel.js` exports a curated tile list —
 `{ label, img, imgAlt, to }` per tile — for the seven mid-level families:
 
-| Label | Route |
-| --- | --- |
-| Under Tray Toolboxes | `/toolboxes/under-tray-toolboxes` |
-| Top Opening Toolboxes | `/toolboxes/top-opening-toolboxes` |
+| Label                  | Route                               |
+| ---------------------- | ----------------------------------- |
+| Under Tray Toolboxes   | `/toolboxes/under-tray-toolboxes`   |
+| Top Opening Toolboxes  | `/toolboxes/top-opening-toolboxes`  |
 | Side Opening Toolboxes | `/toolboxes/side-opening-toolboxes` |
-| Truck Toolboxes | `/toolboxes/truck-toolboxes` |
-| Dog Boxes | `/toolboxes/dog-boxes` |
-| Toolbox Canopies | `/toolboxes/toolbox-canopies` |
-| Accessories | `/accessories` |
+| Truck Toolboxes        | `/toolboxes/truck-toolboxes`        |
+| Dog Boxes              | `/toolboxes/dog-boxes`              |
+| Toolbox Canopies       | `/toolboxes/toolbox-canopies`       |
+| Accessories            | `/accessories`                      |
 
 Tile images are representative product shots picked from
 `/public/images/` + `/public/images/catalog/` (existing assets; no new

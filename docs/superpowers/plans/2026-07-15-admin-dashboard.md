@@ -27,9 +27,11 @@
 ### Task 1: Supabase schema, storage bucket, and RLS
 
 **Files:**
+
 - Create: `supabase/migrations/0001_catalog.sql`
 
 **Interfaces:**
+
 - Produces: tables `public.products`, `public.product_images`; bucket `product-photos`; RLS policies (anon read / authenticated write). All later tasks assume these exist exactly as below.
 
 - [ ] **Step 1: Write the migration file**
@@ -116,16 +118,19 @@ If the four `create policy … on storage.objects` statements fail with "must be
 - [ ] **Step 3: Verify**
 
 Run via `mcp__supabase__execute_sql`:
+
 ```sql
 select table_name from information_schema.tables
 where table_schema = 'public' and table_name in ('products', 'product_images');
 select id, public from storage.buckets where id = 'product-photos';
 ```
+
 Expected: both tables listed; bucket row with `public = true`.
 
 - [ ] **Step 4: Human step — admin user (ask Billy, do not skip)**
 
 Billy must, in the Supabase dashboard (https://supabase.com/dashboard/project/jxyruzhotemmcqcrndbp):
+
 1. **Authentication → Users → Add user**: create the admin account (his email + a strong password), with "Auto Confirm User" on.
 2. **Authentication → Sign In / Providers**: turn OFF "Allow new users to sign up".
 
@@ -143,6 +148,7 @@ git commit -m "feat(db): products + product_images schema, storage bucket, RLS"
 ### Task 2: supabase-js dependency, env, and lazy client
 
 **Files:**
+
 - Modify: `package.json` (via `yarn add`)
 - Modify: `.env.example`
 - Create: `.env` (gitignored — verify it is)
@@ -150,6 +156,7 @@ git commit -m "feat(db): products + product_images schema, storage bucket, RLS"
 - Test: `src/test/supabaseClient.test.js`
 
 **Interfaces:**
+
 - Produces: `getSupabase(): Promise<SupabaseClient|null>` (memoized, dynamic-imports the SDK so the main bundle stays lean; resolves `null` when env is missing), `isConfigured(): boolean`, `publicPhotoUrl(storagePath: string): string` (deterministic public URL, no client needed).
 
 - [ ] **Step 1: Add the dependency**
@@ -247,12 +254,14 @@ git commit -m "feat: supabase client (lazy singleton) + env wiring"
 ### Task 3: Shared pricing helpers
 
 **Files:**
+
 - Create: `src/lib/pricing.js`
 - Modify: `src/components/Card.jsx:10-13` (delete local `formatPrice`, import instead)
 - Modify: `src/components/DetailDrawer.jsx:8-11` (same)
 - Test: `src/test/pricing.test.js`
 
 **Interfaces:**
+
 - Produces: `formatPrice(n: number): string` (e.g. `3900 → "$3,900"`, `382.5 → "$382.50"`), `discountedPrice(price: number|null, discountPct: number|null): number|null` (rounded to the cent; `null` when either input is missing).
 
 - [ ] **Step 1: Write the failing test**
@@ -301,9 +310,7 @@ Create `src/lib/pricing.js`:
 // Australian thousands separator: 3900 -> "$3,900"; 382.5 -> "$382.50".
 export function formatPrice(n) {
   const value = Number(n)
-  const opts = Number.isInteger(value)
-    ? {}
-    : { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+  const opts = Number.isInteger(value) ? {} : { minimumFractionDigits: 2, maximumFractionDigits: 2 }
   return `$${value.toLocaleString('en-AU', opts)}`
 }
 
@@ -339,11 +346,13 @@ git commit -m "refactor: shared pricing helpers (formatPrice, discountedPrice)"
 ### Task 4: Split the category tree into src/data/categories.js
 
 **Files:**
+
 - Create: `src/data/categories.js`
 - Modify: `src/data/catalog.js` (categories re-exported from the new file)
 - Modify: `src/lib/catalog.js` (category helpers read the new file)
 
 **Interfaces:**
+
 - Produces: `export const categories = [...]` in `src/data/categories.js` — the exact tree currently in `src/data/catalog.js` lines 16–160 (`toolboxes` + `accessories` tops). `src/lib/catalog.js` category functions (`getTree`, `getTopCategories`, `getCategoryBySlug`, `getCategoryPath`, `getSubcategories`, `getLeaves`, `isLeaf`, `isFlattenedTop`, `getMegaMenu`) keep exact signatures and now read `categories`.
 
 - [ ] **Step 1: Create `src/data/categories.js`**
@@ -406,11 +415,13 @@ git commit -m "refactor: split static category tree into src/data/categories.js"
 ### Task 5: productStore — live products with the quoteStore pattern
 
 **Files:**
+
 - Create: `src/lib/productStore.js`
 - Create: `src/test/fixtures/productRows.js`
 - Test: `src/test/productStore.test.js`
 
 **Interfaces:**
+
 - Consumes: `getSupabase()`, `publicPhotoUrl(path)` from Task 2; `discountedPrice` from Task 3.
 - Produces:
   - `normalizeRow(row): Product` — DB row (+ joined `product_images`) → the product shape storefront components already consume: `{ id, categoryId, title, slug, summary, specs, features, img, imgAlt, images?, price, discountPct, featured, quote: { id, priceFrom, standardDims } }`. `quote.priceFrom` is the EFFECTIVE price (discounted when a discount is set) so the quote tray and email serialization show what the customer would pay.
@@ -511,9 +522,8 @@ vi.mock('../lib/supabaseClient.js', () => ({
     }),
 }))
 
-const { normalizeRow, loadProducts, getProducts, getStatus } = await import(
-  '../lib/productStore.js'
-)
+const { normalizeRow, loadProducts, getProducts, getStatus } =
+  await import('../lib/productStore.js')
 
 describe('normalizeRow — DB row to storefront product', () => {
   it('maps columns, sorts photos by position and builds the quote descriptor', () => {
@@ -696,6 +706,7 @@ git commit -m "feat: productStore — session-cached live products from Supabase
 ### Task 6: Storefront reads live products (loading + error states)
 
 **Files:**
+
 - Modify: `src/lib/catalog.js` (product getters read the store)
 - Modify: `src/main.jsx` (kick off the fetch at boot)
 - Modify: `src/pages/CategoryPage.jsx`
@@ -704,6 +715,7 @@ git commit -m "feat: productStore — session-cached live products from Supabase
 - Test: `src/test/catalogLive.test.jsx`
 
 **Interfaces:**
+
 - Consumes: `useProductCatalog`, `loadProducts`, `retryLoad`, `getProducts`, `__setStateForTests` from Task 5.
 - Produces: `ProductRange` accepts optional `status` (`'idle'|'loading'|'ready'|'error'`, default `'ready'`) and `onRetry` props. `getProductsForLeaf`/`getProductsUnder` unchanged signatures, now backed by the store.
 
@@ -923,12 +935,14 @@ git commit -m "feat: storefront reads live products with loading/error states"
 ### Task 7: Seed Supabase and retire the static products
 
 **Files:**
+
 - Create: `scripts/seed-data.mjs` (products array, moved verbatim)
 - Create: `scripts/seed-catalog.mjs`
 - Delete: `src/data/catalog.js`
 - Modify: `src/test/content.test.js`
 
 **Interfaces:**
+
 - Consumes: schema from Task 1, admin user from Task 1 Step 4.
 - Produces: all ~73 products + photos in Supabase; `src/data/catalog.js` gone; `content.test.js` category tests import `{ categories }` from `../data/categories.js`.
 
@@ -1106,11 +1120,13 @@ git commit -m "feat: seed Supabase catalog; retire static product data"
 ### Task 8: PriceTag — public prices with discount display
 
 **Files:**
+
 - Create: `src/components/PriceTag.jsx`, `src/components/PriceTag.css`
 - Modify: `src/components/Card.jsx`, `src/components/DetailDrawer.jsx`, `src/components/ProductRange.jsx`
 - Test: `src/test/priceTag.test.jsx`
 
 **Interfaces:**
+
 - Consumes: `formatPrice`, `discountedPrice` (Task 3); `price`/`discountPct` on normalized products (Task 5).
 - Produces: `<PriceTag price={number|null} discountPct={number|null} />` — three states: null price → "Enquire for pricing"; price → "from $X + GST"; price + discount → struck-through original, discounted price, "Save N%" badge. `Card` gains `price` and `discountPct` props; the detail payload gains `price`/`discountPct` fields.
 
@@ -1239,6 +1255,7 @@ Run: `yarn vitest run src/test/priceTag.test.jsx` → PASS.
 - [ ] **Step 5: Wire into Card**
 
 In `src/components/Card.jsx`:
+
 1. Add props `price` and `discountPct` to the destructured signature (after `quote`).
 2. Add `import PriceTag from './PriceTag.jsx'` and remove the now-unused `import { formatPrice } from '../lib/pricing.js'`.
 3. Replace the whole `<div className="card__price">…</div>` block (the `quote.priceFrom != null ? … : …` ternary) with:
@@ -1286,10 +1303,12 @@ git commit -m "feat: public prices with strikethrough discount display"
 ### Task 9: productForm — slug + validation helpers
 
 **Files:**
+
 - Create: `src/lib/productForm.js`
 - Test: `src/test/productForm.test.js`
 
 **Interfaces:**
+
 - Produces: `slugify(title: string): string`; `validateProduct(form, leafIds: string[]): { valid, errors: {field: message}, price: number|null, discountPct: number|null }`. Form fields consumed: `title`, `categoryId`, `price` (string|number|''), `discountPct` (string|number|'').
 
 - [ ] **Step 1: Write the failing test**
@@ -1326,7 +1345,9 @@ describe('validateProduct', () => {
 
   it('requires a title and a real leaf category', () => {
     expect(validateProduct({ ...base, title: '  ' }, LEAVES).errors.title).toBeTruthy()
-    expect(validateProduct({ ...base, categoryId: 'toolboxes' }, LEAVES).errors.categoryId).toBeTruthy()
+    expect(
+      validateProduct({ ...base, categoryId: 'toolboxes' }, LEAVES).errors.categoryId,
+    ).toBeTruthy()
   })
 
   it('rejects negative or non-numeric prices', () => {
@@ -1423,10 +1444,12 @@ git commit -m "feat: product form validation + slugify helpers"
 ### Task 10: imageResize — client-side photo pipeline
 
 **Files:**
+
 - Create: `src/lib/imageResize.js`
 - Test: `src/test/imageResize.test.js`
 
 **Interfaces:**
+
 - Produces: `processPhoto(file: File): Promise<{ jpeg: Blob, variants: [{ width, blob }] }>` (canvas-based; ≤1600px JPEG master + 400/800 WebP derivatives); `photoPaths(productId, name): { jpeg: string, webp: [{ width, path }] }` matching `<Img>`'s `-400.webp`/`-800.webp` naming contract; `DERIVATIVE_WIDTHS = [400, 800]`.
 
 - [ ] **Step 1: Write the failing test (pure part only — canvas isn't available in jsdom)**
@@ -1528,10 +1551,12 @@ git commit -m "feat: client-side photo resize pipeline for admin uploads"
 ### Task 11: adminApi — auth + CRUD wrappers
 
 **Files:**
+
 - Create: `src/lib/adminApi.js`
 - Test: `src/test/adminApi.test.js`
 
 **Interfaces:**
+
 - Consumes: `getSupabase()` (Task 2), `processPhoto`/`photoPaths` (Task 10), `retryLoad` (Task 5).
 - Produces (all throw `Error` with a message on failure unless noted):
   - `signIn(email, password): Promise<{ error }>` (returns, not throws — the login form displays it)
@@ -1671,10 +1696,7 @@ describe('deleteProduct', () => {
   it('sweeps all image files then deletes the product row', async () => {
     await deleteProduct({
       id: 'x',
-      product_images: [
-        { storage_path: 'products/x/a.jpg' },
-        { storage_path: 'products/x/b.jpg' },
-      ],
+      product_images: [{ storage_path: 'products/x/a.jpg' }, { storage_path: 'products/x/b.jpg' }],
     })
     expect(calls.removed).toHaveLength(6)
     expect(calls.deletes[0]).toMatchObject({ table: 'products', val: 'x' })
@@ -1704,7 +1726,9 @@ const BUCKET = 'product-photos'
 async function client() {
   const supabase = await getSupabase()
   if (!supabase) {
-    throw new Error('Supabase is not configured — set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.')
+    throw new Error(
+      'Supabase is not configured — set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.',
+    )
   }
   return supabase
 }
@@ -1872,6 +1896,7 @@ git commit -m "feat: adminApi — auth + product/photo CRUD wrappers"
 ### Task 12: Admin shell — login, auth gate, route, noindex
 
 **Files:**
+
 - Create: `src/pages/admin/AdminPage.jsx`, `src/pages/admin/AdminLogin.jsx`, `src/pages/admin/Admin.css`
 - Create (placeholders, filled in Tasks 13–14): `src/pages/admin/ProductList.jsx`, `src/pages/admin/ProductEditor.jsx`
 - Modify: `src/config/theme.config.js` (add `danger` color token — house rule: no raw hex in component CSS)
@@ -1881,6 +1906,7 @@ git commit -m "feat: adminApi — auth + product/photo CRUD wrappers"
 - Test: `src/test/admin.test.jsx`
 
 **Interfaces:**
+
 - Consumes: `watchSession`, `signIn`, `signOut`, `fetchAdminProducts` (Task 11).
 - Produces: `/admin` route; `SEO` accepts `noindex` (boolean) rendering `<meta name="robots" content="noindex, nofollow" />`; `AdminPage` renders `ProductList rows onEdit onNew onChanged` or `ProductEditor row rows onDone onCancel` (contracts for Tasks 13–14).
 
@@ -1956,7 +1982,9 @@ In `src/config/theme.config.js`, add to `colors` (after `'accent-soft'`):
 In `src/lib/seo.jsx`, change the signature to `export default function SEO({ title, description, image, path = '', noindex = false })` and add inside `<Helmet>` (right after `<link rel="canonical" …>`):
 
 ```jsx
-{noindex && <meta name="robots" content="noindex, nofollow" />}
+{
+  noindex && <meta name="robots" content="noindex, nofollow" />
+}
 ```
 
 - [ ] **Step 4: Create the admin pages**
@@ -2362,8 +2390,10 @@ const AdminPage = lazyWithRetry(() => import('./pages/admin/AdminPage.jsx'))
 and add the route just before the catch-all `*`:
 
 ```jsx
-{/* Catalogue admin — auth-gated, noindexed, deliberately not in the nav. */}
-<Route path="/admin" element={<AdminPage />} />
+{
+  /* Catalogue admin — auth-gated, noindexed, deliberately not in the nav. */
+}
+;<Route path="/admin" element={<AdminPage />} />
 ```
 
 In `public/robots.txt`, add `Disallow: /admin` after the `Allow: /` line.
@@ -2388,10 +2418,12 @@ git commit -m "feat: /admin route with Supabase auth gate + noindex"
 ### Task 13: Admin product list
 
 **Files:**
+
 - Modify: `src/pages/admin/ProductList.jsx` (replace placeholder)
 - Test: extend `src/test/admin.test.jsx`
 
 **Interfaces:**
+
 - Consumes: props `{ rows, onEdit, onNew, onChanged }` from AdminPage (Task 12); `deleteProduct` (Task 11); `getTree`/`getLeaves` (catalog); `publicPhotoUrl` (Task 2); `formatPrice` (Task 3).
 - Produces: filterable table with per-row Edit + two-step Delete.
 
@@ -2492,8 +2524,7 @@ export default function ProductList({ rows, onEdit, onNew, onChanged }) {
 
   const visible = rows.filter(
     (r) =>
-      (!cat || r.category_id === cat) &&
-      (!q || r.title.toLowerCase().includes(q.toLowerCase())),
+      (!cat || r.category_id === cat) && (!q || r.title.toLowerCase().includes(q.toLowerCase())),
   )
 
   async function onDelete(row) {
@@ -2662,11 +2693,13 @@ git commit -m "feat(admin): filterable product list with two-step delete"
 ### Task 14: Admin product editor + photo manager
 
 **Files:**
+
 - Modify: `src/pages/admin/ProductEditor.jsx` (replace placeholder)
 - Create: `src/pages/admin/PhotoManager.jsx`
 - Test: extend `src/test/admin.test.jsx`
 
 **Interfaces:**
+
 - Consumes: props `{ row, rows, onDone, onCancel }` (Task 12 contract); `slugify`/`validateProduct` (Task 9); `saveProduct`, `uploadPhotos`, `deletePhoto`, `swapPhotoPositions`, `fetchProductImages` (Task 11); `publicPhotoUrl` (Task 2).
 - Produces: create/edit form with inline validation; `PhotoManager({ productId, title, images, onImagesChange })`.
 
@@ -2702,7 +2735,11 @@ describe('ProductEditor', () => {
     await userEvent.selectOptions(screen.getByLabelText(/category/i), 'locks')
     await userEvent.click(screen.getByRole('button', { name: /save product/i }))
     expect(saveProduct).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 'whale-lock-mkii', slug: 'whale-lock-mkii', categoryId: 'locks' }),
+      expect.objectContaining({
+        id: 'whale-lock-mkii',
+        slug: 'whale-lock-mkii',
+        categoryId: 'locks',
+      }),
       { isNew: true },
     )
     expect(onDone).toHaveBeenCalled()
@@ -2783,8 +2820,14 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
 
   async function onSubmit(e) {
     e.preventDefault()
-    const features = featuresText.split('\n').map((f) => f.trim()).filter(Boolean)
-    const check = validateProduct(form, leaves.map((l) => l.id))
+    const features = featuresText
+      .split('\n')
+      .map((f) => f.trim())
+      .filter(Boolean)
+    const check = validateProduct(
+      form,
+      leaves.map((l) => l.id),
+    )
     setErrors(check.errors)
     if (!check.valid) return
 
@@ -3119,6 +3162,7 @@ Run: `yarn vitest run src/test/admin.test.jsx` → PASS. `yarn test && yarn lint
 - [ ] **Step 6: Manual end-to-end (the real acceptance test)**
 
 `yarn dev`, sign in at `/admin`, then:
+
 1. Edit a seeded product: change title + set price 450 + discount 15 → Save → storefront card shows ~~$450~~ from $382.50 + GST with Save 15% badge.
 2. Upload two photos to that product → reorder them → storefront card thumbnail changes and the detail drawer shows the gallery.
 3. Delete one photo → gone from storefront after reload.
@@ -3137,6 +3181,7 @@ git commit -m "feat(admin): product editor with photo gallery manager"
 ### Task 15: Final verification and deploy
 
 **Files:**
+
 - Modify: `README.md` (admin section)
 - No other code changes expected — this task is the CLAUDE.md verification gauntlet.
 
@@ -3149,6 +3194,7 @@ Add a short "Admin dashboard" section to `README.md`: URL (`/admin`), where cred
 ```bash
 yarn lint && yarn format:check && yarn test && yarn build && yarn preview
 ```
+
 Expected: all clean; build splits vendor chunks; `@supabase/supabase-js` is NOT in the entry chunk (check `dist/assets` — it should be a separate lazy chunk; run `yarn build:analyze` if unsure).
 
 - [ ] **Step 3: Lighthouse on preview**
@@ -3162,6 +3208,7 @@ Every route renders: `/`, `/toolboxes`, `/toolboxes/under-tray-toolboxes`, `/acc
 - [ ] **Step 5: Deploy**
 
 Set the two new Railway env vars, then deploy with the `railway-deploy` skill:
+
 - `VITE_SUPABASE_URL=https://jxyruzhotemmcqcrndbp.supabase.co`
 - `VITE_SUPABASE_ANON_KEY=<anon key>`
 
@@ -3178,4 +3225,5 @@ git add README.md
 git commit -m "docs: admin dashboard README section"
 git push
 ```
+
 Confirm GitHub Actions CI goes green.
