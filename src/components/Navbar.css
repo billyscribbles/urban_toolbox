@@ -16,15 +16,15 @@
   border-bottom-color: transparent;
 }
 
-/* Hovering the bar fills it solid black (the light text stays readable). The
-   tagline swaps to accent green to match the solid/scrolled bar. */
+/* Hovering the bar fills it accent green; the light logo/links/tagline stay
+   white for contrast against the green. */
 .navbar--transparent:hover {
-  background-color: var(--color-dark);
-  border-bottom-color: var(--color-border-dark);
+  background-color: var(--color-accent);
+  border-bottom-color: transparent;
 }
 
 .navbar--transparent:hover .navbar__logo-sub {
-  color: var(--color-accent);
+  color: #fff;
 }
 
 .navbar--transparent .navbar__link,
@@ -258,6 +258,13 @@
 
 .navbar__cta:hover {
   background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* Over the hero the CTA border is white; on hover it fills green, so match the
+   border to green too for a solid button. */
+.navbar--transparent .navbar__cta:hover {
+  border-color: var(--color-accent);
 }
 
 /* Cart-style count folded into the CTA — only shown once items are added.
