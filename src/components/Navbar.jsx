@@ -1,6 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { ChevronDown } from 'lucide-react'
 import { site } from '../config/site.config.js'
+import { getMegaMenu } from '../lib/catalog.js'
 import { useQuote, openQuote } from '../lib/quoteStore.js'
 import SmartLink from './SmartLink.jsx'
 import './Navbar.css'
@@ -65,17 +68,73 @@ function Brand({ brand }) {
   )
 }
 
+// The contents of an open desktop dropdown — a compact list of topic links only
+// (Toolboxes → its subcategories; Accessories → its items). The leaf-level
+// categories aren't listed here; they surface on each category page's pill
+// sub-nav. `col.items` is left on the view model for future use.
+function MegaPanel({ panel, onNavigate }) {
+  return (
+    <div className="navbar__mega-inner">
+      <Link to={panel.to} className="navbar__mega-all" onClick={onNavigate}>
+        View all {panel.label}
+      </Link>
+      <div className="navbar__mega-list">
+        {panel.columns.map((col) => (
+          <Link key={col.to} to={col.to} className="navbar__mega-topic" onClick={onNavigate}>
+            {col.label}
+          </Link>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false) // mobile hamburger
+  const [openMenu, setOpenMenu] = useState(null) // desktop dropdown slug
+  const [openSection, setOpenSection] = useState(null) // mobile accordion slug
   const { pathname } = useLocation()
   const { brand, nav, cta } = site
   const { items } = useQuote()
   const quoteCount = items.length
+  const reduce = useReducedMotion()
+  const listRef = useRef(null)
 
-  // Close the mobile menu whenever the route changes.
+  // Resolve each nav item to its dropdown panel once (a null panel = flat link).
+  const navItems = nav.map((l) => ({ ...l, panel: l.menu ? getMegaMenu(l.menu) : null }))
+
+  // Close every menu whenever the route changes.
   useEffect(() => {
     setMenuOpen(false)
+    setOpenMenu(null)
+    setOpenSection(null)
   }, [pathname])
+
+  // Esc closes an open dropdown; pointerdown outside the nav closes it too.
+  useEffect(() => {
+    if (!openMenu) return
+    const onKey = (e) => {
+      if (e.key === 'Escape') setOpenMenu(null)
+    }
+    const onDown = (e) => {
+      if (listRef.current && !listRef.current.contains(e.target)) setOpenMenu(null)
+    }
+    document.addEventListener('keydown', onKey)
+    document.addEventListener('pointerdown', onDown)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.removeEventListener('pointerdown', onDown)
+    }
+  }, [openMenu])
+
+  const panelMotion = reduce
+    ? {}
+    : {
+        initial: { opacity: 0, y: -6 },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, y: -6 },
+        transition: { duration: 0.16, ease: 'easeOut' },
+      }
 
   return (
     <header className="navbar">
@@ -85,16 +144,67 @@ export default function Navbar() {
         </Link>
 
         <nav className="navbar__links" aria-label="Main navigation">
-          {nav.map((l) => (
-            <NavLink
-              key={l.to}
-              to={l.to}
-              end={l.to === '/'}
-              className={({ isActive }) => `navbar__link${isActive ? ' active' : ''}`}
-            >
-              {l.label}
-            </NavLink>
-          ))}
+          <ul className="navbar__list" ref={listRef}>
+            {navItems.map((l) =>
+              l.panel ? (
+                <li
+                  key={l.to}
+                  className="navbar__item navbar__item--mega"
+                  onMouseEnter={() => setOpenMenu(l.menu)}
+                  onMouseLeave={() => setOpenMenu((cur) => (cur === l.menu ? null : cur))}
+                  onBlur={(e) => {
+                    if (!e.currentTarget.contains(e.relatedTarget)) {
+                      setOpenMenu((cur) => (cur === l.menu ? null : cur))
+                    }
+                  }}
+                >
+                  <span className="navbar__mega-trigger">
+                    <NavLink
+                      to={l.to}
+                      className={({ isActive }) => `navbar__link${isActive ? ' active' : ''}`}
+                      onFocus={() => setOpenMenu(l.menu)}
+                    >
+                      {l.label}
+                    </NavLink>
+                    <button
+                      type="button"
+                      className="navbar__mega-toggle"
+                      aria-expanded={openMenu === l.menu}
+                      aria-controls={`megapanel-${l.menu}`}
+                      aria-label={`${l.label} menu`}
+                      onFocus={() => setOpenMenu(l.menu)}
+                      onClick={() => setOpenMenu((cur) => (cur === l.menu ? null : l.menu))}
+                    >
+                      <ChevronDown size={16} strokeWidth={2} aria-hidden="true" />
+                    </button>
+                  </span>
+                  <AnimatePresence>
+                    {openMenu === l.menu && (
+                      <motion.div
+                        id={`megapanel-${l.menu}`}
+                        className="navbar__mega-panel"
+                        role="group"
+                        aria-label={l.label}
+                        {...panelMotion}
+                      >
+                        <MegaPanel panel={l.panel} onNavigate={() => setOpenMenu(null)} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </li>
+              ) : (
+                <li key={l.to} className="navbar__item">
+                  <NavLink
+                    to={l.to}
+                    end={l.to === '/'}
+                    className={({ isActive }) => `navbar__link${isActive ? ' active' : ''}`}
+                  >
+                    {l.label}
+                  </NavLink>
+                </li>
+              ),
+            )}
+          </ul>
         </nav>
 
         <QuoteCta cta={cta} count={quoteCount} className="navbar__cta" />
@@ -112,17 +222,56 @@ export default function Navbar() {
       </div>
 
       <nav className={`navbar__mobile${menuOpen ? ' open' : ''}`} aria-label="Mobile navigation">
-        {nav.map((l) => (
-          <NavLink
-            key={l.to}
-            to={l.to}
-            end={l.to === '/'}
-            className={({ isActive }) => `navbar__mobile-link${isActive ? ' active' : ''}`}
-            onClick={() => setMenuOpen(false)}
-          >
-            {l.label}
-          </NavLink>
-        ))}
+        {navItems.map((l) =>
+          l.panel ? (
+            <div key={l.to} className="navbar__mobile-group">
+              <div className="navbar__mobile-row">
+                <NavLink
+                  to={l.to}
+                  className={({ isActive }) => `navbar__mobile-link${isActive ? ' active' : ''}`}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {l.label}
+                </NavLink>
+                <button
+                  type="button"
+                  className={`navbar__mobile-toggle${openSection === l.menu ? ' open' : ''}`}
+                  aria-expanded={openSection === l.menu}
+                  aria-controls={`mobilesec-${l.menu}`}
+                  aria-label={`${l.label} categories`}
+                  onClick={() => setOpenSection((cur) => (cur === l.menu ? null : l.menu))}
+                >
+                  <ChevronDown size={18} strokeWidth={2} aria-hidden="true" />
+                </button>
+              </div>
+              {openSection === l.menu && (
+                <ul id={`mobilesec-${l.menu}`} className="navbar__mobile-sub">
+                  {l.panel.columns.map((col) => (
+                    <li key={col.to}>
+                      <Link
+                        to={col.to}
+                        className="navbar__mobile-sublink"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        {col.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ) : (
+            <NavLink
+              key={l.to}
+              to={l.to}
+              end={l.to === '/'}
+              className={({ isActive }) => `navbar__mobile-link${isActive ? ' active' : ''}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              {l.label}
+            </NavLink>
+          ),
+        )}
         <QuoteCta
           cta={cta}
           count={quoteCount}
