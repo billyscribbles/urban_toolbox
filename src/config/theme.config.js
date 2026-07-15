@@ -32,6 +32,9 @@ export const theme = {
     accent: '#5c8a2f',
     'accent-hover': '#4d7527',
     'accent-soft': '#e6f0dc',
+
+    // Destructive actions + error text (admin dashboard, form errors).
+    danger: '#a03030',
   },
   fonts: {
     // Display / headings — uppercase, single heavy weight.

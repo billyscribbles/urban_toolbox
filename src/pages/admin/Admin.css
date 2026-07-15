@@ -1,0 +1,213 @@
+/* Admin dashboard — lean, utilitarian, tokens only. Single-admin tool. */
+
+.admin {
+  min-height: 60vh;
+}
+.admin__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.admin__title {
+  font-family: var(--font-display);
+  font-size: 32px;
+  text-transform: uppercase;
+  color: var(--color-ink-strong);
+}
+.admin__label {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  margin: 14px 0 4px;
+  color: var(--color-ink);
+}
+.admin__input,
+.admin__select,
+.admin__textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--color-ink);
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-none);
+}
+.admin__input:focus-visible,
+.admin__select:focus-visible,
+.admin__textarea:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+.admin__primary {
+  font-family: var(--font-body);
+  font-weight: 600;
+  padding: 10px 22px;
+  margin-top: 18px;
+  color: var(--color-white);
+  background: var(--color-ink-strong);
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+.admin__primary:hover {
+  background: var(--color-accent-hover);
+}
+.admin__primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.admin__ghost,
+.admin__danger {
+  font: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 7px 14px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+.admin__ghost:hover {
+  border-color: var(--color-accent);
+}
+.admin__danger {
+  color: var(--color-danger);
+}
+.admin__danger:hover {
+  border-color: var(--color-danger);
+}
+.admin__error {
+  color: var(--color-danger);
+  font-size: 14px;
+  margin-top: 12px;
+}
+.admin__empty {
+  color: var(--color-ink-muted);
+  padding: 24px 0;
+}
+
+/* Login */
+.admin-login {
+  max-width: 380px;
+  margin: 48px auto;
+}
+
+/* List table */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-border-light);
+  vertical-align: middle;
+}
+.admin-table__thumb {
+  width: 56px;
+  height: 42px;
+  object-fit: cover;
+  background: var(--color-off-white);
+  display: block;
+}
+.admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.admin-toolbar .admin__input,
+.admin-toolbar .admin__select {
+  width: auto;
+  min-width: 200px;
+}
+.admin-toolbar__spacer {
+  flex: 1;
+}
+
+/* Editor */
+.admin-editor {
+  max-width: 720px;
+}
+.admin-editor__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.admin-editor__spec {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.admin-editor__actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+.admin-editor__check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-weight: 600;
+  font-size: 14px;
+}
+.admin-editor__check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-accent);
+}
+
+/* Photo manager */
+.admin-photos {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-border-light);
+}
+.admin-photos__list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.admin-photos__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.admin-photos__img {
+  width: 88px;
+  height: 64px;
+  object-fit: cover;
+  background: var(--color-off-white);
+}
+.admin-photos__badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+}
+.admin-photos__buttons {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+.admin-photos__hint {
+  color: var(--color-ink-muted);
+  font-size: 14px;
+}
+
+@media (max-width: 700px) {
+  .admin-editor__row {
+    grid-template-columns: 1fr;
+  }
+  .admin-table__hide-sm {
+    display: none;
+  }
+}

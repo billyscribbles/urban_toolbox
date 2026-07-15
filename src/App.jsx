@@ -39,6 +39,7 @@ const AboutPage = lazyWithRetry(() => import('./pages/AboutPage.jsx'))
 const QuotePage = lazyWithRetry(() => import('./pages/QuotePage.jsx'))
 const LegalPage = lazyWithRetry(() => import('./pages/LegalPage.jsx'))
 const NotFoundPage = lazyWithRetry(() => import('./pages/NotFoundPage.jsx'))
+const AdminPage = lazyWithRetry(() => import('./pages/admin/AdminPage.jsx'))
 
 // Resets scroll on navigation and reports the page view to analytics.
 function RouteChange() {
@@ -140,6 +141,9 @@ export default function App() {
               />
               <Route path="/folding" element={<Navigate to="/fabrication#folding" replace />} />
               <Route path="/photos" element={<Navigate to="/" replace />} />
+
+              {/* Catalogue admin — auth-gated, noindexed, deliberately not in the nav. */}
+              <Route path="/admin" element={<AdminPage />} />
 
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

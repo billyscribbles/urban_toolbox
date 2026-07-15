@@ -50,7 +50,7 @@ const organizationLd = (() => {
 
 // Per-page SEO wrapper. Pass `title` and `description` to override defaults.
 // All other tags fall back to site.config.seo.
-export default function SEO({ title, description, image, path = '' }) {
+export default function SEO({ title, description, image, path = '', noindex = false }) {
   const seo = site.seo
   const resolvedTitle = title ? seo.titleTemplate.replace('%s', title) : seo.defaultTitle
   const resolvedDescription = description || seo.description
@@ -64,6 +64,7 @@ export default function SEO({ title, description, image, path = '' }) {
       <title>{resolvedTitle}</title>
       <meta name="description" content={resolvedDescription} />
       <link rel="canonical" href={url} />
+      {noindex && <meta name="robots" content="noindex, nofollow" />}
       <meta property="og:type" content="website" />
       <meta property="og:url" content={url} />
       <meta property="og:title" content={resolvedTitle} />
