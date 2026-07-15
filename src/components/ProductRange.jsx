@@ -38,7 +38,7 @@ export default function ProductRange({ data }) {
             <div className="grid grid--3">
               {s.products.map((p) => (
                 <Card
-                  key={p.title}
+                  key={p.id || p.title}
                   img={p.img}
                   imgAlt={p.imgAlt}
                   images={p.images}
@@ -46,14 +46,15 @@ export default function ProductRange({ data }) {
                   imageTone={p.imageTone || s.imageTone}
                   imagePosition={p.imagePosition || s.imagePosition}
                   title={p.title}
-                  body={p.body}
+                  body={p.summary || p.body}
                   height={240}
                   titleSize={22}
                   pad={26}
                   alt
                   quote={p.quote}
                   quoteCategory={header.title}
-                  build={s.build || data.build}
+                  specs={p.specs}
+                  features={p.features}
                 />
               ))}
             </div>

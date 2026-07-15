@@ -60,8 +60,27 @@
 
 .navbar__links {
   display: flex;
-  gap: 32px;
+  align-self: stretch;
   align-items: center;
+}
+
+.navbar__list {
+  display: flex;
+  gap: 32px;
+  align-items: stretch;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navbar__item {
+  display: flex;
+  align-items: center;
+}
+
+.navbar__item--mega {
+  position: relative;
 }
 
 .navbar__link {
@@ -76,6 +95,103 @@
 .navbar__link:hover,
 .navbar__link.active {
   color: #fff;
+}
+
+/* ---------------------------------------------------- mega dropdown */
+
+.navbar__mega-trigger {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+}
+
+.navbar__mega-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  color: var(--color-dark-text);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition:
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.navbar__mega-toggle:hover {
+  color: #fff;
+}
+
+.navbar__item--mega:hover .navbar__mega-toggle,
+.navbar__mega-toggle[aria-expanded='true'] {
+  color: #fff;
+}
+
+.navbar__mega-toggle[aria-expanded='true'] {
+  transform: rotate(180deg);
+}
+
+.navbar__mega-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 70;
+  width: min(480px, 94vw);
+  max-height: calc(100vh - 88px);
+  overflow-y: auto;
+  background: var(--color-dark);
+  border: 1px solid var(--color-border-dark);
+  border-top: 2px solid var(--color-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.navbar__mega-inner {
+  padding: 20px 24px 22px;
+}
+
+.navbar__mega-all {
+  display: inline-block;
+  margin-bottom: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.navbar__mega-all:hover {
+  color: #fff;
+}
+
+/* Just the topic headings — the subcategories (or, for a flattened top, its
+   items). Wraps into columns rather than growing tall. */
+.navbar__mega-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 4px 28px;
+}
+
+.navbar__mega-topic {
+  display: block;
+  padding: 9px 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-dark-text);
+  transition: color var(--transition-fast);
+}
+
+.navbar__mega-topic:hover {
+  color: #fff;
+}
+
+.navbar__mega-toggle:focus-visible,
+.navbar__mega-all:focus-visible,
+.navbar__mega-topic:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 /* --------------------------------------------------------------- cta */
@@ -185,6 +301,70 @@
 
 .navbar__mobile-link.active {
   color: #fff;
+}
+
+/* -------------------------------------------------- mobile accordion */
+
+.navbar__mobile-group {
+  border-bottom: 1px solid var(--color-border-dark);
+}
+
+.navbar__mobile-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar__mobile-group .navbar__mobile-link {
+  flex: 1;
+  border-bottom: 0;
+}
+
+.navbar__mobile-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--color-dark-text);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition:
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.navbar__mobile-toggle.open {
+  color: #fff;
+  transform: rotate(180deg);
+}
+
+.navbar__mobile-sub {
+  margin: 0 0 12px;
+  padding: 0 0 4px 4px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navbar__mobile-sublink {
+  display: block;
+  padding: 9px 0;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--color-dark-text);
+}
+
+.navbar__mobile-sublink:hover {
+  color: #fff;
+}
+
+.navbar__mobile-toggle:focus-visible,
+.navbar__mobile-sublink:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 .navbar__mobile-cta {

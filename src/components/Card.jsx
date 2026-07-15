@@ -12,23 +12,6 @@ function formatPrice(n) {
   return `$${Number(n).toLocaleString('en-AU')}`
 }
 
-// A product `body` packs its specs as dot-separated segments, e.g.
-// "2200 × 570 × 1010mm · 70kg" or a finish sentence. Split them into labelled
-// rows for the detail drawer: a segment with an "×" is the dimensions, a bare
-// weight (…kg) is the weight, anything else is a finish/feature note.
-function parseSpecs(body) {
-  if (!body) return []
-  return body
-    .split('·')
-    .map((s) => s.trim())
-    .filter(Boolean)
-    .map((value) => {
-      if (value.includes('×')) return { label: 'Dimensions', value }
-      if (/^\d+(\.\d+)?\s*kg$/i.test(value)) return { label: 'Weight', value }
-      return { label: 'Finish', value }
-    })
-}
-
 // Product / category card: striped photo slot over a heading and body. With a
 // `quote` descriptor it becomes a shop card — an "in your quote" badge on the
 // photo, a price row (or "Enquire for pricing" when priceless) and an action
@@ -50,7 +33,8 @@ export default function Card({
   pad = 28,
   quote,
   quoteCategory,
-  build,
+  specs,
+  features,
   imageFit,
   imageTone,
   imagePosition,
@@ -72,8 +56,8 @@ export default function Card({
       }
     : null
   // "View details" opens the detail drawer with everything the card already
-  // knows — photo, price, specs parsed from `body`, the shared build list and
-  // the same add-to-quote descriptor.
+  // knows — photo, price, the structured spec rows, the feature list and the
+  // same add-to-quote descriptor.
   function showDetails() {
     openDetail({
       title,
@@ -85,8 +69,8 @@ export default function Card({
       imagePosition,
       category: quoteCategory,
       priceFrom: quote?.priceFrom ?? null,
-      specs: parseSpecs(body),
-      build,
+      specs,
+      features,
       quoteItem,
     })
   }

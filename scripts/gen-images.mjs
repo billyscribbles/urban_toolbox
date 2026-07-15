@@ -28,6 +28,8 @@ const QUALITY = 68
 // is full-bleed on desktop and needs the extra step up.
 const TARGETS = [
   { dir: 'public/images', widths: [400, 800] },
+  // readdirSync is non-recursive, so the catalog subfolder needs its own entry.
+  { dir: 'public/images/catalog', widths: [400, 800] },
   { dir: 'public/brand', widths: [800, 1600], only: /^hero-/ },
 ]
 
