@@ -34,7 +34,7 @@ use**. Three concrete changes, per Billy's request:
 
 - `/admin` is a single lazy route (`App.jsx:146`). Login / list / editor are toggled
   via `useState` in `AdminPage.jsx` (`editing = null | 'new' | row`).
-- Clicking **Edit**/**New** *replaces* `ProductList` with a full-page `ProductEditor`
+- Clicking **Edit**/**New** _replaces_ `ProductList` with a full-page `ProductEditor`
   form inline; **Cancel/Save** returns to the list. List and editor never coexist.
 - Layout is container-constrained (`.container` max-width 1240px, `.section` padding;
   editor further narrowed to `max-width: 720px`).
@@ -60,7 +60,7 @@ use**. Three concrete changes, per Billy's request:
     same placement. `App` itself cannot call `useLocation` (it renders the provider).
 - `AdminPage` drops `.container`/`.section`. It renders:
   - A **sticky top bar** (`.admin-topbar`): left = `⚡` logo mark + `Urban Toolbox —
-    Admin`; right = a **`← Return to site`** link (`<Link to="/">`, the single escape
+Admin`; right = a **`← Return to site`** link (`<Link to="/">`, the single escape
     hatch back to the homepage — no full marketing nav) followed by **`Sign out`**.
   - A full-bleed content area with its own responsive horizontal padding
     (`clamp(20px, 4vw, 48px)`), not the shared container.
@@ -91,7 +91,7 @@ use**. Three concrete changes, per Billy's request:
 - Adds `products.hidden boolean not null default false` via
   `supabase/migrations/0002_product_hidden.sql`. Existing rows default to visible.
 - The public storefront fetch (`productStore.loadProducts`) filters `.eq('hidden',
-  false)`, so a hidden product disappears from category pages, search, and the quote
+false)`, so a hidden product disappears from category pages, search, and the quote
   flow. The admin's `fetchAdminProducts` uses `select('*')`, so it still lists hidden
   rows.
 - New `adminApi.setProductHidden(id, hidden)` updates only the flag and calls
@@ -139,19 +139,19 @@ use**. Three concrete changes, per Billy's request:
 
 ### 5. Files touched
 
-| File | Change |
-|------|--------|
-| `src/App.jsx` | `SiteFrame` guard: render Navbar/Footer/Lightbox/QuoteDrawer/DetailDrawer only when path ≠ `/admin`. |
-| `src/pages/admin/AdminPage.jsx` | Sticky top bar (mark, title, Return-to-site link, Sign out); full-bleed layout; host `EditorTray` instead of inline editor swap. |
-| `src/pages/admin/ProductList.jsx` | Refreshed full-width table: badges, `formatPrice`, hover, empty + loading states; Edit opens tray; stats bar + inline show/hide eye toggle. |
-| `supabase/migrations/0002_product_hidden.sql` | **New** — adds the `hidden` column to `products`. |
-| `src/lib/productStore.js` | Storefront fetch filters out hidden products. |
-| `src/lib/adminApi.js` | Adds `setProductHidden(id, hidden)`. |
-| `src/pages/admin/ProductEditor.jsx` | Form body restyled to fit the ~640px tray; logic untouched. |
-| `src/pages/admin/EditorTray.jsx` | **New** — drawer shell (framer-motion + focus trap + Esc/backdrop), props-driven. |
-| `src/pages/admin/AdminLogin.jsx` | Centered polished card in the standalone frame. |
-| `src/pages/admin/Admin.css` | Major update: top bar, full-bleed, warm surfaces, tray styles, badges, skeleton, login card. |
-| `src/test/admin.test.jsx` | Assert: tray opens as a `dialog` on Edit/New, closes via Esc/backdrop/✕, Navbar/Footer hidden on `/admin`, Return-to-site link present, CRUD + photo flows still pass. |
+| File                                          | Change                                                                                                                                                                 |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/App.jsx`                                 | `SiteFrame` guard: render Navbar/Footer/Lightbox/QuoteDrawer/DetailDrawer only when path ≠ `/admin`.                                                                   |
+| `src/pages/admin/AdminPage.jsx`               | Sticky top bar (mark, title, Return-to-site link, Sign out); full-bleed layout; host `EditorTray` instead of inline editor swap.                                       |
+| `src/pages/admin/ProductList.jsx`             | Refreshed full-width table: badges, `formatPrice`, hover, empty + loading states; Edit opens tray; stats bar + inline show/hide eye toggle.                            |
+| `supabase/migrations/0002_product_hidden.sql` | **New** — adds the `hidden` column to `products`.                                                                                                                      |
+| `src/lib/productStore.js`                     | Storefront fetch filters out hidden products.                                                                                                                          |
+| `src/lib/adminApi.js`                         | Adds `setProductHidden(id, hidden)`.                                                                                                                                   |
+| `src/pages/admin/ProductEditor.jsx`           | Form body restyled to fit the ~640px tray; logic untouched.                                                                                                            |
+| `src/pages/admin/EditorTray.jsx`              | **New** — drawer shell (framer-motion + focus trap + Esc/backdrop), props-driven.                                                                                      |
+| `src/pages/admin/AdminLogin.jsx`              | Centered polished card in the standalone frame.                                                                                                                        |
+| `src/pages/admin/Admin.css`                   | Major update: top bar, full-bleed, warm surfaces, tray styles, badges, skeleton, login card.                                                                           |
+| `src/test/admin.test.jsx`                     | Assert: tray opens as a `dialog` on Edit/New, closes via Esc/backdrop/✕, Navbar/Footer hidden on `/admin`, Return-to-site link present, CRUD + photo flows still pass. |
 
 ### 6. Error handling
 
