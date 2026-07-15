@@ -16,15 +16,19 @@ use**. Three concrete changes, per Billy's request:
    swapping the whole list out for a full-page form.
 3. **Warm visual refresh** — softer surfaces, roomier spacing, larger type, status
    badges, and friendly empty/loading states, all from existing design tokens.
+4. **At-a-glance stats + show/hide** — a stats bar (total / visible / hidden) and a
+   one-click per-row toggle to hide a product from the public storefront (or show it
+   again) without deleting it. This adds a `hidden` column (see "Visibility" below).
 
 ## Non-goals
 
-- No changes to CRUD logic, Supabase calls (`adminApi.js`), validation
-  (`productForm.js`), image processing (`imageResize.js`), or the data model.
+- No changes to validation (`productForm.js`) or image processing (`imageResize.js`).
 - No new routes or URL/query-param state for the editor (tray stays driven by local
   React state, matching today).
 - No new design tokens — the warm look uses tokens already in `theme.config.js`.
 - Categories remain config-driven (not editable in the admin), as today.
+- The only data-model change is the additive `hidden` column (§ Visibility); no other
+  schema or existing-CRUD changes.
 
 ## Current state (baseline)
 
@@ -76,6 +80,25 @@ use**. Three concrete changes, per Billy's request:
     existing two-step inline `Delete → Confirm delete` (no `window.confirm`).
 - **Empty state**: friendly message + a `+ New product` call to action.
 - **Loading state**: lightweight skeleton rows instead of bare text.
+- **Stats bar** above the toolbar: three tiles — Total, Visible, Hidden — computed
+  from the loaded rows.
+- **Inline show/hide**: each row has an eye / eye-off button that toggles the
+  product's `hidden` flag in one click (handled internally like Delete: call
+  `setProductHidden`, then refresh). Hidden rows render muted with a `Hidden` badge.
+
+### Visibility (`hidden` column)
+
+- Adds `products.hidden boolean not null default false` via
+  `supabase/migrations/0002_product_hidden.sql`. Existing rows default to visible.
+- The public storefront fetch (`productStore.loadProducts`) filters `.eq('hidden',
+  false)`, so a hidden product disappears from category pages, search, and the quote
+  flow. The admin's `fetchAdminProducts` uses `select('*')`, so it still lists hidden
+  rows.
+- New `adminApi.setProductHidden(id, hidden)` updates only the flag and calls
+  `retryLoad()` so an open storefront tab reflects the change. `saveProduct` does not
+  touch `hidden` (the toggle owns it), so editing a product never changes visibility.
+- RLS is unchanged (anon `select … using (true)`); visibility is enforced app-side in
+  the query, matching the "categories in code" convention from `0001_catalog.sql`.
 
 ### 3. Editor — right-side slide-out tray (~640px)
 
@@ -120,7 +143,10 @@ use**. Three concrete changes, per Billy's request:
 |------|--------|
 | `src/App.jsx` | `SiteFrame` guard: render Navbar/Footer/Lightbox/QuoteDrawer/DetailDrawer only when path ≠ `/admin`. |
 | `src/pages/admin/AdminPage.jsx` | Sticky top bar (mark, title, Return-to-site link, Sign out); full-bleed layout; host `EditorTray` instead of inline editor swap. |
-| `src/pages/admin/ProductList.jsx` | Refreshed full-width table: badges, `formatPrice`, hover, empty + loading states; Edit opens tray. |
+| `src/pages/admin/ProductList.jsx` | Refreshed full-width table: badges, `formatPrice`, hover, empty + loading states; Edit opens tray; stats bar + inline show/hide eye toggle. |
+| `supabase/migrations/0002_product_hidden.sql` | **New** — adds the `hidden` column to `products`. |
+| `src/lib/productStore.js` | Storefront fetch filters out hidden products. |
+| `src/lib/adminApi.js` | Adds `setProductHidden(id, hidden)`. |
 | `src/pages/admin/ProductEditor.jsx` | Form body restyled to fit the ~640px tray; logic untouched. |
 | `src/pages/admin/EditorTray.jsx` | **New** — drawer shell (framer-motion + focus trap + Esc/backdrop), props-driven. |
 | `src/pages/admin/AdminLogin.jsx` | Centered polished card in the standalone frame. |
@@ -140,9 +166,11 @@ use**. Three concrete changes, per Billy's request:
 2. `yarn test` — updated `admin.test.jsx` passes, incl. **axe** on the tray's dialog
    semantics (role, aria-modal, labelling, focusable close).
 3. `yarn build` — production build succeeds, vendor chunks intact.
-4. Browser drive-through: sign in → open tray (New + Edit) → save → delete → Return to
-   site link → Sign out; verify Esc/backdrop close and focus restore; resize at
-   375 / 768 / 1280px (tray full-width on mobile, toolbar wraps, top bar holds).
+4. Browser drive-through: sign in → check stats bar → toggle a product hidden/shown
+   (verify it leaves/returns to the public storefront) → open tray (New + Edit) →
+   save → delete → Return to site link → Sign out; verify Esc/backdrop close and focus
+   restore; resize at 375 / 768 / 1280px (tray full-width on mobile, toolbar wraps, top
+   bar holds).
 
 ## Open risks
 
