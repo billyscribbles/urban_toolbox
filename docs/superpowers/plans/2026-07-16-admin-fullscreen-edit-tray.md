@@ -22,31 +22,33 @@
 
 ## File Structure
 
-| File | Responsibility |
-|------|----------------|
-| `src/App.jsx` (modify) | Extract an `AppBody` inside `BrowserRouter`; render storefront chrome only when path ≠ `/admin`. |
-| `src/pages/admin/EditorTray.jsx` (create) | Slide-out drawer shell hosting `ProductEditor`; dialog semantics, prop-driven open/close. |
-| `src/pages/admin/AdminPage.jsx` (modify) | Standalone top bar + full-bleed body; hosts `EditorTray`; tracks `loaded`. |
-| `src/pages/admin/ProductEditor.jsx` (modify) | Drop its own `<h2>` (tray owns the title); add tray form class. Logic untouched. |
-| `src/pages/admin/ProductList.jsx` (modify) | Full-width table, status badges, `formatPrice`, loading skeleton + empty states; a stats bar (total/visible/hidden) and an inline show/hide eye toggle. |
-| `src/pages/admin/AdminLogin.jsx` (modify) | Add a form-level class hook for the centered card (markup minimal). |
-| `src/pages/admin/Admin.css` (modify) | Full warm refresh: top bar, full-bleed, card table, badges, skeleton, tray, login card, stats bar, hidden-row + toggle styles. |
-| `supabase/migrations/0002_product_hidden.sql` (create) | Adds the `hidden` boolean column to `products` (default false). |
-| `src/lib/productStore.js` (modify) | Storefront fetch filters out hidden products (`.eq('hidden', false)`). |
-| `src/lib/adminApi.js` (modify) | Add `setProductHidden(id, hidden)` — updates the flag and refreshes the storefront. |
-| `src/test/appFrame.test.jsx` (create) | Asserts marketing nav hidden on `/admin`, present on `/`. |
-| `src/test/admin.test.jsx` (modify) | Signed-in dashboard tests; ProductList badge, stats, and show/hide toggle assertions. |
-| `src/test/adminApi.test.js` (modify) | Covers `setProductHidden`. |
+| File                                                   | Responsibility                                                                                                                                          |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/App.jsx` (modify)                                 | Extract an `AppBody` inside `BrowserRouter`; render storefront chrome only when path ≠ `/admin`.                                                        |
+| `src/pages/admin/EditorTray.jsx` (create)              | Slide-out drawer shell hosting `ProductEditor`; dialog semantics, prop-driven open/close.                                                               |
+| `src/pages/admin/AdminPage.jsx` (modify)               | Standalone top bar + full-bleed body; hosts `EditorTray`; tracks `loaded`.                                                                              |
+| `src/pages/admin/ProductEditor.jsx` (modify)           | Drop its own `<h2>` (tray owns the title); add tray form class. Logic untouched.                                                                        |
+| `src/pages/admin/ProductList.jsx` (modify)             | Full-width table, status badges, `formatPrice`, loading skeleton + empty states; a stats bar (total/visible/hidden) and an inline show/hide eye toggle. |
+| `src/pages/admin/AdminLogin.jsx` (modify)              | Add a form-level class hook for the centered card (markup minimal).                                                                                     |
+| `src/pages/admin/Admin.css` (modify)                   | Full warm refresh: top bar, full-bleed, card table, badges, skeleton, tray, login card, stats bar, hidden-row + toggle styles.                          |
+| `supabase/migrations/0002_product_hidden.sql` (create) | Adds the `hidden` boolean column to `products` (default false).                                                                                         |
+| `src/lib/productStore.js` (modify)                     | Storefront fetch filters out hidden products (`.eq('hidden', false)`).                                                                                  |
+| `src/lib/adminApi.js` (modify)                         | Add `setProductHidden(id, hidden)` — updates the flag and refreshes the storefront.                                                                     |
+| `src/test/appFrame.test.jsx` (create)                  | Asserts marketing nav hidden on `/admin`, present on `/`.                                                                                               |
+| `src/test/admin.test.jsx` (modify)                     | Signed-in dashboard tests; ProductList badge, stats, and show/hide toggle assertions.                                                                   |
+| `src/test/adminApi.test.js` (modify)                   | Covers `setProductHidden`.                                                                                                                              |
 
 ---
 
 ### Task 1: Hide storefront chrome on `/admin`
 
 **Files:**
+
 - Modify: `src/App.jsx`
 - Test: `src/test/appFrame.test.jsx` (create)
 
 **Interfaces:**
+
 - Consumes: existing `Navbar`, `Footer`, `Lightbox`, `QuoteDrawer`, `DetailDrawer`, `RouteChange`, route table (all already in `App.jsx`).
 - Produces: no exported API change — `App` still default-exports the same component. Behavior: on `/admin`, none of Navbar/Footer/Lightbox/QuoteDrawer/DetailDrawer render.
 
@@ -96,9 +98,7 @@ afterEach(() => {
 describe('App storefront chrome', () => {
   it('renders the marketing nav on the home route', async () => {
     renderAt('/')
-    expect(
-      await screen.findByRole('navigation', { name: /main navigation/i }),
-    ).toBeInTheDocument()
+    expect(await screen.findByRole('navigation', { name: /main navigation/i })).toBeInTheDocument()
   })
 
   it('hides the marketing nav on /admin and shows the admin login', async () => {
@@ -135,9 +135,7 @@ function AppBody() {
       <div id="main" tabIndex={-1}>
         <ErrorBoundary>
           <Suspense fallback={<RouteFallback />}>
-            <Routes>
-              {/* …unchanged: copy the exact existing <Route> list here… */}
-            </Routes>
+            <Routes>{/* …unchanged: copy the exact existing <Route> list here… */}</Routes>
           </Suspense>
         </ErrorBoundary>
       </div>
@@ -181,11 +179,13 @@ git commit -m "feat(admin): hide storefront chrome on /admin route"
 ### Task 2: EditorTray drawer shell
 
 **Files:**
+
 - Create: `src/pages/admin/EditorTray.jsx`
 - Modify: `src/pages/admin/ProductEditor.jsx` (remove own `<h2>`, add tray form class)
 - Test: `src/test/admin.test.jsx` (add an EditorTray describe block)
 
 **Interfaces:**
+
 - Consumes: `ProductEditor` (default export, props `{ row, rows, onDone, onCancel }` — unchanged).
 - Produces: `EditorTray` default export with props:
   - `editing`: `null | 'new' | row` (same shape `AdminPage` already holds).
@@ -353,10 +353,12 @@ git commit -m "feat(admin): add slide-out EditorTray hosting the product editor"
 ### Task 3: Standalone AdminPage shell + tray host
 
 **Files:**
+
 - Modify: `src/pages/admin/AdminPage.jsx`
 - Test: `src/test/admin.test.jsx` (add "signed in" describe block; update signed-out assertion)
 
 **Interfaces:**
+
 - Consumes: `EditorTray` (Task 2), `ProductList` (props `{ rows, onEdit, onNew, onChanged, loading }` — `loading` added in Task 4; passing it now is forward-compatible), `AdminLogin`, `signOut`, `fetchAdminProducts`, `watchSession`, `site.brand.logoMark`, `Link` from react-router-dom.
 - Produces: no exported API change. Behavior: signed-in view renders `.admin-topbar` (mark + `Urban Toolbox — Admin` + `← Return to site` link + `Sign out`) and hosts `EditorTray`.
 
@@ -393,7 +395,7 @@ const { saveProduct, watchSession } = await import('../lib/adminApi.js')
 Update the existing signed-out assertion (currently `expect(screen.queryByText(/catalogue admin/i)).toBeNull()`) to check the new dashboard chrome is absent when signed out:
 
 ```jsx
-    expect(screen.queryByRole('link', { name: /return to site/i })).toBeNull()
+expect(screen.queryByRole('link', { name: /return to site/i })).toBeNull()
 ```
 
 Add `waitFor` to the testing-library import:
@@ -427,9 +429,7 @@ describe('AdminPage — signed in', () => {
     await user.click(newBtn)
     expect(await screen.findByRole('dialog', { name: /new product/i })).toBeInTheDocument()
     await user.keyboard('{Escape}')
-    await waitFor(() =>
-      expect(screen.queryByRole('dialog', { name: /new product/i })).toBeNull(),
-    )
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: /new product/i })).toBeNull())
   })
 })
 ```
@@ -567,10 +567,12 @@ git commit -m "feat(admin): standalone top bar with Return-to-site link and tray
 ### Task 4: ProductList warm refresh — badges + loading/empty states
 
 **Files:**
+
 - Modify: `src/pages/admin/ProductList.jsx`
 - Test: `src/test/admin.test.jsx` (update the existing `ProductList` block)
 
 **Interfaces:**
+
 - Consumes: `getTree`, `getLeaves`, `publicPhotoUrl`, `formatPrice`, `deleteProduct` (all already imported).
 - Produces: `ProductList` default export, props `{ rows, loading, onEdit, onNew, onChanged }`. `loading` is optional (defaults falsy). Renders a `Status` column with `.admin-badge` pills (`★ Featured`, `{n}% off`), a skeleton while `loading`, and a friendly empty state with an `Add your first product` CTA when `rows` is empty.
 
@@ -579,39 +581,39 @@ git commit -m "feat(admin): standalone top bar with Return-to-site link and tray
 In `src/test/admin.test.jsx`, replace the first `ProductList` test's discount assertion and add a badge/empty assertion. Change the existing test body:
 
 ```jsx
-  it('renders a row per product with price and status badges', () => {
-    render(
-      <MemoryRouter>
-        <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
-      </MemoryRouter>,
-    )
-    expect(screen.getByText('Whale Tail Lock')).toBeInTheDocument()
-    expect(screen.getByText('$450')).toBeInTheDocument()
-    expect(screen.getByText(/15% off/i)).toBeInTheDocument()
-    expect(screen.getByText(/featured/i)).toBeInTheDocument()
-  })
+it('renders a row per product with price and status badges', () => {
+  render(
+    <MemoryRouter>
+      <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
+    </MemoryRouter>,
+  )
+  expect(screen.getByText('Whale Tail Lock')).toBeInTheDocument()
+  expect(screen.getByText('$450')).toBeInTheDocument()
+  expect(screen.getByText(/15% off/i)).toBeInTheDocument()
+  expect(screen.getByText(/featured/i)).toBeInTheDocument()
+})
 ```
 
 Add two more tests inside the same `describe('ProductList', …)`:
 
 ```jsx
-  it('shows a skeleton while loading', () => {
-    const { container } = render(
-      <MemoryRouter>
-        <ProductList rows={[]} loading onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
-      </MemoryRouter>,
-    )
-    expect(container.querySelector('.admin-skel')).not.toBeNull()
-  })
+it('shows a skeleton while loading', () => {
+  const { container } = render(
+    <MemoryRouter>
+      <ProductList rows={[]} loading onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
+    </MemoryRouter>,
+  )
+  expect(container.querySelector('.admin-skel')).not.toBeNull()
+})
 
-  it('shows a friendly empty state with a create CTA when there are no products', () => {
-    render(
-      <MemoryRouter>
-        <ProductList rows={[]} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
-      </MemoryRouter>,
-    )
-    expect(screen.getByRole('button', { name: /add your first product/i })).toBeInTheDocument()
-  })
+it('shows a friendly empty state with a create CTA when there are no products', () => {
+  render(
+    <MemoryRouter>
+      <ProductList rows={[]} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
+    </MemoryRouter>,
+  )
+  expect(screen.getByRole('button', { name: /add your first product/i })).toBeInTheDocument()
+})
 ```
 
 - [ ] **Step 2: Run the tests to verify they fail**
@@ -838,12 +840,14 @@ git commit -m "feat(admin): full-width product list with status badges and empty
 ### Task 5: Visibility data layer — `hidden` column, storefront filter, `setProductHidden`
 
 **Files:**
+
 - Create: `supabase/migrations/0002_product_hidden.sql`
 - Modify: `src/lib/productStore.js` (filter hidden from the public fetch)
 - Modify: `src/lib/adminApi.js` (add `setProductHidden`)
 - Test: `src/test/adminApi.test.js` (cover `setProductHidden`)
 
 **Interfaces:**
+
 - Consumes: existing `client()` helper and `retryLoad` in `adminApi.js`; the Supabase query builder in `productStore.loadProducts`.
 - Produces: `setProductHidden(id: string, hidden: boolean): Promise<void>` — throws on error, calls `retryLoad()` on success. New DB column `products.hidden boolean not null default false`. The storefront no longer returns hidden products.
 
@@ -869,12 +873,12 @@ Apply it to the linked Supabase project (via the Supabase MCP `apply_migration` 
 In `src/lib/productStore.js`, the public fetch is in `loadProducts` (the `.from('products').select(...)` chain). Add a `.eq('hidden', false)` filter:
 
 ```jsx
-  const { data, error } = await supabase
-    .from('products')
-    .select('*, product_images(*)')
-    .eq('hidden', false)
-    .order('sort_order', { ascending: true })
-    .order('id', { ascending: true })
+const { data, error } = await supabase
+  .from('products')
+  .select('*, product_images(*)')
+  .eq('hidden', false)
+  .order('sort_order', { ascending: true })
+  .order('id', { ascending: true })
 ```
 
 (No change to `normalizeRow` — the storefront never needs the flag once hidden rows are excluded.)
@@ -884,9 +888,8 @@ In `src/lib/productStore.js`, the public fetch is in `loadProducts` (the `.from(
 In `src/test/adminApi.test.js`, add `setProductHidden` to the import on line 55:
 
 ```jsx
-const { saveProduct, deletePhoto, deleteProduct, setProductHidden } = await import(
-  '../lib/adminApi.js'
-)
+const { saveProduct, deletePhoto, deleteProduct, setProductHidden } =
+  await import('../lib/adminApi.js')
 ```
 
 Add a describe block:
@@ -941,10 +944,12 @@ git commit -m "feat(admin): add product visibility (hidden) column, storefront f
 ### Task 6: Stats bar + inline show/hide toggle in ProductList
 
 **Files:**
+
 - Modify: `src/pages/admin/ProductList.jsx` (built in Task 4)
 - Test: `src/test/admin.test.jsx` (add `setProductHidden` to the mock; stats + toggle tests)
 
 **Interfaces:**
+
 - Consumes: `setProductHidden` (Task 5), `Eye`/`EyeOff` from `lucide-react`, the `rows` prop (each row may carry `hidden: boolean`).
 - Produces: no new external props — the toggle is handled internally (like delete). Renders a `.admin-stats` bar (Total / Visible / Hidden) and a per-row eye button; hidden rows get `.admin-table__row--hidden` + a `Hidden` badge.
 
@@ -986,33 +991,33 @@ const listRows = [
 Add tests inside `describe('ProductList', …)`:
 
 ```jsx
-  it('shows total / visible / hidden stats', () => {
-    render(
-      <MemoryRouter>
-        <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
-      </MemoryRouter>,
-    )
-    const total = screen.getByTestId('stat-total')
-    const visible = screen.getByTestId('stat-visible')
-    const hidden = screen.getByTestId('stat-hidden')
-    expect(total).toHaveTextContent('2')
-    expect(visible).toHaveTextContent('1')
-    expect(hidden).toHaveTextContent('1')
-  })
+it('shows total / visible / hidden stats', () => {
+  render(
+    <MemoryRouter>
+      <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
+    </MemoryRouter>,
+  )
+  const total = screen.getByTestId('stat-total')
+  const visible = screen.getByTestId('stat-visible')
+  const hidden = screen.getByTestId('stat-hidden')
+  expect(total).toHaveTextContent('2')
+  expect(visible).toHaveTextContent('1')
+  expect(hidden).toHaveTextContent('1')
+})
 
-  it('toggles visibility from the row eye button', async () => {
-    const user = userEvent.setup()
-    const onChanged = vi.fn()
-    render(
-      <MemoryRouter>
-        <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={onChanged} />
-      </MemoryRouter>,
-    )
-    // The hidden row (Whale Tail Lock) offers a "Show" action; the visible row offers "Hide".
-    await user.click(screen.getByRole('button', { name: /show whale tail lock/i }))
-    expect(setProductHidden).toHaveBeenCalledWith('a', false)
-    await waitFor(() => expect(onChanged).toHaveBeenCalled())
-  })
+it('toggles visibility from the row eye button', async () => {
+  const user = userEvent.setup()
+  const onChanged = vi.fn()
+  render(
+    <MemoryRouter>
+      <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={onChanged} />
+    </MemoryRouter>,
+  )
+  // The hidden row (Whale Tail Lock) offers a "Show" action; the visible row offers "Hide".
+  await user.click(screen.getByRole('button', { name: /show whale tail lock/i }))
+  expect(setProductHidden).toHaveBeenCalledWith('a', false)
+  await waitFor(() => expect(onChanged).toHaveBeenCalled())
+})
 ```
 
 Import `setProductHidden` into the test module alongside the other mocked fns:
@@ -1047,57 +1052,57 @@ import { deleteProduct, setProductHidden } from '../../lib/adminApi.js'
 3c. Add toggle state next to the existing `busyId` state:
 
 ```jsx
-  const [togglingId, setTogglingId] = useState(null)
+const [togglingId, setTogglingId] = useState(null)
 ```
 
 3d. Add the toggle handler next to `onDelete`:
 
 ```jsx
-  async function onToggleHidden(row) {
-    setTogglingId(row.id)
-    setError('')
-    try {
-      await setProductHidden(row.id, !row.hidden)
-      onChanged()
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setTogglingId(null)
-    }
+async function onToggleHidden(row) {
+  setTogglingId(row.id)
+  setError('')
+  try {
+    await setProductHidden(row.id, !row.hidden)
+    onChanged()
+  } catch (err) {
+    setError(err.message)
+  } finally {
+    setTogglingId(null)
   }
+}
 ```
 
 3e. Compute stats just before the `return` (after `visible`):
 
 ```jsx
-  const total = rows.length
-  const hiddenCount = rows.filter((r) => r.hidden).length
-  const visibleCount = total - hiddenCount
+const total = rows.length
+const hiddenCount = rows.filter((r) => r.hidden).length
+const visibleCount = total - hiddenCount
 ```
 
 3f. Render the stats bar as the first child inside the top-level `<div>` (above `.admin-toolbar`):
 
 ```jsx
-      <div className="admin-stats">
-        <div className="admin-stat">
-          <span className="admin-stat__num" data-testid="stat-total">
-            {total}
-          </span>
-          <span className="admin-stat__label">Total</span>
-        </div>
-        <div className="admin-stat">
-          <span className="admin-stat__num" data-testid="stat-visible">
-            {visibleCount}
-          </span>
-          <span className="admin-stat__label">Visible</span>
-        </div>
-        <div className="admin-stat">
-          <span className="admin-stat__num" data-testid="stat-hidden">
-            {hiddenCount}
-          </span>
-          <span className="admin-stat__label">Hidden</span>
-        </div>
-      </div>
+<div className="admin-stats">
+  <div className="admin-stat">
+    <span className="admin-stat__num" data-testid="stat-total">
+      {total}
+    </span>
+    <span className="admin-stat__label">Total</span>
+  </div>
+  <div className="admin-stat">
+    <span className="admin-stat__num" data-testid="stat-visible">
+      {visibleCount}
+    </span>
+    <span className="admin-stat__label">Visible</span>
+  </div>
+  <div className="admin-stat">
+    <span className="admin-stat__num" data-testid="stat-hidden">
+      {hiddenCount}
+    </span>
+    <span className="admin-stat__label">Hidden</span>
+  </div>
+</div>
 ```
 
 3g. Mark hidden rows and add a `Hidden` badge. Change the row `<tr>` open tag to carry the state class:
@@ -1109,26 +1114,28 @@ import { deleteProduct, setProductHidden } from '../../lib/adminApi.js'
 In the Status cell's `.admin-badges`, add a hidden badge alongside Featured / % off:
 
 ```jsx
-                      {row.hidden && <span className="admin-badge admin-badge--hidden">Hidden</span>}
+{
+  row.hidden && <span className="admin-badge admin-badge--hidden">Hidden</span>
+}
 ```
 
 3h. Add the eye toggle as the first control in the actions `.admin-photos__buttons`, before the Edit button:
 
 ```jsx
-                      <button
-                        type="button"
-                        className="admin__ghost"
-                        disabled={togglingId === row.id}
-                        aria-pressed={!row.hidden}
-                        aria-label={row.hidden ? `Show ${row.title}` : `Hide ${row.title}`}
-                        onClick={() => onToggleHidden(row)}
-                      >
-                        {row.hidden ? (
-                          <EyeOff size={14} strokeWidth={2} aria-hidden="true" />
-                        ) : (
-                          <Eye size={14} strokeWidth={2} aria-hidden="true" />
-                        )}
-                      </button>
+<button
+  type="button"
+  className="admin__ghost"
+  disabled={togglingId === row.id}
+  aria-pressed={!row.hidden}
+  aria-label={row.hidden ? `Show ${row.title}` : `Hide ${row.title}`}
+  onClick={() => onToggleHidden(row)}
+>
+  {row.hidden ? (
+    <EyeOff size={14} strokeWidth={2} aria-hidden="true" />
+  ) : (
+    <Eye size={14} strokeWidth={2} aria-hidden="true" />
+  )}
+</button>
 ```
 
 - [ ] **Step 4: Run the tests to verify they pass**
@@ -1148,10 +1155,12 @@ git commit -m "feat(admin): product stats bar and inline show/hide toggle"
 ### Task 7: Warm visual refresh in Admin.css + login card
 
 **Files:**
+
 - Modify: `src/pages/admin/Admin.css`
 - Modify: `src/pages/admin/AdminLogin.jsx` (no structural change required; verify class hooks)
 
 **Interfaces:**
+
 - Consumes: class names introduced in Tasks 2-4 (`.admin-topbar*`, `.admin__body`, `.admin-card`, `.admin-badge*`, `.admin-badges`, `.admin-empty*`, `.admin-skel*`, `.editor-tray*`, `.editor-tray__form`) plus existing (`.admin`, `.admin__ghost`, `.admin-login`, `.admin-table`, `.admin-editor`).
 - Produces: no JS interface — purely visual. This task has no unit test; it is verified by the full suite still passing plus the browser drive-through in the Verification task.
 
@@ -1723,6 +1732,7 @@ Expected: succeeds; vendor chunks (react, motion) split as before.
 - [ ] **Step 4: Browser drive-through**
 
 Run `yarn preview` (or `yarn dev`) and, using the browser (Claude-in-Chrome or Playwright skill), verify on `/admin`:
+
 - No marketing Navbar/Footer; the admin top bar shows the mark, `Urban Toolbox — Admin`, `← Return to site`, and `Sign out`.
 - Login card is centered on the page.
 - After sign-in: full-width product table with thumbnails, `Featured` / `% off` badges, hover rows.
@@ -1747,6 +1757,7 @@ git commit -m "chore(admin): verification polish for full-screen edit-tray redes
 ## Self-Review
 
 **Spec coverage:**
+
 - Full-screen standalone dashboard → Task 1 (hide chrome) + Task 3 (top bar, full-bleed) ✓
 - Return-to-site button → Task 3 ✓
 - Edit tray instead of new page → Task 2 (EditorTray) + Task 3 (host) ✓

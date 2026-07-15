@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { site } from '../config/site.config.js'
 import { getMegaMenu } from '../lib/catalog.js'
@@ -98,7 +97,6 @@ export default function Navbar() {
   const { brand, nav, cta } = site
   const { items } = useQuote()
   const quoteCount = items.length
-  const reduce = useReducedMotion()
   const listRef = useRef(null)
 
   // Resolve each nav item to its dropdown panel once (a null panel = flat link).
@@ -147,15 +145,6 @@ export default function Navbar() {
     }
   }, [openMenu])
 
-  const panelMotion = reduce
-    ? {}
-    : {
-        initial: { opacity: 0, y: -6 },
-        animate: { opacity: 1, y: 0 },
-        exit: { opacity: 0, y: -6 },
-        transition: { duration: 0.16, ease: 'easeOut' },
-      }
-
   return (
     <header className={`navbar${transparent ? ' navbar--transparent' : ''}`}>
       <div className="navbar__inner container">
@@ -198,19 +187,21 @@ export default function Navbar() {
                       <ChevronDown size={16} strokeWidth={2} aria-hidden="true" />
                     </button>
                   </span>
-                  <AnimatePresence>
-                    {openMenu === l.menu && (
-                      <motion.div
-                        id={`megapanel-${l.menu}`}
-                        className="navbar__mega-panel"
-                        role="group"
-                        aria-label={l.label}
-                        {...panelMotion}
-                      >
-                        <MegaPanel panel={l.panel} onNavigate={() => setOpenMenu(null)} />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  {/* CSS-animated dropdown (see navbar__mega-panel in the CSS).
+                      This deliberately avoids framer-motion so the library stays
+                      out of the home route's initial bundle — the enter uses a
+                      keyframe; closing is instant, which reads fine for a hover
+                      menu. */}
+                  {openMenu === l.menu && (
+                    <div
+                      id={`megapanel-${l.menu}`}
+                      className="navbar__mega-panel"
+                      role="group"
+                      aria-label={l.label}
+                    >
+                      <MegaPanel panel={l.panel} onNavigate={() => setOpenMenu(null)} />
+                    </div>
+                  )}
                 </li>
               ) : (
                 <li key={l.to} className="navbar__item">
