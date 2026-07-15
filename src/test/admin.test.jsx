@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
@@ -8,10 +8,10 @@ import { axe, toHaveNoViolations } from 'jest-axe'
 expect.extend(toHaveNoViolations)
 
 vi.mock('../lib/adminApi.js', () => ({
-  watchSession: async (onChange) => {
+  watchSession: vi.fn(async (onChange) => {
     onChange(null)
     return () => {}
-  },
+  }),
   signIn: vi.fn(async () => ({ error: { message: 'Invalid login credentials' } })),
   signOut: vi.fn(),
   fetchAdminProducts: vi.fn(async () => []),
@@ -40,13 +40,39 @@ describe('AdminPage — signed out', () => {
     renderAdmin()
     expect(await screen.findByLabelText(/email/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
-    expect(screen.queryByText(/catalogue admin/i)).toBeNull()
+    expect(screen.queryByRole('link', { name: /return to site/i })).toBeNull()
   })
 
   it('has no axe violations', async () => {
     const { container } = renderAdmin()
     await screen.findByLabelText(/email/i)
     expect(await axe(container)).toHaveNoViolations()
+  })
+})
+
+describe('AdminPage — signed in', () => {
+  function renderSignedIn() {
+    watchSession.mockImplementationOnce(async (onChange) => {
+      onChange({ user: { id: 'u1' } })
+      return () => {}
+    })
+    return renderAdmin()
+  }
+
+  it('shows the standalone top bar with a Return to site link and Sign out', async () => {
+    renderSignedIn()
+    expect(await screen.findByRole('link', { name: /return to site/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /sign out/i })).toBeInTheDocument()
+  })
+
+  it('opens the editor tray on New product and closes it on Escape', async () => {
+    const user = userEvent.setup()
+    renderSignedIn()
+    const newBtn = await screen.findByRole('button', { name: /new product/i })
+    await user.click(newBtn)
+    expect(await screen.findByRole('dialog', { name: /new product/i })).toBeInTheDocument()
+    await user.keyboard('{Escape}')
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: /new product/i })).toBeNull())
   })
 })
 
@@ -98,7 +124,7 @@ describe('ProductList', () => {
 })
 
 const { default: ProductEditor } = await import('../pages/admin/ProductEditor.jsx')
-const { saveProduct } = await import('../lib/adminApi.js')
+const { saveProduct, watchSession } = await import('../lib/adminApi.js')
 
 describe('ProductEditor', () => {
   it('blocks save with inline errors when title is empty', async () => {

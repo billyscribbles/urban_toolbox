@@ -1,18 +1,21 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import SEO from '../../lib/seo.jsx'
+import { site } from '../../config/site.config.js'
 import AdminLogin from './AdminLogin.jsx'
 import ProductList from './ProductList.jsx'
-import ProductEditor from './ProductEditor.jsx'
+import EditorTray from './EditorTray.jsx'
 import { watchSession, signOut, fetchAdminProducts } from '../../lib/adminApi.js'
 import './Admin.css'
 
-// The whole admin lives on this one lazy route: auth gate -> product list
-// <-> product editor. Data is raw DB rows (snake_case) — the storefront's
-// normalized shape never leaks in here.
+// The whole admin lives on this one lazy route: auth gate -> product list, with
+// create/edit in a slide-out tray. Data is raw DB rows (snake_case) — the
+// storefront's normalized shape never leaks in here.
 export default function AdminPage() {
   const [session, setSession] = useState(null)
   const [checked, setChecked] = useState(false)
   const [rows, setRows] = useState([])
+  const [loaded, setLoaded] = useState(false)
   const [loadError, setLoadError] = useState('')
   const [editing, setEditing] = useState(null) // null | 'new' | row
 
@@ -33,6 +36,8 @@ export default function AdminPage() {
       setLoadError('')
     } catch (err) {
       setLoadError(err.message)
+    } finally {
+      setLoaded(true)
     }
   }, [])
 
@@ -41,44 +46,58 @@ export default function AdminPage() {
   }, [session, refresh])
 
   return (
-    <main className="admin section">
+    <main className="admin">
       <SEO title="Admin" description="Catalogue admin" path="/admin" noindex />
       {!checked ? null : !session ? (
-        <div className="container">
-          <AdminLogin />
-        </div>
+        <AdminLogin />
       ) : (
-        <div className="container">
-          <header className="admin__head">
-            <h1 className="admin__title">Catalogue admin</h1>
-            <button type="button" className="admin__ghost" onClick={signOut}>
-              Sign out
-            </button>
+        <>
+          <header className="admin-topbar">
+            <div className="admin-topbar__brand">
+              <img
+                className="admin-topbar__mark"
+                src={site.brand.logoMark}
+                alt=""
+                width="28"
+                height="28"
+              />
+              <span className="admin-topbar__name">Urban Toolbox — Admin</span>
+            </div>
+            <div className="admin-topbar__actions">
+              <Link className="admin-topbar__link" to="/">
+                ← Return to site
+              </Link>
+              <button type="button" className="admin__ghost" onClick={signOut}>
+                Sign out
+              </button>
+            </div>
           </header>
-          {loadError && (
-            <p className="admin__error" role="alert">
-              {loadError}
-            </p>
-          )}
-          {editing ? (
-            <ProductEditor
-              row={editing === 'new' ? null : editing}
-              rows={rows}
-              onDone={() => {
-                setEditing(null)
-                refresh()
-              }}
-              onCancel={() => setEditing(null)}
-            />
-          ) : (
+
+          <div className="admin__body">
+            {loadError && (
+              <p className="admin__error" role="alert">
+                {loadError}
+              </p>
+            )}
             <ProductList
               rows={rows}
+              loading={!loaded}
               onEdit={setEditing}
               onNew={() => setEditing('new')}
               onChanged={refresh}
             />
-          )}
-        </div>
+          </div>
+
+          <EditorTray
+            editing={editing}
+            rows={rows}
+            onDone={() => {
+              setEditing(null)
+              refresh()
+            }}
+            onCancel={() => setEditing(null)}
+          />
+        </>
       )}
     </main>
   )
