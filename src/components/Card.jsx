@@ -5,12 +5,8 @@ import Placeholder from './Placeholder.jsx'
 import QuoteButton from './QuoteButton.jsx'
 import { useQuote } from '../lib/quoteStore.js'
 import { openDetail } from '../lib/detailStore.js'
+import { formatPrice } from '../lib/pricing.js'
 import './Card.css'
-
-// Australian thousands separator: 3900 -> "$3,900".
-function formatPrice(n) {
-  return `$${Number(n).toLocaleString('en-AU')}`
-}
 
 // Product / category card: striped photo slot over a heading and body. With a
 // `quote` descriptor it becomes a shop card — an "in your quote" badge on the

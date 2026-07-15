@@ -2,13 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { X } from 'lucide-react'
 import { useDetail, closeDetail } from '../lib/detailStore.js'
+import { formatPrice } from '../lib/pricing.js'
 import QuoteButton from './QuoteButton.jsx'
 import './DetailDrawer.css'
-
-// Australian thousands separator: 3900 -> "$3,900".
-function formatPrice(n) {
-  return `$${Number(n).toLocaleString('en-AU')}`
-}
 
 // Site-wide product-detail drawer. Mounted once in App beside the quote drawer;
 // borrows the same dialog semantics (role, Esc-to-close, scroll lock, focus the
