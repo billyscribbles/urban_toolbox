@@ -1,7 +1,16 @@
+/* Inner-page hero. Not a photo hero like home — a quieter, layered dark surface:
+   a soft top-light and a whisper of brand-green glow give it depth so it reads
+   intentional rather than a flat block, without competing with the home fold. */
 .page-hero {
-  background: var(--color-dark);
-  color: #fff;
+  position: relative;
+  background:
+    radial-gradient(75% 120% at 100% 100%, rgba(var(--color-accent-rgb), 0.1), transparent 55%),
+    radial-gradient(120% 100% at 12% 0%, rgba(255, 255, 255, 0.05), transparent 60%),
+    var(--color-dark);
+  color: var(--color-white);
   padding: 76px 0 72px;
+  border-bottom: 1px solid var(--color-border-dark);
+  overflow: hidden;
 }
 
 .page-hero__title {

@@ -12,11 +12,12 @@
 .notfound__title {
   font-family: var(--font-display);
   font-size: clamp(40px, 5vw, 64px);
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  line-height: 1.04;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
   color: var(--color-ink-strong);
   margin: 16px 0 12px;
-  font-optical-sizing: auto;
 }
 
 .notfound__sub {
@@ -40,5 +41,5 @@
 
 .notfound__cta:hover {
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-white);
 }

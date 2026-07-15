@@ -4,7 +4,7 @@
   top: 78px;
   z-index: 50;
   background: var(--color-white);
-  border-bottom: 1px solid var(--color-border, #e6e6e1);
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .range-nav__inner {
@@ -23,8 +23,8 @@
   text-transform: uppercase;
   color: var(--color-ink-strong);
   padding: 9px 16px;
-  border: 1.5px solid #d7d7d1;
-  border-radius: 999px;
+  border: 1.5px solid var(--color-border-light);
+  border-radius: var(--radius-full);
   transition:
     background-color var(--transition-fast),
     border-color var(--transition-fast),
@@ -34,7 +34,7 @@
 .range-nav__pill:hover {
   background: var(--color-accent);
   border-color: var(--color-accent);
-  color: #fff;
+  color: var(--color-white);
 }
 
 /* Anchor targets clear both sticky bars (navbar + sub-nav) when jumped to. */

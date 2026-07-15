@@ -33,6 +33,9 @@ export const theme = {
     accent: '#5c8a2f',
     'accent-hover': '#4d7527',
     'accent-soft': '#e6f0dc',
+    // Accent as bare RGB channels, for translucent borders/fills:
+    // rgba(var(--color-accent-rgb), 0.5). Keep in sync with `accent` above.
+    'accent-rgb': '92, 138, 47',
 
     // Destructive actions + error text (admin dashboard, form errors).
     danger: '#a03030',

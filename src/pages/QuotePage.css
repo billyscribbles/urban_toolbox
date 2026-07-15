@@ -84,7 +84,7 @@
 .quote-form__aria {
   margin: 0;
   font-size: 14px;
-  color: #c0392b;
+  color: var(--color-danger);
 }
 
 /* --------------------------------------------------- success / error notes */
@@ -104,7 +104,7 @@
 }
 
 .quote-note--err {
-  border-left-color: #c0392b;
+  border-left-color: var(--color-danger);
   margin-top: 4px;
 }
 
@@ -131,7 +131,7 @@
   font-size: 24px;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  color: #fff;
+  color: var(--color-white);
   margin-bottom: 24px;
   font-weight: 400;
 }
@@ -157,7 +157,7 @@
 }
 
 .quote-aside__list a {
-  color: #fff;
+  color: var(--color-white);
   transition: color var(--transition-fast);
 }
 
@@ -185,12 +185,12 @@
 }
 .quote-summary__heading {
   margin: 0 0 4px;
-  font-size: 1.1rem;
+  font-size: 18px;
   color: var(--color-ink-strong);
 }
 .quote-summary__intro {
   margin: 0 0 14px;
-  font-size: 0.9rem;
+  font-size: 14px;
   color: var(--color-ink-muted);
 }
 .quote-summary__list {
@@ -203,5 +203,5 @@
 }
 .quote-summary__meta {
   color: var(--color-ink-muted);
-  font-size: 0.9rem;
+  font-size: 14px;
 }

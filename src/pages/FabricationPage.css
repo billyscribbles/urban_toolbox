@@ -3,17 +3,21 @@
   flex-direction: column;
   background: var(--color-white);
   border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   /* Offset so legacy #laser-cutting / #folding anchor jumps clear the
      sticky navbar instead of hiding the heading beneath it. */
   scroll-margin-top: 96px;
   transition:
     border-color var(--transition-base),
-    box-shadow var(--transition-base);
+    box-shadow var(--transition-base),
+    transform var(--transition-base);
 }
 
 .fab-service:hover {
-  border-color: var(--color-accent);
+  border-color: rgba(var(--color-accent-rgb), 0.5);
   box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
 }
 
 /* Photo header. The head is unclipped so the icon badge can straddle the
@@ -27,6 +31,10 @@
   overflow: hidden;
   aspect-ratio: 16 / 10;
   background: var(--color-dark);
+  /* Round only the top — the card itself stays unclipped so the icon badge can
+     straddle the photo's bottom edge. */
+  border-top-left-radius: var(--radius-md);
+  border-top-right-radius: var(--radius-md);
 }
 
 .fab-service__img {
@@ -125,9 +133,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .fab-service,
   .fab-service__img,
   .fab-service:hover .fab-service__img {
     transition: none;
+    transform: none;
+  }
+  .fab-service:hover {
     transform: none;
   }
 }

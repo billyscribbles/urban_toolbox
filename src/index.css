@@ -1,7 +1,7 @@
 /* Base resets + shared utility classes.
  * Design tokens are injected onto :root by src/lib/applyTheme.js at boot.
  * Reference them via var(--color-accent), var(--font-display), etc.
- * Fonts (Anton / Barlow / JetBrains Mono) are loaded from Google Fonts in index.html.
+ * Fonts (Manrope / Manrope Display / JetBrains Mono) are self-hosted — see src/fonts.css.
  */
 
 *,
@@ -109,7 +109,7 @@ select {
   font-size: clamp(32px, 4.4vw, 44px);
   line-height: 1.08;
   /* Manrope ExtraBold is a wide face — large headings read cleaner with tight,
-     near-zero tracking (the condensed Anton wanted the extra 0.02em). */
+     near-zero tracking. */
   letter-spacing: -0.01em;
   text-transform: uppercase;
   color: var(--color-ink-strong);
