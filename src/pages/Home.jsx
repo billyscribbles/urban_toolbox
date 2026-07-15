@@ -12,10 +12,12 @@ export default function Home() {
   return (
     <main>
       <SEO />
-      <SplitHero />
-      <CategoryCarousel />
+      <div className="hero-fold">
+        <SplitHero />
+        <TrustBar />
+        <CategoryCarousel />
+      </div>
       <WhatWeBuild />
-      <TrustBar />
       <Process />
       <Capability />
       <CtaBand sub={cta.homeSub} />

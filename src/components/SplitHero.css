@@ -1,18 +1,54 @@
+/* The hero fold: split hero + trust bar + category carousel share one
+   full-screen band on desktop. The hero panel flexes to fill whatever height
+   the trust bar and carousel leave, so the whole fold lands exactly at the
+   bottom of the viewport with nothing chopped off. */
+.hero-fold {
+  /* Slide the whole fold up under the transparent navbar so the photos fill
+     behind it. The header is --navbar-h tall plus its 1px bottom border, so
+     cover that extra pixel too — otherwise the white body shows as a faint
+     seam at the top. */
+  margin-top: calc(-1 * var(--navbar-h) - 1px);
+}
+
 /* Full-bleed split hero: two photo panels side by side, joined by a subtle
    central seam and a circular centre control. Stacks on tablet/phone. */
 .split-hero {
   position: relative;
   background: var(--color-dark);
-  /* Slide up under the transparent navbar so the photo fills behind it. The
-     header is --navbar-h tall plus its 1px bottom border, so cover that extra
-     pixel too — otherwise the white body shows as a faint seam at the top. */
-  margin-top: calc(-1 * var(--navbar-h) - 1px);
 }
 
 .split-hero__grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   min-height: clamp(560px, 82vh, 860px);
+}
+
+/* Desktop: the hero + trust bar + carousel share one full-screen fold. These
+   overrides come after the base rules above so they win at equal specificity —
+   the hero grid gives up its fixed 82vh and instead flexes to fill only the
+   height the trust bar and carousel leave, keeping the whole fold on screen. */
+@media (min-width: 761px) {
+  .hero-fold {
+    display: flex;
+    flex-direction: column;
+    /* Exactly the viewport. The fold is already pulled up under the sticky
+       navbar by the negative margin above, so its top sits at the top of the
+       screen — a plain 100svh then lands its base at the bottom of the screen,
+       adapting to any window height. */
+    min-height: 100svh;
+  }
+  /* Flex chain so the hero stretches to fill whatever height the trust bar and
+     carousel leave: hero grows/shrinks, and its grid fills the hero so the
+     photos cover the whole panel with no dead space. */
+  .split-hero {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .split-hero__grid {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
 }
 
 /* ---------------------------------------------------------------- a panel */
