@@ -63,3 +63,49 @@
     scroll-margin-top: 128px;
   }
 }
+
+/* Loading / failed catalog states — the pill nav stays, the grids swap out. */
+.range-status {
+  padding: 8px 0;
+}
+.range-status--error {
+  text-align: center;
+  padding: 48px 0;
+}
+.range-status__text {
+  color: var(--color-ink-muted);
+  margin-bottom: 16px;
+}
+.range-status__retry {
+  font-family: var(--font-body);
+  font-weight: 600;
+  padding: 10px 22px;
+  color: var(--color-white);
+  background: var(--color-ink-strong);
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+.range-status__retry:hover {
+  background: var(--color-accent-hover);
+}
+.range-skeleton {
+  height: 340px;
+  background: var(--color-off-white);
+  border: 1px solid var(--color-border-light);
+  animation: range-skel-pulse 1.2s ease-in-out infinite;
+}
+@keyframes range-skel-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .range-skeleton {
+    animation: none;
+  }
+}

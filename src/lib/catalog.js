@@ -1,10 +1,12 @@
-// Pure read helpers over `src/data/catalog.js`. Components stay dumb: they ask
-// these functions for a tree, a slice of products, or the mega-menu view model,
-// and never walk the raw catalog themselves. When the catalog moves to a database
-// behind an admin dashboard, only this module changes — callers keep their shape.
+// Pure read helpers over the category tree and the live product catalog.
+// Components stay dumb: they ask these functions for a tree, a slice of
+// products, or the mega-menu view model, and never walk the raw catalog
+// themselves. Products now live in Supabase (see lib/productStore.js) — this
+// module stays the only read surface callers use, so the swap from the old
+// static file was invisible to every page/component.
 
 import { categories } from '../data/categories.js'
-import { catalog } from '../data/catalog.js'
+import { getProducts } from './productStore.js'
 
 export function getTree() {
   return categories
@@ -63,12 +65,12 @@ export function getLeaves(node) {
 }
 
 export function getProductsForLeaf(leafId) {
-  return catalog.products.filter((p) => p.categoryId === leafId)
+  return getProducts().filter((p) => p.categoryId === leafId)
 }
 
 export function getProductsUnder(node) {
   const ids = new Set(getLeaves(node).map((l) => l.id))
-  return catalog.products.filter((p) => ids.has(p.categoryId))
+  return getProducts().filter((p) => ids.has(p.categoryId))
 }
 
 // A top category whose children are ALL leaves renders as one page with the

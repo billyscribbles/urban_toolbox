@@ -1,14 +1,21 @@
+import { useEffect } from 'react'
 import SEO from '../lib/seo.jsx'
 import PageHero from '../components/PageHero.jsx'
 import Card from '../components/Card.jsx'
 import CtaBand from '../components/CtaBand.jsx'
 import NotFoundPage from './NotFoundPage.jsx'
 import { getCategoryBySlug, getSubcategories, getProductsUnder } from '../lib/catalog.js'
+import { useProductCatalog, loadProducts } from '../lib/productStore.js'
 
 // Landing page for a top category (Toolboxes): a hero over a grid of
 // subcategory cards that link into their CategoryPage. Each card borrows the
 // first product photo under that subcategory as its thumbnail.
 export default function CategoryOverview({ slug, intro }) {
+  const { status } = useProductCatalog()
+  useEffect(() => {
+    loadProducts()
+  }, [])
+
   const top = getCategoryBySlug(slug)
   if (!top) return <NotFoundPage />
 
@@ -36,7 +43,13 @@ export default function CategoryOverview({ slug, intro }) {
                 imgAlt={sub.label}
                 ph={sub.label}
                 title={sub.label}
-                body={count ? `${count} product${count === 1 ? '' : 's'}` : 'Explore the range'}
+                body={
+                  count
+                    ? `${count} product${count === 1 ? '' : 's'}`
+                    : status === 'ready'
+                      ? 'Explore the range'
+                      : 'Loading range…'
+                }
                 cta="Browse"
                 height={240}
                 titleSize={22}

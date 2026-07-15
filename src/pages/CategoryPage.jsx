@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import SEO from '../lib/seo.jsx'
 import ProductRange from '../components/ProductRange.jsx'
@@ -8,6 +9,7 @@ import {
   getLeaves,
   getProductsForLeaf,
 } from '../lib/catalog.js'
+import { useProductCatalog, loadProducts, retryLoad } from '../lib/productStore.js'
 
 // One page renders any catalog category — a Toolboxes subcategory
 // (/toolboxes/:subSlug), a bare leaf (Toolbox Canopies), or the flattened
@@ -15,6 +17,11 @@ import {
 // ProductRange section; the sticky pill sub-nav and Card grid come for free.
 export default function CategoryPage({ slug: slugProp }) {
   const params = useParams()
+  const { status } = useProductCatalog()
+  useEffect(() => {
+    loadProducts()
+  }, [])
+
   const slug = slugProp || params.subSlug
   const node = getCategoryBySlug(slug)
 
@@ -47,7 +54,7 @@ export default function CategoryPage({ slug: slugProp }) {
         description={`${node.label} — Australian-made aluminium, built to order in Dandenong South. ${sections.length} categories, add to a no-obligation quote.`}
         path={slugProp ? `/${node.slug}` : `/${top.slug}/${node.slug}`}
       />
-      <ProductRange data={data} />
+      <ProductRange data={data} status={status} onRetry={retryLoad} />
     </main>
   )
 }
