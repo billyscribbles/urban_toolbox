@@ -138,7 +138,11 @@ export function buildSections(node, filter = null) {
 // products flagged for that vehicle.
 export function getVehicleSections(vehicle) {
   const key = vehicle === 'caravan' ? 'fitsCaravan' : 'fitsUte'
-  return getTopCategories().flatMap((top) => buildSections(top, (p) => p[key] !== false))
+  // Tag each section with its top-level category ('Toolboxes' / 'Accessories')
+  // so the range nav can split the pills into labelled groups.
+  return getTopCategories().flatMap((top) =>
+    buildSections(top, (p) => p[key] !== false).map((s) => ({ ...s, group: top.label })),
+  )
 }
 
 // A top category whose children are ALL leaves renders as one page with the

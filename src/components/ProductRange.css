@@ -15,6 +15,88 @@
   padding-bottom: 14px;
 }
 
+/* Vehicle pages collapse the long category list behind a toggle. Collapsed by
+   default so the sticky bar stays a single slim row. */
+.range-nav__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 0;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-strong);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.range-nav__chevron {
+  transition: transform var(--transition-fast);
+}
+.range-nav__toggle[aria-expanded='true'] .range-nav__chevron {
+  transform: rotate(180deg);
+}
+
+/* Expanded panel — the grouped pills sit below the toggle. */
+.range-nav__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 16px;
+}
+/* `display: flex` would otherwise override the `hidden` attribute's UA style. */
+.range-nav__panel[hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .range-nav__chevron {
+    transition: none;
+  }
+}
+
+.range-nav__group {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.range-nav__group + .range-nav__group {
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.range-nav__group-label {
+  flex-shrink: 0;
+  width: 96px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-gray-muted);
+}
+
+.range-nav__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 560px) {
+  .range-nav__group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .range-nav__group-label {
+    width: auto;
+  }
+}
+
 .range-nav__pill {
   font-family: var(--font-body);
   font-size: 13px;
