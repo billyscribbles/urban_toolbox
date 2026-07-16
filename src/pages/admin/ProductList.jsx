@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Eye, EyeOff, Pencil, Plus, Star } from 'lucide-react'
+import { Eye, EyeOff, Pencil, Plus, Search, Star, Trash2 } from 'lucide-react'
 import { getTree, getLeaves } from '../../lib/catalog.js'
 import { publicPhotoUrl } from '../../lib/supabaseClient.js'
 import { formatPrice } from '../../lib/pricing.js'
@@ -64,66 +64,72 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
     <div>
       <StatCards total={total} visibleCount={visibleCount} hiddenCount={hiddenCount} />
 
-      <div className="admin-toolbar">
-        <label className="sr-only" htmlFor="admin-search">
-          Search products
-        </label>
-        <input
-          id="admin-search"
-          className="admin__input"
-          type="search"
-          placeholder="Search products…"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-        />
-        <label className="sr-only" htmlFor="admin-cat">
-          Filter by category
-        </label>
-        <select
-          id="admin-cat"
-          className="admin__select"
-          value={cat}
-          onChange={(e) => setCat(e.target.value)}
-        >
-          <option value="">All categories</option>
-          {leaves.map((l) => (
-            <option key={l.id} value={l.id}>
-              {l.label}
-            </option>
-          ))}
-        </select>
-        <span className="admin-toolbar__spacer" />
-        <button type="button" className="admin__primary" style={{ marginTop: 0 }} onClick={onNew}>
-          <Plus size={15} strokeWidth={2.5} aria-hidden="true" /> New product
-        </button>
-      </div>
+      <div className="admin-card">
+        <div className="admin-toolbar">
+          <div className="admin-toolbar__search">
+            <Search size={16} strokeWidth={2} aria-hidden="true" />
+            <label className="sr-only" htmlFor="admin-search">
+              Search products
+            </label>
+            <input
+              id="admin-search"
+              className="admin__input"
+              type="search"
+              placeholder="Search products…"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+            />
+          </div>
+          <label className="sr-only" htmlFor="admin-cat">
+            Filter by category
+          </label>
+          <select
+            id="admin-cat"
+            className="admin__select"
+            value={cat}
+            onChange={(e) => setCat(e.target.value)}
+          >
+            <option value="">All categories</option>
+            {leaves.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.label}
+              </option>
+            ))}
+          </select>
+          <span className="admin-toolbar__spacer" />
+          <button type="button" className="admin__primary" style={{ marginTop: 0 }} onClick={onNew}>
+            <Plus size={15} strokeWidth={2.5} aria-hidden="true" /> New product
+          </button>
+        </div>
 
-      {error && (
-        <p className="admin__error" role="alert">
-          {error}
-        </p>
-      )}
+        {error && (
+          <p className="admin__error" role="alert">
+            {error}
+          </p>
+        )}
 
-      {loading ? (
-        <div className="admin-card">
+        {loading ? (
           <ul className="admin-skel" aria-hidden="true">
             {Array.from({ length: 5 }).map((_, i) => (
               <li key={i} className="admin-skel__row" />
             ))}
           </ul>
-        </div>
-      ) : rows.length === 0 ? (
-        <div className="admin-empty">
-          <p className="admin-empty__title">No products yet</p>
-          <p className="admin-empty__sub">Add your first catalogue product to get started.</p>
-          <button type="button" className="admin__primary" style={{ marginTop: 0 }} onClick={onNew}>
-            <Plus size={15} strokeWidth={2.5} aria-hidden="true" /> Add your first product
-          </button>
-        </div>
-      ) : visible.length === 0 ? (
-        <p className="admin__empty">No products match your search.</p>
-      ) : (
-        <div className="admin-card">
+        ) : rows.length === 0 ? (
+          <div className="admin-empty">
+            <p className="admin-empty__title">No products yet</p>
+            <p className="admin-empty__sub">Add your first catalogue product to get started.</p>
+            <button
+              type="button"
+              className="admin__primary"
+              style={{ marginTop: 0 }}
+              onClick={onNew}
+            >
+              <Plus size={15} strokeWidth={2.5} aria-hidden="true" /> Add your first product
+            </button>
+          </div>
+        ) : visible.length === 0 ? (
+          <p className="admin__empty">No products match your search.</p>
+        ) : (
           <table className="admin-table">
             <thead>
               <tr>
@@ -160,7 +166,10 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
                       <span className="admin-table__thumb" aria-hidden="true" />
                     )}
                   </td>
-                  <td className="admin-table__title">{row.title}</td>
+                  <td className="admin-table__product">
+                    <span className="admin-table__title">{row.title}</span>
+                    <span className="admin-table__sku">SKU: {row.id}</span>
+                  </td>
                   <td className="admin-table__hide-sm">
                     {leafLabel.get(row.category_id) ?? row.category_id}
                   </td>
@@ -189,23 +198,6 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
                   </td>
                   <td>
                     <div className="admin-table__actions">
-                      <button
-                        type="button"
-                        className="admin__icon"
-                        disabled={togglingId === row.id}
-                        aria-pressed={!row.hidden}
-                        aria-label={row.hidden ? `Show ${row.title}` : `Hide ${row.title}`}
-                        onClick={() => onToggleHidden(row)}
-                      >
-                        {row.hidden ? (
-                          <EyeOff size={14} strokeWidth={2} aria-hidden="true" />
-                        ) : (
-                          <Eye size={14} strokeWidth={2} aria-hidden="true" />
-                        )}
-                      </button>
-                      <button type="button" className="admin__ghost" onClick={() => onEdit(row)}>
-                        <Pencil size={13} strokeWidth={2} aria-hidden="true" /> Edit
-                      </button>
                       {confirmId === row.id ? (
                         <>
                           <button
@@ -225,13 +217,38 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
                           </button>
                         </>
                       ) : (
-                        <button
-                          type="button"
-                          className="admin__danger"
-                          onClick={() => setConfirmId(row.id)}
-                        >
-                          Delete
-                        </button>
+                        <>
+                          <button
+                            type="button"
+                            className="admin__icon"
+                            disabled={togglingId === row.id}
+                            aria-pressed={!row.hidden}
+                            aria-label={row.hidden ? `Show ${row.title}` : `Hide ${row.title}`}
+                            onClick={() => onToggleHidden(row)}
+                          >
+                            {row.hidden ? (
+                              <EyeOff size={15} strokeWidth={2} aria-hidden="true" />
+                            ) : (
+                              <Eye size={15} strokeWidth={2} aria-hidden="true" />
+                            )}
+                          </button>
+                          <button
+                            type="button"
+                            className="admin__icon"
+                            aria-label={`Edit ${row.title}`}
+                            onClick={() => onEdit(row)}
+                          >
+                            <Pencil size={14} strokeWidth={2} aria-hidden="true" />
+                          </button>
+                          <button
+                            type="button"
+                            className="admin__icon admin__icon--danger"
+                            aria-label={`Delete ${row.title}`}
+                            onClick={() => setConfirmId(row.id)}
+                          >
+                            <Trash2 size={15} strokeWidth={2} aria-hidden="true" />
+                          </button>
+                        </>
                       )}
                     </div>
                   </td>
@@ -239,8 +256,8 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
               ))}
             </tbody>
           </table>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }

@@ -184,6 +184,39 @@ describe('ProductList', () => {
     expect(setProductHidden).toHaveBeenCalledWith('a', false)
     await waitFor(() => expect(onChanged).toHaveBeenCalled())
   })
+
+  it('shows the product id as a SKU subline', () => {
+    render(
+      <MemoryRouter>
+        <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
+      </MemoryRouter>,
+    )
+    expect(screen.getByText(/SKU:\s*a/i)).toBeInTheDocument()
+  })
+
+  it('edits from the row pencil button', async () => {
+    const user = userEvent.setup()
+    const onEdit = vi.fn()
+    render(
+      <MemoryRouter>
+        <ProductList rows={listRows} onEdit={onEdit} onNew={() => {}} onChanged={() => {}} />
+      </MemoryRouter>,
+    )
+    await user.click(screen.getByRole('button', { name: /edit whale tail lock/i }))
+    expect(onEdit).toHaveBeenCalledWith(listRows[0])
+  })
+
+  it('deletes in two steps from the trash button', async () => {
+    const user = userEvent.setup()
+    render(
+      <MemoryRouter>
+        <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
+      </MemoryRouter>,
+    )
+    await user.click(screen.getByRole('button', { name: /delete whale tail lock/i }))
+    expect(await screen.findByRole('button', { name: /confirm delete/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument()
+  })
 })
 
 const { default: StatCards } = await import('../pages/admin/StatCards.jsx')
