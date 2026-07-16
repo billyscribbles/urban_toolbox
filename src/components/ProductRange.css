@@ -37,14 +37,29 @@
   color: var(--color-white);
 }
 
-/* Anchor targets clear both sticky bars (navbar + sub-nav) when jumped to. */
+/* Keep the shared grid--3 column gutter, but tighten the vertical gap so
+   stacked rows of product cards sit closer together. */
+.range-grid {
+  row-gap: 14px;
+}
+
+/* Anchor targets clear both sticky bars (navbar + sub-nav) when jumped to.
+   Override the site-wide 96px .section padding — back-to-back product grids
+   read tighter with far less air between one section's cards and the next
+   section's heading. */
 .range-section {
   scroll-margin-top: 150px;
+  padding: 52px 0;
+}
+
+/* Compact the eyebrow/heading → cards gap inside the range too. */
+.range-section .section-head {
+  margin-bottom: 28px;
 }
 
 /* Trim the top padding so the first section sits snug under the sub-nav. */
 .range-section:first-of-type {
-  padding-top: 64px;
+  padding-top: 40px;
 }
 
 .range-note {

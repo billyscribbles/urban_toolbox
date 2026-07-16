@@ -38,7 +38,7 @@ export default function ProductRange({ data, status = 'ready', onRetry }) {
               </div>
             ) : (
               <div className="range-status" role="status" aria-label="Loading products">
-                <div className="grid grid--3">
+                <div className="grid grid--3 range-grid">
                   {[0, 1, 2].map((i) => (
                     <div key={i} className="range-skeleton" aria-hidden="true" />
                   ))}
@@ -59,7 +59,7 @@ export default function ProductRange({ data, status = 'ready', onRetry }) {
                 <h2 className="h2 h2--md">{s.heading}</h2>
                 {s.sub && <p className="section-head__sub">{s.sub}</p>}
               </div>
-              <div className="grid grid--3">
+              <div className="grid grid--3 range-grid">
                 {s.products.map((p) => (
                   <Card
                     key={p.id || p.title}
