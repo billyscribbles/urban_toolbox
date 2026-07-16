@@ -217,6 +217,53 @@ describe('ProductList', () => {
     expect(await screen.findByRole('button', { name: /confirm delete/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument()
   })
+
+  it('paginates to 10 rows per page by default and pages through the rest', async () => {
+    const user = userEvent.setup()
+    const many = Array.from({ length: 14 }, (_, i) => ({
+      id: `p${i}`,
+      category_id: 'locks',
+      title: `Product ${i}`,
+      price: 10,
+      discount_pct: null,
+      featured: false,
+      hidden: false,
+      product_images: [],
+    }))
+    render(
+      <MemoryRouter>
+        <ProductList rows={many} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
+      </MemoryRouter>,
+    )
+    expect(screen.getByText('Product 0')).toBeInTheDocument()
+    expect(screen.queryByText('Product 12')).toBeNull()
+    expect(screen.getByText(/showing 1 to 10 of 14/i)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /go to page 2/i }))
+    expect(screen.getByText('Product 12')).toBeInTheDocument()
+    expect(screen.queryByText('Product 0')).toBeNull()
+  })
+
+  it('resets to page 1 when the search query changes', async () => {
+    const user = userEvent.setup()
+    const many = Array.from({ length: 14 }, (_, i) => ({
+      id: `p${i}`,
+      category_id: 'locks',
+      title: `Product ${i}`,
+      price: 10,
+      discount_pct: null,
+      featured: false,
+      hidden: false,
+      product_images: [],
+    }))
+    render(
+      <MemoryRouter>
+        <ProductList rows={many} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
+      </MemoryRouter>,
+    )
+    await user.click(screen.getByRole('button', { name: /go to page 2/i }))
+    await userEvent.type(screen.getByLabelText(/search/i), 'Product 1')
+    expect(screen.getByText(/showing 1 to/i)).toBeInTheDocument()
+  })
 })
 
 const { default: StatCards } = await import('../pages/admin/StatCards.jsx')

@@ -1,10 +1,36 @@
-import { useMemo, useState } from 'react'
-import { Eye, EyeOff, Pencil, Plus, Search, Star, Trash2 } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  EyeOff,
+  Pencil,
+  Plus,
+  Search,
+  Star,
+  Trash2,
+} from 'lucide-react'
 import { getTree, getLeaves } from '../../lib/catalog.js'
 import { publicPhotoUrl } from '../../lib/supabaseClient.js'
 import { formatPrice } from '../../lib/pricing.js'
 import { deleteProduct, setProductHidden } from '../../lib/adminApi.js'
 import StatCards from './StatCards.jsx'
+
+// Compact page-number window: always the first and last page, the current page
+// with a neighbour either side, and '…' gaps where pages are skipped.
+function pageItems(current, count) {
+  if (count <= 7) return Array.from({ length: count }, (_, i) => i + 1)
+  const pages = new Set([1, count, current, current - 1, current + 1])
+  const sorted = [...pages].filter((p) => p >= 1 && p <= count).sort((a, b) => a - b)
+  const out = []
+  let prev = 0
+  for (const p of sorted) {
+    if (p - prev > 1) out.push('…')
+    out.push(p)
+    prev = p
+  }
+  return out
+}
 
 // Full-width, filterable table of every product. Delete is two-step (Delete ->
 // Confirm) instead of window.confirm so nothing blocks the tab.
@@ -15,6 +41,8 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
   const [busyId, setBusyId] = useState(null)
   const [togglingId, setTogglingId] = useState(null)
   const [error, setError] = useState('')
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
 
   const leaves = useMemo(() => getTree().flatMap((t) => getLeaves(t)), [])
   const leafLabel = useMemo(() => new Map(leaves.map((l) => [l.id, l.label])), [leaves])
@@ -23,6 +51,17 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
     (r) =>
       (!cat || r.category_id === cat) && (!q || r.title.toLowerCase().includes(q.toLowerCase())),
   )
+
+  const pageCount = Math.max(1, Math.ceil(visible.length / pageSize))
+  const clampedPage = Math.min(page, pageCount)
+  const start = (clampedPage - 1) * pageSize
+  const paged = visible.slice(start, start + pageSize)
+
+  // Any change to the filters or page size sends the user back to page 1 so they
+  // never land on an out-of-range page.
+  useEffect(() => {
+    setPage(1)
+  }, [q, cat, pageSize])
 
   async function onDelete(row) {
     setBusyId(row.id)
@@ -148,7 +187,7 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
               </tr>
             </thead>
             <tbody>
-              {visible.map((row) => (
+              {paged.map((row) => (
                 // Clicking a row opens its editor; clicks that land on a control
                 // (toggle/edit/delete) are ignored so those keep their own action.
                 // The row-level Edit button stays the keyboard/AT-accessible path.
@@ -256,6 +295,66 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
               ))}
             </tbody>
           </table>
+        )}
+
+        {!loading && rows.length > 0 && visible.length > 0 && (
+          <nav className="admin-pager" aria-label="Pagination">
+            <span className="admin-pager__count">
+              Showing {visible.length === 0 ? 0 : start + 1} to{' '}
+              {Math.min(start + pageSize, visible.length)} of {visible.length} products
+            </span>
+            <div className="admin-pager__controls">
+              <button
+                type="button"
+                className="admin__icon"
+                aria-label="Previous page"
+                disabled={clampedPage === 1}
+                onClick={() => setPage(clampedPage - 1)}
+              >
+                <ChevronLeft size={15} strokeWidth={2} aria-hidden="true" />
+              </button>
+              {pageItems(clampedPage, pageCount).map((it, i) =>
+                it === '…' ? (
+                  <span key={`gap-${i}`} className="admin-pager__gap" aria-hidden="true">
+                    …
+                  </span>
+                ) : (
+                  <button
+                    key={it}
+                    type="button"
+                    className={`admin-pager__num${it === clampedPage ? ' admin-pager__num--on' : ''}`}
+                    aria-label={`Go to page ${it}`}
+                    aria-current={it === clampedPage ? 'page' : undefined}
+                    onClick={() => setPage(it)}
+                  >
+                    {it}
+                  </button>
+                ),
+              )}
+              <button
+                type="button"
+                className="admin__icon"
+                aria-label="Next page"
+                disabled={clampedPage === pageCount}
+                onClick={() => setPage(clampedPage + 1)}
+              >
+                <ChevronRight size={15} strokeWidth={2} aria-hidden="true" />
+              </button>
+            </div>
+            <label className="sr-only" htmlFor="admin-pagesize">
+              Products per page
+            </label>
+            <select
+              id="admin-pagesize"
+              className="admin__select admin-pager__size"
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value))}
+            >
+              <option value={10}>10 / page</option>
+              <option value={25}>25 / page</option>
+              <option value={50}>50 / page</option>
+            </select>
+          </nav>
         )}
       </div>
     </div>
