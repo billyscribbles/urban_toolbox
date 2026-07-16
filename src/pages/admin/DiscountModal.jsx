@@ -41,35 +41,40 @@ export default function DiscountModal({ open, onSaved, onClose }) {
   return (
     <AnimatePresence>
       {open && (
-        <div className="admin-modal" role="dialog" aria-modal="true" aria-label="Store-wide discount">
-        <motion.button
-          type="button"
-          className="admin-modal__backdrop"
-          aria-label="Close discount dialog"
-          onClick={onClose}
-          {...fade}
-        />
-        <motion.div className="admin-modal__panel" {...panelMotion}>
-          <div className="admin-modal__head">
-            <h2 className="admin-modal__title">Store-wide discount</h2>
-            <button
-              ref={closeRef}
-              type="button"
-              className="editor-tray__close"
-              onClick={onClose}
-              aria-label="Close discount dialog"
-            >
-              <X size={22} strokeWidth={1.8} aria-hidden="true" />
-            </button>
-          </div>
-          <div className="admin-modal__body">
-            <p className="admin-modal__intro">
-              One percentage applied to every storefront price at display time. The greater of this
-              and each product&rsquo;s own discount wins. Set to 0 to turn it off.
-            </p>
-            <StoreDiscount onSaved={onSaved} />
-          </div>
-        </motion.div>
+        <div
+          className="admin-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Store-wide discount"
+        >
+          <motion.button
+            type="button"
+            className="admin-modal__backdrop"
+            aria-label="Close discount dialog"
+            onClick={onClose}
+            {...fade}
+          />
+          <motion.div className="admin-modal__panel" {...panelMotion}>
+            <div className="admin-modal__head">
+              <h2 className="admin-modal__title">Store-wide discount</h2>
+              <button
+                ref={closeRef}
+                type="button"
+                className="editor-tray__close"
+                onClick={onClose}
+                aria-label="Close discount dialog"
+              >
+                <X size={22} strokeWidth={1.8} aria-hidden="true" />
+              </button>
+            </div>
+            <div className="admin-modal__body">
+              <p className="admin-modal__intro">
+                One percentage applied to every storefront price at display time. The greater of
+                this and each product&rsquo;s own discount wins. Set to 0 to turn it off.
+              </p>
+              <StoreDiscount onSaved={onSaved} />
+            </div>
+          </motion.div>
         </div>
       )}
     </AnimatePresence>
