@@ -49,7 +49,11 @@ function RangeNav({ title, sections }) {
   }
 
   return (
-    <nav className="range-nav" aria-label={`${title} sections`}>
+    <nav
+      className="range-nav"
+      aria-label={`${title} sections`}
+      onMouseLeave={() => setOpenLabel(null)}
+    >
       <div className="container">
         <div className="range-nav__toggles">
           {groups.map((g, i) => {
@@ -61,6 +65,7 @@ function RangeNav({ title, sections }) {
                 className="range-nav__toggle"
                 aria-expanded={open}
                 aria-controls={`range-nav-panel-${i}`}
+                onMouseEnter={() => setOpenLabel(g.label)}
                 onClick={() => setOpenLabel(open ? null : g.label)}
               >
                 Browse {g.label}

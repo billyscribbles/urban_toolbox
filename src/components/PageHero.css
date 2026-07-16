@@ -13,38 +13,60 @@
   overflow: hidden;
 }
 
-/* Photo variant (vehicle pages): the generated hero image sits under a dark
-   scrim. The gradient is heavy on the left where copy lives and eases toward
-   the right so the ute/caravan stays visible, over a base tint so text keeps
-   its contrast even before the image loads. */
+/* Photo variant (vehicle pages): a product shot occupies the right half of the
+   band and blends into the dark. The photo lives on a masked ::before layer so
+   its left edge fades to transparent (see mask-image) and melts into the dark
+   surface instead of hard-cutting — the copy sits on the clean left. */
 .page-hero--photo {
+  display: flex;
+  align-items: center;
+  /* Compact band — enough to frame the product, not a third of the screen. */
+  min-height: clamp(240px, 26vw, 340px);
+  padding-block: 40px;
   background:
-    linear-gradient(
-      90deg,
-      rgba(13, 13, 13, 0.95) 0%,
-      rgba(13, 13, 13, 0.9) 38%,
-      rgba(13, 13, 13, 0.45) 66%,
-      rgba(13, 13, 13, 0) 92%
-    ),
-    radial-gradient(75% 120% at 100% 100%, rgba(var(--color-accent-rgb), 0.12), transparent 55%),
-    var(--page-hero-image) center right / cover no-repeat,
+    radial-gradient(70% 120% at 92% 100%, rgba(255, 255, 255, 0.05), transparent 55%),
     var(--color-dark);
 }
 
-/* Narrow screens: copy spans the full width, so keep the scrim strong across
-   the whole band rather than fading the right — the vehicle takes a back seat
-   to readability here. */
+.page-hero--photo::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 62%;
+  background: var(--page-hero-image) center right / cover no-repeat;
+  /* The product is matte black shot on near-black, so lift exposure a touch to
+     let the checkerplate read rather than dropping opacity (which only makes it
+     fainter). */
+  filter: brightness(1.35) contrast(1.02);
+  /* Feather the inner (left) edge AND the top/bottom/right so the brightened
+     backdrop melts into the dark surface with no hard rectangle seam. */
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.45) 24%, #000 58%),
+    linear-gradient(180deg, transparent 0%, #000 14%, #000 86%, transparent 100%),
+    linear-gradient(270deg, transparent 0%, #000 8%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.45) 24%, #000 58%),
+    linear-gradient(180deg, transparent 0%, #000 14%, #000 86%, transparent 100%),
+    linear-gradient(270deg, transparent 0%, #000 8%);
+  mask-composite: intersect;
+  pointer-events: none;
+}
+
+.page-hero--photo .container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+/* Narrow screens: copy spans the full width, so drop the photo back to a faint
+   full-bleed backdrop weighted right — legibility wins over the product shot. */
 @media (max-width: 760px) {
-  .page-hero--photo {
-    background:
-      linear-gradient(
-        90deg,
-        rgba(13, 13, 13, 0.94) 0%,
-        rgba(13, 13, 13, 0.86) 60%,
-        rgba(13, 13, 13, 0.72) 100%
-      ),
-      var(--page-hero-image) center right / cover no-repeat,
-      var(--color-dark);
+  .page-hero--photo::before {
+    width: 100%;
+    opacity: 0.32;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 72%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 72%);
   }
 }
 

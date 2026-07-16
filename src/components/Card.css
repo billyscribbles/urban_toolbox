@@ -108,6 +108,10 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  /* Fill the card so the bottom group (price + actions, or the cta) can pin to
+     the bottom — keeps buttons aligned across a row when titles differ in
+     length. Cards already stretch to equal height in the grid. */
+  flex: 1;
 }
 
 .card__title {
@@ -124,10 +128,13 @@
   font-size: 15px;
   line-height: 1.55;
   color: var(--color-gray-muted);
+  /* Baseline gap kept here so the auto-margin below can push the bottom group
+     down without ever letting it butt against the text on the tallest card. */
+  margin-bottom: 18px;
 }
 
 .card__cta {
-  margin-top: 18px;
+  margin-top: auto;
 }
 
 /* Price row — bold amount left, muted "+ GST" right (or the enquire fallback). */
@@ -136,7 +143,9 @@
   align-items: baseline;
   justify-content: space-between;
   width: 100%;
-  margin-top: 18px;
+  /* Pin the price + actions block to the bottom of the body so buttons line up
+     across the row regardless of title/description length. */
+  margin-top: auto;
 }
 
 .card__price-amount {
