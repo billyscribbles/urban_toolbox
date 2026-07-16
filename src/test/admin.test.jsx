@@ -211,6 +211,7 @@ describe('StatCards', () => {
     await user.type(input, '20')
     await user.click(screen.getByRole('button', { name: /^apply$/i }))
     expect(saveStoreDiscount).toHaveBeenCalledWith(20)
+    expect(await screen.findByText('20%')).toBeInTheDocument()
     await user.keyboard('{Escape}')
     await waitFor(() =>
       expect(screen.queryByRole('dialog', { name: /store-wide discount/i })).toBeNull(),

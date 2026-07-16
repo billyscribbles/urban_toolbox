@@ -7,11 +7,12 @@ import StoreDiscount from './StoreDiscount.jsx'
 // dialog semantics (Esc-to-close, backdrop, body scroll lock, focus the close
 // button, restore focus on exit). Always rendered open — the parent mounts it
 // only while the modal should be visible.
-export default function DiscountModal({ onSaved, onClose }) {
+export default function DiscountModal({ open, onSaved, onClose }) {
   const reduce = useReducedMotion()
   const closeRef = useRef(null)
 
   useEffect(() => {
+    if (!open) return
     const trigger = document.activeElement
     const { overflow } = document.body.style
     document.body.style.overflow = 'hidden'
@@ -23,7 +24,7 @@ export default function DiscountModal({ onSaved, onClose }) {
       document.body.style.overflow = overflow
       trigger?.focus?.()
     }
-  }, [onClose])
+  }, [open, onClose])
 
   const panelMotion = reduce
     ? {}
@@ -39,7 +40,8 @@ export default function DiscountModal({ onSaved, onClose }) {
 
   return (
     <AnimatePresence>
-      <div className="admin-modal" role="dialog" aria-modal="true" aria-label="Store-wide discount">
+      {open && (
+        <div className="admin-modal" role="dialog" aria-modal="true" aria-label="Store-wide discount">
         <motion.button
           type="button"
           className="admin-modal__backdrop"
@@ -68,7 +70,8 @@ export default function DiscountModal({ onSaved, onClose }) {
             <StoreDiscount onSaved={onSaved} />
           </div>
         </motion.div>
-      </div>
+        </div>
+      )}
     </AnimatePresence>
   )
 }

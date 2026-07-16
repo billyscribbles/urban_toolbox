@@ -58,7 +58,7 @@ export default function StatCards({ total, visibleCount, hiddenCount }) {
         </button>
       </StatCard>
 
-      {open && <DiscountModal onSaved={(v) => setPct(v)} onClose={() => setOpen(false)} />}
+      <DiscountModal open={open} onSaved={(v) => setPct(v)} onClose={() => setOpen(false)} />
     </div>
   )
 }
