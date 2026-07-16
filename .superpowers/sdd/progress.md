@@ -1,22 +1,16 @@
-# Admin Full-Screen + Edit-Tray — progress ledger
+# Admin Dashboard Redesign — progress ledger
 
-Plan: docs/superpowers/plans/2026-07-16-admin-fullscreen-edit-tray.md
-Branch: admin-fullscreen-edit-tray
+Plan: docs/superpowers/plans/2026-07-16-admin-dashboard-redesign.md
+Branch: admin-dashboard-redesign
+Baseline commit (Task 1 BASE): 4d5471a
 
 ## Tasks
-- Task 1: complete (commit 1cc25a2, review clean; Minors: test could also assert Footer absence — plan-mandated test text; strict '/admin' equality fine for current routes)
-- Task 2: complete (commit 0cb36a4, review clean; Minor: onCancel in effect deps — benign, form state is local to ProductEditor)
-- Task 3: complete (commit a31de61, review clean; Minors below)
-- Task 4: complete (commit c6f4887, review clean; Minors: empty .admin-badges cell shows nothing vs old '—'; duplicate inline marginTop — both for CSS pass)
-- Task 5: complete (commit 483732b, review clean; migration FILE only — NOT applied to remote, apply at deploy w/ user)
-- Task 6: complete (commit f0b8429, review clean; Minors: icon=state/label=action pattern (fine); literal 'Hidden' text in both stat+badge — note for future getByText)
-- Task 7: complete (commit c3201d9, review inline — hex-grep clean, all classes styled, hidden dims via color+thumb not tr-opacity, reduced-motion guard present, build OK)
-- Task 8: automated gate PASS (lint/format/118 tests/build). Final whole-branch review: ready-to-merge after fixes. Fix commit 8615c0e (#1 title from site.brand.name; #2 storefront hidden-filter arg assertion + red-check). Deferred Minors: loaded-not-reset, empty-badge-dash, EditorTray onCancel dep. REMAINING (user-gated): apply migration 0002 to live DB + browser drive-through + merge/deploy.
+- Task 1: complete (commits 4d5471a..aca8904, review clean — no issues)
+- Task 2: complete (commits 791061a..08de966, re-review clean after 2 fix waves). Fixed: Imp#1 dead exit anim (hoisted `open` to DiscountModal, mirrors EditorTray), Imp#2 onSaved round-trip asserted, Imp#3 format:check regression (prettier). Incl. user header change: logo + "Admin" h1, dropped Dashboard/welcome. Deferred Minors for final review: dialog aria-label shares name w/ input (within() scoping kept — fine); no Tab focus-trap (matches EditorTray pattern, left consistent).
+- Task 3: complete (commit e7a1443, review Approved). FOLLOW-UP for Task 5: empty-state ".admin-empty" (dashed border) nested in ".admin-card" (solid, zero padding) → flush double border; fix by margin or strip border when nested.
+- Task 4: complete (commit ec61f46, review Approved). Minor for Task 5: dead code `visible.length === 0 ? 0 : start + 1` (now guarded by visible.length>0) → simplify to `start + 1`.
+- Task 5: automated gate PASS (commit for polish; lint clean, format:check clean, 127/127 tests, build OK, hex-grep clean). Delivered polish: (a) one-screen layout — .admin/.admin__body/.admin-dash/.admin-card flex chain, .admin-card__scroll internal scroll + sticky thead, pinned toolbar+pager; (b) shorter stat cards (pad 12/16, tile 44, num 24); (c) empty-state border removed; (d) pager count dead code removed. Final whole-branch review (opus, 313ee8e..43e1a0f): "Ready to merge with fixes" — core engineering confirmed correct. Fixed in 77840e7: Imp responsive stat-grid collapse (2/1 cols; clipped under overflow:hidden at 375px), Minor login-scroll on short viewports, dead .admin-topbar__name removed. DEFERRED minors (acceptable, match EditorTray pattern): no Tab focus-trap; dialog aria-label shares name w/ input (within() scoping); editor-tray__close reuse; duplicate fetchStoreDiscount round-trip. Re-verified: lint/format/25 admin tests/hex all clean.
+  PENDING (user-gated): visual one-screen confirm in authed browser + tune density; then merge to main + deploy (apply migration 0003 to live DB per launch-gates memory).
 
 ## Minor findings (for final review triage)
-- T1: appFrame test asserts nav absence only, not Footer (plan-dictated); pathname==='/admin' strict-equality (fine, no nested admin routes)
-- T2: EditorTray effect deps [open, onCancel] vs QuoteDrawer [isOpen]; benign since typing doesn't re-render AdminPage while tray open. Watch if Task 3 refresh churns rows mid-edit.
-- T3: top-bar title 'Urban Toolbox — Admin' is a hardcoded literal (CLAUDE.md 'no hardcoded client strings'); consider `{site.brand.name} — Admin`. FIX candidate for final wave.
-- T3: `loaded` not reset on sign-out/sign-in; harmless until ProductList consumes `loading` (Task 4). Verify Task 4 doesn't surface stale state.
-- T5: productStore.test.js .eq() mock accepts any args (won't catch wrong-field/inverted-bool filter regression); matches file's loose style. Cheap fix: eq spy + toHaveBeenCalledWith('hidden', false). FIX candidate.
-- T5 DEPLOY GATE: supabase/migrations/0002_product_hidden.sql must be applied to the live DB before/with deploy, else storefront fetch (.eq('hidden',false)) errors. Confirm with user.
+(none yet)
