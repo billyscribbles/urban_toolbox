@@ -48,14 +48,16 @@ export default function StatCards({ total, visibleCount, hiddenCount }) {
 
       <StatCard variant="accent" icon={<Tag size={22} strokeWidth={2} aria-hidden="true" />}>
         <span className="admin-statcard__label">Store-wide discount</span>
-        <span className="admin-statcard__num admin-statcard__num--pct">{pct}%</span>
-        <button
-          type="button"
-          className="admin__ghost admin-statcard__btn"
-          onClick={() => setOpen(true)}
-        >
-          Manage discount
-        </button>
+        <span className="admin-statcard__row">
+          <span className="admin-statcard__num admin-statcard__num--pct">{pct}%</span>
+          <button
+            type="button"
+            className="admin__ghost admin-statcard__btn"
+            onClick={() => setOpen(true)}
+          >
+            Manage discount
+          </button>
+        </span>
       </StatCard>
 
       <DiscountModal open={open} onSaved={(v) => setPct(v)} onClose={() => setOpen(false)} />

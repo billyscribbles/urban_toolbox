@@ -258,7 +258,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
+  padding: 8px 14px;
   background: var(--color-white);
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-md);
@@ -269,8 +269,8 @@
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   border-radius: var(--radius-md);
 }
 .admin-statcard__tile--dark {
@@ -293,7 +293,7 @@
 }
 .admin-statcard__num {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 20px;
   line-height: 1;
   color: var(--color-ink-strong);
 }
@@ -302,18 +302,26 @@
 }
 .admin-statcard__label {
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
+  line-height: 1.2;
   color: var(--color-ink);
 }
 .admin-statcard__sub {
   font-size: 12px;
+  line-height: 1.2;
   color: var(--color-ink-muted);
 }
+/* Discount card: keep the % and Manage button on one line so this card isn't
+   taller than the others (the grid stretches all four to the tallest). */
+.admin-statcard__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 .admin-statcard__btn {
-  margin-top: 6px;
-  align-self: flex-start;
-  padding: 6px 12px;
-  font-size: 13px;
+  margin-top: 0;
+  padding: 5px 10px;
+  font-size: 12px;
 }
 
 /* Centered modal (store-wide discount) */
