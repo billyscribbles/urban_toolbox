@@ -2,11 +2,11 @@ import SEO from '../lib/seo.jsx'
 import SplitHero from '../components/SplitHero.jsx'
 import CategoryCarousel from '../components/CategoryCarousel.jsx'
 import TrustBar from '../components/TrustBar.jsx'
-import WhatWeBuild from '../components/WhatWeBuild.jsx'
+import WhyChoose from '../components/WhyChoose.jsx'
+import DistanceCta from '../components/DistanceCta.jsx'
+import StoryBlock from '../components/StoryBlock.jsx'
 import Process from '../components/Process.jsx'
-import Capability from '../components/Capability.jsx'
-import CtaBand from '../components/CtaBand.jsx'
-import { cta } from '../content/cta.js'
+import Testimonials from '../components/Testimonials.jsx'
 
 export default function Home() {
   return (
@@ -15,12 +15,13 @@ export default function Home() {
       <div className="hero-fold">
         <SplitHero />
         <TrustBar />
-        <CategoryCarousel />
       </div>
-      <WhatWeBuild />
+      <CategoryCarousel />
+      <WhyChoose />
+      <DistanceCta />
+      <StoryBlock />
       <Process />
-      <Capability />
-      <CtaBand sub={cta.homeSub} />
+      <Testimonials />
     </main>
   )
 }

@@ -1,0 +1,62 @@
+/* Home "distance" band — full-bleed photo with a left-weighted dark scrim. */
+.distance {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--color-dark);
+  background-size: cover;
+  background-position: center 38%;
+  color: #fff;
+  overflow: hidden;
+}
+
+/* Darken left-to-right so the copy stays legible over any photo. */
+.distance__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    90deg,
+    rgba(8, 8, 8, 0.86) 0%,
+    rgba(8, 8, 8, 0.62) 42%,
+    rgba(8, 8, 8, 0.28) 78%,
+    rgba(8, 8, 8, 0.12) 100%
+  );
+}
+
+.distance__inner {
+  padding: clamp(80px, 12vw, 132px) 0;
+  max-width: 620px;
+}
+
+.distance__heading {
+  margin-top: 6px;
+  color: #fff;
+  max-width: 14ch;
+}
+
+.distance__body {
+  margin-top: 18px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 44ch;
+}
+
+/* Translucent outline button that reads on the photo. */
+.distance__cta {
+  margin-top: 30px;
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.55);
+}
+.distance__cta:hover {
+  background: #fff;
+  color: var(--color-ink-strong);
+  border-color: #fff;
+}
+
+@media (max-width: 700px) {
+  .distance__inner {
+    max-width: none;
+  }
+}

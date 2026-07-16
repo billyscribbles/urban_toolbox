@@ -1,0 +1,94 @@
+/* Home "Why choose Urban" — dark band, headline column + 4-up feature grid. */
+.why__grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) 1.6fr;
+  gap: clamp(40px, 6vw, 88px);
+  align-items: start;
+}
+
+.why__heading {
+  margin-top: 4px;
+  max-width: 12ch;
+}
+
+.why__body {
+  margin-top: 20px;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--color-dark-text);
+  max-width: 42ch;
+}
+
+.why__cta {
+  margin-top: 30px;
+  /* Outline button on dark: invert to a light hairline. */
+  background: transparent;
+  color: #fff;
+  border-color: var(--color-border-dark-3);
+}
+.why__cta:hover {
+  border-color: #fff;
+  background: #fff;
+  color: var(--color-ink-strong);
+}
+
+.why__features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px 48px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* A hairline divider between the two columns of features, echoing the design. */
+.why__feature {
+  position: relative;
+  padding-left: 2px;
+}
+.why__feature:nth-child(even) {
+  padding-left: 34px;
+  border-left: 1px solid var(--color-border-dark-2);
+}
+
+.why__icon {
+  display: inline-flex;
+  color: var(--color-accent);
+  margin-bottom: 16px;
+}
+
+.why__feature-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 17px;
+  letter-spacing: 0;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.why__feature-body {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-dark-text-2);
+}
+
+@media (max-width: 960px) {
+  .why__grid {
+    grid-template-columns: 1fr;
+    gap: 44px;
+  }
+  .why__heading {
+    max-width: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .why__features {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .why__feature:nth-child(even) {
+    padding-left: 2px;
+    border-left: none;
+  }
+}

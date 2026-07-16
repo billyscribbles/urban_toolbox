@@ -1,49 +1,54 @@
-/* Slim category rail — the bottom band of the hero fold. A compact full-bleed
-   marquee that reads as a quiet navigator, not a hero of its own. */
-.cat-carousel {
-  flex-shrink: 0;
+/* Home range carousel — "Built for every adventure". A framed heading above a
+   seamless, continuously rotating full-bleed marquee of category cards. */
+.range {
+  padding: 88px 0;
   background: var(--color-white);
-  border-top: 1px solid var(--color-border-light);
-  padding: clamp(8px, 1.2vh, 14px) 0;
 }
 
-/* Edge fades ease the cards in and out at the viewport edges instead of ending
-   on a hard clip. */
-.cat-carousel__viewport {
+.range__head {
+  margin-bottom: 40px;
+}
+
+.range__heading {
+  margin-top: 4px;
+}
+
+/* Full-bleed viewport with soft edge fades so cards ease in/out at the margins
+   instead of ending on a hard clip. */
+.range__viewport {
   overflow: hidden;
   -webkit-mask-image: linear-gradient(
     90deg,
     transparent 0,
-    #000 64px,
-    #000 calc(100% - 64px),
+    #000 80px,
+    #000 calc(100% - 80px),
     transparent 100%
   );
   mask-image: linear-gradient(
     90deg,
     transparent 0,
-    #000 64px,
-    #000 calc(100% - 64px),
+    #000 80px,
+    #000 calc(100% - 80px),
     transparent 100%
   );
 }
 
-/* Four copies of the track sit side by side (TRACK_COUNT in the component);
-   sliding the belt by exactly one track width (-25% of the belt) then looping
-   is what makes the marquee seamless. The extra copies keep the belt wider
-   than any real viewport so its tail never scrolls into view as a blank gap. */
-.cat-carousel__belt {
+/* TRACK_COUNT identical tracks sit side by side; translating the belt by one
+   track width (-100% / TRACK_COUNT = -25% at 4 tracks) then looping is what
+   makes the marquee seamless. Slow + linear so it reads as a quiet rotation. */
+.range__belt {
   display: flex;
   width: max-content;
-  animation: cat-carousel-marquee 50s linear infinite;
+  animation: range-marquee 48s linear infinite;
 }
 
 /* Pointer hover or keyboard focus anywhere in the rail freezes it. */
-.cat-carousel__viewport:hover .cat-carousel__belt,
-.cat-carousel__viewport:focus-within .cat-carousel__belt {
+.range__viewport:hover .range__belt,
+.range__viewport:focus-within .range__belt {
   animation-play-state: paused;
 }
 
-@keyframes cat-carousel-marquee {
+@keyframes range-marquee {
   from {
     transform: translateX(0);
   }
@@ -52,23 +57,22 @@
   }
 }
 
-.cat-carousel__track {
+.range__track {
   display: flex;
-  list-style: none;
   margin: 0;
   padding: 0;
+  list-style: none;
 }
 
-/* Padding sets the gap between cards; the card sits inside it. */
-.cat-carousel__tile {
+/* Padding is the gap between cards — kept inside the tile so every track is
+   self-contained and exactly one-quarter of the belt (see the keyframe). */
+.range__tile {
   flex: 0 0 auto;
-  width: 208px;
-  padding: 8px;
+  width: 216px;
+  padding: 8px 10px;
 }
 
-/* White card: light grey border, soft rounded corners and a very subtle shadow
-   — a premium product frame that stays compact. */
-.cat-carousel__card {
+.range__card {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -84,34 +88,26 @@
     transform var(--transition-base);
 }
 
-/* The product image fills the media area but is shown in full (no crop). The
-   media ground is white to match the product shots, so it reads as filling the
-   card seamlessly. */
-/* A perfect square that tracks the card width, with no padding — so the image,
-   contained (never cropped), renders as large as it can while fully fitting. */
-.cat-carousel__media {
+.range__media {
   aspect-ratio: 1 / 1;
   background: var(--color-white);
   overflow: hidden;
 }
 
-.cat-carousel__img {
+.range__img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  display: block;
   transition: transform var(--transition-base);
 }
 
-/* Titled footer, ruled off from the image, clean uppercase label. Fixed height
-   so one- and two-line labels share a footer height across all cards. */
-.cat-carousel__label {
+.range__label {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 50px;
+  min-height: 54px;
   border-top: 1px solid var(--color-border-light);
-  padding: 10px 12px;
+  padding: 12px;
   font-family: var(--font-body);
   font-size: 11.5px;
   font-weight: 600;
@@ -122,54 +118,30 @@
   transition: color var(--transition-fast);
 }
 
-.cat-carousel__card:hover,
-.cat-carousel__card:focus-visible {
+.range__card:hover,
+.range__card:focus-visible {
   border-color: rgba(var(--color-accent-rgb), 0.5);
   box-shadow: var(--shadow-md);
   transform: translateY(-3px);
 }
-
-.cat-carousel__card:hover .cat-carousel__img,
-.cat-carousel__card:focus-visible .cat-carousel__img {
+.range__card:hover .range__img,
+.range__card:focus-visible .range__img {
   transform: scale(1.04);
 }
-
-.cat-carousel__card:hover .cat-carousel__label,
-.cat-carousel__card:focus-visible .cat-carousel__label {
+.range__card:hover .range__label,
+.range__card:focus-visible .range__label {
   color: var(--color-accent);
 }
 
-/* Reduced motion: no marquee — a normal scrollable row, single track, no edge
-   mask so nothing sits half-hidden. */
-@media (prefers-reduced-motion: reduce) {
-  .cat-carousel__belt {
-    animation: none;
-    width: auto;
-  }
-  .cat-carousel__viewport {
-    overflow-x: auto;
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-  .cat-carousel__track[aria-hidden='true'] {
-    display: none;
-  }
-  .cat-carousel__card:hover,
-  .cat-carousel__card:focus-visible {
-    transform: none;
-  }
-  .cat-carousel__card:hover .cat-carousel__img {
-    transform: none;
-  }
-}
-
 @media (max-width: 700px) {
-  .cat-carousel__tile {
-    width: 176px;
-    padding: 6px;
+  .range {
+    padding: 60px 0;
   }
-  .cat-carousel__label {
-    min-height: 46px;
-    font-size: 11px;
+  .range__head {
+    margin-bottom: 30px;
+  }
+  .range__tile {
+    width: 176px;
+    padding: 6px 8px;
   }
 }

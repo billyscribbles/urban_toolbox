@@ -1,0 +1,85 @@
+/* Home "story" block — monochrome media beside the about intro + proof stats. */
+.story__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(36px, 5vw, 72px);
+  align-items: center;
+}
+
+.story__media {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--color-dark);
+}
+
+.story__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
+}
+
+.story__heading {
+  margin-top: 4px;
+}
+
+.story__text {
+  margin-top: 18px;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--color-gray-muted);
+  max-width: 46ch;
+}
+
+/* Three equal columns so the icons, values and labels line up in tidy rows
+   even when a value ("Australian Made & Owned") wraps to two lines. */
+.story__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px 20px;
+  margin: 34px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.story__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.story__stat-icon {
+  color: var(--color-accent);
+  margin-bottom: 10px;
+}
+
+.story__stat-value {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.25;
+  color: var(--color-ink-strong);
+  /* Reserve two lines so single-line values keep their labels on the same
+     baseline as the wrapped one. */
+  min-height: 2.5em;
+}
+
+.story__stat-label {
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--color-gray-muted);
+}
+
+.story__cta {
+  margin-top: 36px;
+}
+
+@media (max-width: 900px) {
+  .story__grid {
+    grid-template-columns: 1fr;
+  }
+  .story__stats {
+    gap: 24px;
+  }
+}

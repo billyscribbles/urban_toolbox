@@ -8,6 +8,13 @@
 // `imgAlt` is the asset's human-readable description, kept in content only —
 // the component renders alt="" on purpose (the visible label already names
 // the link; a non-empty alt would double-announce it to screen readers).
+// Section header for the home range carousel (the component reads these — no
+// hardcoded strings live in the component itself).
+export const rangeSection = {
+  eyebrow: 'Explore our range',
+  heading: 'Built for every adventure',
+}
+
 export const homeCarousel = [
   {
     label: 'Under Tray Toolboxes',

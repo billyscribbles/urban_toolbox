@@ -1,0 +1,137 @@
+/* Home "testimonials" — paged review cards on the off-white band. */
+.tm__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 34px;
+}
+
+.tm__heading {
+  margin-top: 4px;
+}
+
+.tm__arrows {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.tm__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1.5px solid var(--color-border-light);
+  border-radius: var(--radius-full);
+  color: var(--color-ink-strong);
+  background: var(--color-white);
+  transition:
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    opacity var(--transition-fast);
+}
+.tm__arrow:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.tm__arrow:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.tm__track {
+  display: flex;
+  gap: 26px;
+  margin: 0;
+  padding: 4px 2px;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.tm__track::-webkit-scrollbar {
+  display: none;
+}
+
+.tm__item {
+  flex: 0 0 auto;
+  width: calc((100% - 52px) / 3);
+  min-width: 280px;
+  scroll-snap-align: start;
+}
+
+.tm__card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0;
+  padding: 32px 30px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.tm__stars {
+  display: inline-flex;
+  gap: 3px;
+  color: var(--color-accent);
+  margin-bottom: 18px;
+}
+
+.tm__quote {
+  margin: 0 0 24px;
+  font-size: 16px;
+  line-height: 1.62;
+  color: var(--color-ink);
+  flex: 1;
+}
+
+.tm__author {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.tm__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+
+.tm__author-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.tm__name {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-ink-strong);
+}
+
+.tm__role {
+  font-size: 12.5px;
+  color: var(--color-gray-muted);
+}
+
+@media (max-width: 900px) {
+  .tm__item {
+    width: 78vw;
+    min-width: 0;
+    max-width: 340px;
+  }
+}
