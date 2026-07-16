@@ -21,13 +21,31 @@
   background:
     linear-gradient(
       90deg,
-      rgba(13, 13, 13, 0.96) 0%,
-      rgba(13, 13, 13, 0.82) 42%,
-      rgba(13, 13, 13, 0.6) 100%
+      rgba(13, 13, 13, 0.95) 0%,
+      rgba(13, 13, 13, 0.9) 38%,
+      rgba(13, 13, 13, 0.45) 66%,
+      rgba(13, 13, 13, 0) 92%
     ),
     radial-gradient(75% 120% at 100% 100%, rgba(var(--color-accent-rgb), 0.12), transparent 55%),
     var(--page-hero-image) center right / cover no-repeat,
     var(--color-dark);
+}
+
+/* Narrow screens: copy spans the full width, so keep the scrim strong across
+   the whole band rather than fading the right — the vehicle takes a back seat
+   to readability here. */
+@media (max-width: 760px) {
+  .page-hero--photo {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(13, 13, 13, 0.94) 0%,
+        rgba(13, 13, 13, 0.86) 60%,
+        rgba(13, 13, 13, 0.72) 100%
+      ),
+      var(--page-hero-image) center right / cover no-repeat,
+      var(--color-dark);
+  }
 }
 
 .page-hero__title {
