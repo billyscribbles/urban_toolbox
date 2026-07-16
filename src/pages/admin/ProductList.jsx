@@ -4,7 +4,7 @@ import { getTree, getLeaves } from '../../lib/catalog.js'
 import { publicPhotoUrl } from '../../lib/supabaseClient.js'
 import { formatPrice } from '../../lib/pricing.js'
 import { deleteProduct, setProductHidden } from '../../lib/adminApi.js'
-import StoreDiscount from './StoreDiscount.jsx'
+import StatCards from './StatCards.jsx'
 
 // Full-width, filterable table of every product. Delete is two-step (Delete ->
 // Confirm) instead of window.confirm so nothing blocks the tab.
@@ -62,29 +62,7 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
 
   return (
     <div>
-      <div className="admin-dash-head">
-        <div className="admin-stats">
-          <div className="admin-stat">
-            <span className="admin-stat__num" data-testid="stat-total">
-              {total}
-            </span>
-            <span className="admin-stat__label">Total</span>
-          </div>
-          <div className="admin-stat">
-            <span className="admin-stat__num" data-testid="stat-visible">
-              {visibleCount}
-            </span>
-            <span className="admin-stat__label">Visible</span>
-          </div>
-          <div className="admin-stat">
-            <span className="admin-stat__num" data-testid="stat-hidden">
-              {hiddenCount}
-            </span>
-            <span className="admin-stat__label">Hidden</span>
-          </div>
-        </div>
-        <StoreDiscount />
-      </div>
+      <StatCards total={total} visibleCount={visibleCount} hiddenCount={hiddenCount} />
 
       <div className="admin-toolbar">
         <label className="sr-only" htmlFor="admin-search">

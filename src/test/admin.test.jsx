@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
@@ -184,6 +184,38 @@ describe('ProductList', () => {
     await user.click(screen.getByRole('button', { name: /show whale tail lock/i }))
     expect(setProductHidden).toHaveBeenCalledWith('a', false)
     await waitFor(() => expect(onChanged).toHaveBeenCalled())
+  })
+})
+
+const { default: StatCards } = await import('../pages/admin/StatCards.jsx')
+const { saveStoreDiscount } = await import('../lib/adminApi.js')
+
+describe('StatCards', () => {
+  it('renders total / visible / hidden counts', () => {
+    render(<StatCards total={5} visibleCount={3} hiddenCount={2} />)
+    expect(screen.getByTestId('stat-total')).toHaveTextContent('5')
+    expect(screen.getByTestId('stat-visible')).toHaveTextContent('3')
+    expect(screen.getByTestId('stat-hidden')).toHaveTextContent('2')
+  })
+
+  it('opens the discount modal, applies a value, and closes', async () => {
+    const user = userEvent.setup()
+    render(<StatCards total={5} visibleCount={3} hiddenCount={2} />)
+    await user.click(screen.getByRole('button', { name: /manage discount/i }))
+    const dialog = await screen.findByRole('dialog', { name: /store-wide discount/i })
+    expect(dialog).toBeInTheDocument()
+    // Scoped to the dialog: the dialog's own aria-label also matches
+    // /store-wide discount/i, so an unscoped screen.getByLabelText would
+    // resolve to two elements (the dialog and the form's input).
+    const input = within(dialog).getByLabelText(/store-wide discount/i)
+    await user.clear(input)
+    await user.type(input, '20')
+    await user.click(screen.getByRole('button', { name: /^apply$/i }))
+    expect(saveStoreDiscount).toHaveBeenCalledWith(20)
+    await user.keyboard('{Escape}')
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog', { name: /store-wide discount/i })).toBeNull(),
+    )
   })
 })
 

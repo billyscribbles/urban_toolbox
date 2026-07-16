@@ -5,7 +5,7 @@ import { fetchStoreDiscount, saveStoreDiscount } from '../../lib/adminApi.js'
 // Store-wide discount: one % applied to every storefront price at display time
 // (the greater of this and each product's own discount wins). 0 turns it off.
 // Non-destructive — it never overwrites per-product discounts.
-export default function StoreDiscount() {
+export default function StoreDiscount({ onSaved }) {
   const [value, setValue] = useState('')
   const [loaded, setLoaded] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -39,6 +39,7 @@ export default function StoreDiscount() {
       await saveStoreDiscount(pct)
       setValue(pct ? String(pct) : '')
       setStatus(pct ? `Store-wide ${pct}% discount is live.` : 'Store-wide discount cleared.')
+      onSaved?.(pct)
     } catch (err) {
       setError(err.message)
     } finally {

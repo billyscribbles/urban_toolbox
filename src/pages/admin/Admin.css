@@ -236,42 +236,137 @@
   justify-content: center;
 }
 
-/* Dashboard head — stats on the left, store-wide discount on the right */
-.admin-dash-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: stretch;
-  justify-content: space-between;
+/* Stat cards — four across, icon tile + text */
+.admin-statcards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   margin-bottom: 20px;
 }
-
-/* Stats bar */
-.admin-stats {
+.admin-statcard {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-/* Store-wide discount control */
-.admin-discount {
-  display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
-  padding: 14px 18px;
+  gap: 16px;
+  padding: 18px 20px;
   background: var(--color-white);
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
 }
+.admin-statcard__tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+}
+.admin-statcard__tile--dark {
+  background: var(--color-ink-strong);
+  color: var(--color-white);
+}
+.admin-statcard__tile--accent {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+}
+.admin-statcard__tile--muted {
+  background: var(--color-border-light);
+  color: var(--color-ink-muted);
+}
+.admin-statcard__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.admin-statcard__num {
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1;
+  color: var(--color-ink-strong);
+}
+.admin-statcard__num--pct {
+  color: var(--color-accent-hover);
+}
+.admin-statcard__label {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-ink);
+}
+.admin-statcard__sub {
+  font-size: 12px;
+  color: var(--color-ink-muted);
+}
+.admin-statcard__btn {
+  margin-top: 8px;
+  align-self: flex-start;
+}
+
+/* Centered modal (store-wide discount) */
+.admin-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.admin-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.45);
+}
+.admin-modal__panel {
+  position: relative;
+  width: min(460px, 100%);
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.admin-modal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--color-border-light);
+}
+.admin-modal__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 20px;
+  text-transform: uppercase;
+  color: var(--color-ink-strong);
+}
+.admin-modal__body {
+  padding: 20px 22px 24px;
+}
+.admin-modal__intro {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: var(--color-ink-muted);
+}
+
+/* Store-wide discount form (rendered inside the modal) */
+.admin-discount {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
 .admin-discount__label {
   display: inline-flex;
   align-items: center;
   gap: 7px;
+  flex-basis: 100%;
   font-weight: 600;
-  font-size: 13px;
-  color: var(--color-ink-muted);
+  font-size: 14px;
+  color: var(--color-ink);
 }
 .admin-discount__label svg {
   color: var(--color-accent);
@@ -282,7 +377,7 @@
   align-items: center;
 }
 .admin-discount__input {
-  width: 78px;
+  width: 90px;
   padding-right: 26px;
   text-align: right;
 }
@@ -300,29 +395,6 @@
   margin-top: 0;
   font-size: 13px;
   color: var(--color-accent-hover);
-}
-.admin-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 120px;
-  padding: 14px 18px;
-  background: var(--color-white);
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-}
-.admin-stat__num {
-  font-family: var(--font-display);
-  font-size: 28px;
-  line-height: 1;
-  color: var(--color-ink-strong);
-}
-.admin-stat__label {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--color-ink-muted);
 }
 
 /* Toolbar */
