@@ -1,11 +1,10 @@
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Check, ArrowRight, Images } from 'lucide-react'
 import Img from './Img.jsx'
 import Placeholder from './Placeholder.jsx'
 import PriceTag from './PriceTag.jsx'
 import QuoteButton from './QuoteButton.jsx'
 import { useQuote } from '../lib/quoteStore.js'
-import { openDetail } from '../lib/detailStore.js'
 import './Card.css'
 
 // Product / category card: striped photo slot over a heading and body. With a
@@ -23,6 +22,7 @@ export default function Card({
   body,
   cta,
   to,
+  slug,
   height = 220,
   alt = false,
   titleSize = 24,
@@ -31,13 +31,12 @@ export default function Card({
   price,
   discountPct,
   quoteCategory,
-  specs,
-  features,
   imageFit,
   imageTone,
   imagePosition,
 }) {
   const { items } = useQuote()
+  const [searchParams, setSearchParams] = useSearchParams()
   const inQuote = quote ? items.some((i) => i.id === quote.id) : false
   const quoteItem = quote
     ? {
@@ -53,26 +52,17 @@ export default function Card({
         imagePosition,
       }
     : null
-  // "View details" opens the detail drawer with everything the card already
-  // knows — photo, price, the structured spec rows, the feature list and the
-  // same add-to-quote descriptor.
+  // "View details" writes the product token into the URL (?product=<slug>)
+  // rather than opening the drawer directly. DetailRouteSync watches that param
+  // and opens the drawer from the catalog, so the address bar always reflects
+  // the open product and the link can be shared. Pushed (not replaced) so the
+  // browser Back button closes the drawer.
+  const detailToken = slug || (quote?.id != null ? String(quote.id) : null)
   function showDetails() {
-    openDetail({
-      title,
-      img,
-      imgAlt,
-      images,
-      imageFit,
-      imageTone,
-      imagePosition,
-      category: quoteCategory,
-      priceFrom: quote?.priceFrom ?? null,
-      price: price ?? quote?.priceFrom ?? null,
-      discountPct: discountPct ?? null,
-      specs,
-      features,
-      quoteItem,
-    })
+    if (!detailToken) return
+    const next = new URLSearchParams(searchParams)
+    next.set('product', detailToken)
+    setSearchParams(next)
   }
   const style = { '--card-title': `${titleSize}px`, '--card-pad': `${pad}px` }
   const resolvedImageFit = imageFit || (img?.match(/\.(png|svg)$/i) ? 'contain' : 'cover')

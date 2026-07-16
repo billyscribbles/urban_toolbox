@@ -8,14 +8,19 @@ import {
   getCategoryPath,
   getLeaves,
   getProductsForLeaf,
+  getProductsUnder,
+  isLeaf,
 } from '../lib/catalog.js'
 import { useProductCatalog, loadProducts, retryLoad } from '../lib/productStore.js'
 
-// One page renders any catalog category — a Toolboxes subcategory
+// One page renders any catalog category — the Toolboxes root (slug prop, every
+// product shown grouped by its top-level type), a Toolboxes subcategory
 // (/toolboxes/:subSlug), a bare leaf (Toolbox Canopies), or the flattened
-// Accessories root (slug prop). Each leaf under the resolved node becomes a
-// ProductRange section; the sticky pill sub-nav and Card grid come for free.
-export default function CategoryPage({ slug: slugProp }) {
+// Accessories root. Sections become a ProductRange; the sticky pill sub-nav and
+// Card grid come for free. When a node has nested children, each direct child is
+// one section aggregating every product beneath it — so nothing has to be
+// clicked through. Otherwise each leaf is its own section.
+export default function CategoryPage({ slug: slugProp, intro }) {
   const params = useParams()
   const { status } = useProductCatalog()
   useEffect(() => {
@@ -29,20 +34,29 @@ export default function CategoryPage({ slug: slugProp }) {
 
   const path = getCategoryPath(slug)
   const top = path[0] || node
-  const leaves = getLeaves(node)
 
-  const sections = leaves.map((leaf) => ({
-    id: leaf.slug,
-    label: leaf.label,
-    heading: leaf.label,
-    products: getProductsForLeaf(leaf.id),
-  }))
+  const grouped = (node.children ?? []).some((child) => !isLeaf(child))
+  const sections = grouped
+    ? node.children.map((child) => ({
+        id: child.slug,
+        label: child.label,
+        heading: child.label,
+        products: getProductsUnder(child),
+      }))
+    : getLeaves(node).map((leaf) => ({
+        id: leaf.slug,
+        label: leaf.label,
+        heading: leaf.label,
+        products: getProductsForLeaf(leaf.id),
+      }))
 
   const data = {
     header: {
       eyebrow: top.label === node.label ? 'Range' : top.label,
       title: node.label,
-      intro: `Browse our ${node.label.toLowerCase()} range. Every unit is built to order in aluminium — add what fits to your quote and we'll confirm size and price.`,
+      intro:
+        intro ||
+        `Browse our ${node.label.toLowerCase()} range. Every unit is built to order in aluminium — add what fits to your quote and we'll confirm size and price.`,
     },
     sections,
   }

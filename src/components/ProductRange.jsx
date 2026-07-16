@@ -63,6 +63,7 @@ export default function ProductRange({ data, status = 'ready', onRetry }) {
                 {s.products.map((p) => (
                   <Card
                     key={p.id || p.title}
+                    slug={p.slug}
                     img={p.img}
                     imgAlt={p.imgAlt}
                     images={p.images}
@@ -79,8 +80,6 @@ export default function ProductRange({ data, status = 'ready', onRetry }) {
                     price={p.price}
                     discountPct={p.discountPct}
                     quoteCategory={header.title}
-                    specs={p.specs}
-                    features={p.features}
                   />
                 ))}
               </div>

@@ -68,6 +68,39 @@ export function getProductsForLeaf(leafId) {
   return getProducts().filter((p) => p.categoryId === leafId)
 }
 
+// Depth-first lookup of a category node by its id (used to resolve the top-level
+// label for a product from its leaf's categoryId).
+export function getCategoryById(id) {
+  const walk = (nodes) => {
+    for (const n of nodes) {
+      if (n.id === id) return n
+      if (n.children) {
+        const hit = walk(n.children)
+        if (hit) return hit
+      }
+    }
+    return undefined
+  }
+  return walk(categories)
+}
+
+// Resolve a product by the token used in the shareable URL — its slug, falling
+// back to the id for products that predate slugs. Coerces so a numeric id in the
+// URL string still matches.
+export function getProductByToken(token) {
+  if (token == null) return undefined
+  const t = String(token)
+  return getProducts().find((p) => p.slug === t || String(p.id) === t)
+}
+
+// Top-level category label ("Toolboxes" / "Accessories") a product lives under —
+// the drawer eyebrow and the quote line's category.
+export function getTopLabelForProduct(product) {
+  const leaf = product && getCategoryById(product.categoryId)
+  const path = leaf ? getCategoryPath(leaf.slug) : []
+  return path[0]?.label || ''
+}
+
 export function getProductsUnder(node) {
   const ids = new Set(getLeaves(node).map((l) => l.id))
   return getProducts().filter((p) => ids.has(p.categoryId))

@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { X } from 'lucide-react'
-import { useDetail, closeDetail } from '../lib/detailStore.js'
+import { useDetail } from '../lib/detailStore.js'
 import PriceTag from './PriceTag.jsx'
 import QuoteButton from './QuoteButton.jsx'
 import './DetailDrawer.css'
@@ -13,8 +14,22 @@ import './DetailDrawer.css'
 // "built into every box" list and an add-to-quote action.
 export default function DetailDrawer() {
   const { product, isOpen } = useDetail()
+  const [, setSearchParams] = useSearchParams()
   const reduce = useReducedMotion()
   const closeRef = useRef(null)
+  // Closing just drops ?product from the URL (replace, so it doesn't pile up a
+  // history entry); DetailRouteSync sees the param vanish and closes the store,
+  // keeping the address bar the single source of truth.
+  const close = useCallback(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('product')
+        return next
+      },
+      { replace: true },
+    )
+  }, [setSearchParams])
   // Products that ship extra angles carry an `images` array; the rest render a
   // single photo. Track which one the thumbnail strip has selected, and start
   // back at the first shot every time a different product opens the drawer.
@@ -30,7 +45,7 @@ export default function DetailDrawer() {
     const trigger = document.activeElement
     const { overflow } = document.body.style
     document.body.style.overflow = 'hidden'
-    const onKey = (e) => e.key === 'Escape' && closeDetail()
+    const onKey = (e) => e.key === 'Escape' && close()
     document.addEventListener('keydown', onKey)
     closeRef.current?.focus()
     return () => {
@@ -38,7 +53,7 @@ export default function DetailDrawer() {
       document.body.style.overflow = overflow
       trigger?.focus?.()
     }
-  }, [isOpen])
+  }, [isOpen, close])
 
   const panelMotion = reduce
     ? {}
@@ -70,7 +85,7 @@ export default function DetailDrawer() {
             type="button"
             className="detail-drawer__backdrop"
             aria-label="Close details"
-            onClick={closeDetail}
+            onClick={close}
             {...fade}
           />
           <motion.div className="detail-drawer__panel" {...panelMotion}>
@@ -83,7 +98,7 @@ export default function DetailDrawer() {
                 ref={closeRef}
                 type="button"
                 className="detail-drawer__close"
-                onClick={closeDetail}
+                onClick={close}
                 aria-label="Close details"
               >
                 <X size={22} strokeWidth={1.8} aria-hidden="true" />

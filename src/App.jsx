@@ -3,6 +3,7 @@ import { useEffect, useLayoutEffect, useState, lazy, Suspense } from 'react'
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
 import Lightbox from './components/Lightbox.jsx'
+import DetailRouteSync from './components/DetailRouteSync.jsx'
 import Home from './pages/Home.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import RouteFallback from './components/RouteFallback.jsx'
@@ -60,7 +61,6 @@ function DeferredDrawers() {
   )
 }
 
-const CategoryOverview = lazyWithRetry(() => import('./pages/CategoryOverview.jsx'))
 const CategoryPage = lazyWithRetry(() => import('./pages/CategoryPage.jsx'))
 const FabricationPage = lazyWithRetry(() => import('./pages/FabricationPage.jsx'))
 const AboutPage = lazyWithRetry(() => import('./pages/AboutPage.jsx'))
@@ -133,9 +133,9 @@ function AppBody() {
               <Route
                 path="/toolboxes"
                 element={
-                  <CategoryOverview
+                  <CategoryPage
                     slug="toolboxes"
-                    intro="Custom aluminium toolboxes for utes, trucks and trailers — under-tray, top-opening, side-opening, truck boxes, dog boxes and canopies. Built to order in Dandenong South."
+                    intro="Custom aluminium toolboxes for utes, trucks and trailers — under-tray, top-opening, side-opening, truck boxes, dog boxes and canopies. Every model, built to order in Dandenong South."
                   />
                 }
               />
@@ -185,6 +185,7 @@ function AppBody() {
         <>
           <Footer />
           <Lightbox />
+          <DetailRouteSync />
           <DeferredDrawers />
         </>
       )}
