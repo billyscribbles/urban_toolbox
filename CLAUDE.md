@@ -54,62 +54,7 @@ Plus: **`public/brand/`** for `logo.svg`, `logo-mark.svg`, `favicon.svg`, and an
 
 ## Directory structure
 
-```
-foundation/
-├── public/
-│   ├── brand/          logo.svg, logo-mark.svg, favicon.svg, og-image.png
-│   ├── fonts/          default display + body (woff2, preloaded)
-│   └── images/         placeholder hero/section imagery
-├── src/
-│   ├── config/
-│   │   ├── theme.config.js
-│   │   └── site.config.js
-│   ├── content/
-│   │   ├── hero.js
-│   │   ├── stats.js
-│   │   ├── services.js
-│   │   ├── howItWorks.js
-│   │   ├── testimonials.js
-│   │   ├── faq.js
-│   │   └── legal.js
-│   ├── lib/
-│   │   ├── applyTheme.js     writes theme.config -> CSS vars on :root
-│   │   ├── seo.jsx           Helmet wrapper + JSON-LD using site.config.seo
-│   │   ├── motion.js         reduced-motion-aware scroll-in variants
-│   │   ├── analytics.js      opt-in GA4 wiring (no-op without VITE_GA_ID)
-│   │   └── errorReporter.js  opt-in error reporting (no-op without Sentry)
-│   ├── components/
-│   │   ├── ErrorBoundary.jsx / .css   route-level render-error fallback
-│   │   ├── RouteFallback.jsx / .css   Suspense loading state
-│   │   ├── Navbar.jsx / .css
-│   │   ├── Footer.jsx / .css
-│   │   ├── Hero.jsx / .css
-│   │   ├── Stats.jsx / .css
-│   │   ├── Services.jsx / .css
-│   │   ├── HowItWorks.jsx / .css
-│   │   ├── Testimonials.jsx / .css
-│   │   ├── FAQ.jsx / .css
-│   │   └── Contact.jsx / .css
-│   ├── pages/
-│   │   ├── Home.jsx            composes all sections
-│   │   ├── ServicesPage.jsx
-│   │   ├── AboutPage.jsx
-│   │   ├── ContactPage.jsx
-│   │   ├── LegalPage.jsx       renders privacy or terms from legal.js
-│   │   └── NotFoundPage.jsx
-│   ├── App.jsx
-│   ├── main.jsx                calls applyTheme() then mounts
-│   └── index.css               base resets + utility classes
-├── .env.example                VITE_FORMSPREE_ID, VITE_SITE_URL, VITE_GA_ID, VITE_SENTRY_DSN
-├── index.html
-├── package.json
-├── vite.config.js              manual vendor chunks (react, motion)
-├── lighthouserc.json           Lighthouse CI thresholds
-├── scripts/
-│   └── gen-seo-files.mjs       post-build: templates sitemap/robots domain
-├── railway.json
-└── README.md                   "How to fork" checklist
-```
+(Run `ls`/`find` for the live layout. The notes below capture only what the tree can't explain on its own.)
 
 ### Components included
 
@@ -123,15 +68,7 @@ Explicitly **excluded** as too site-specific (add back per-project only if asked
 
 ### Routes
 
-```
-/            Home
-/services    ServicesPage
-/about       AboutPage
-/contact     ContactPage
-/privacy     LegalPage (section="privacy")
-/terms       LegalPage (section="terms")
-*            NotFoundPage
-```
+Defined in `src/App.jsx` (Home, Services, About, Contact, `/privacy` + `/terms` via `LegalPage`, and a `*` 404). Read it for the current set.
 
 ---
 
