@@ -171,6 +171,28 @@ describe('ProductList', () => {
     expect(hidden).toHaveTextContent('1')
   })
 
+  it('filters the grid by clicking the visible / hidden stat cards', async () => {
+    const user = userEvent.setup()
+    render(
+      <MemoryRouter>
+        <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
+      </MemoryRouter>,
+    )
+    // Both show under the default "all" filter.
+    expect(screen.getByText('Whale Tail Lock')).toBeInTheDocument()
+    expect(screen.getByText('Job Site Box')).toBeInTheDocument()
+
+    // Hidden card → only the hidden product (Whale Tail Lock).
+    await user.click(screen.getByRole('button', { name: /hidden products/i }))
+    expect(screen.getByText('Whale Tail Lock')).toBeInTheDocument()
+    expect(screen.queryByText('Job Site Box')).toBeNull()
+
+    // Visible card → only the visible product (Job Site Box).
+    await user.click(screen.getByRole('button', { name: /visible products/i }))
+    expect(screen.getByText('Job Site Box')).toBeInTheDocument()
+    expect(screen.queryByText('Whale Tail Lock')).toBeNull()
+  })
+
   it('toggles visibility from the row eye button', async () => {
     const user = userEvent.setup()
     const onChanged = vi.fn()

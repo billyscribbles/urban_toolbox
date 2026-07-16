@@ -195,7 +195,8 @@
 }
 .admin__empty {
   color: var(--color-ink-muted);
-  padding: 24px 0;
+  text-align: center;
+  padding: 56px 24px;
 }
 
 /* Login — centered card on the standalone background */
@@ -264,6 +265,34 @@
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
 }
+/* Count cards double as filters — clickable, and ringed while active. */
+.admin-statcard--btn {
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+.admin-statcard--btn:hover {
+  border-color: var(--color-accent);
+}
+.admin-statcard--btn:active {
+  background: var(--color-off-white);
+}
+.admin-statcard--btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+/* Active filter: greyed + accent-ringed so the pressed card is unmistakable. */
+.admin-statcard--on {
+  background: var(--color-off-white);
+  border-color: var(--color-accent);
+  box-shadow:
+    var(--shadow-sm),
+    0 0 0 1px var(--color-accent);
+}
 .admin-statcard__tile {
   display: inline-flex;
   align-items: center;
@@ -288,7 +317,7 @@
 .admin-statcard__body {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   min-width: 0;
 }
 .admin-statcard__num {
@@ -305,11 +334,6 @@
   font-size: 13px;
   line-height: 1.2;
   color: var(--color-ink);
-}
-.admin-statcard__sub {
-  font-size: 12px;
-  line-height: 1.2;
-  color: var(--color-ink-muted);
 }
 /* Discount card: keep the % and Manage button on one line so this card isn't
    taller than the others (the grid stretches all four to the tallest). */

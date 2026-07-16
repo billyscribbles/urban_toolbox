@@ -37,6 +37,7 @@ function pageItems(current, count) {
 export default function ProductList({ rows, loading, onEdit, onNew, onChanged }) {
   const [q, setQ] = useState('')
   const [cat, setCat] = useState('')
+  const [vis, setVis] = useState('all') // 'all' | 'visible' | 'hidden'
   const [confirmId, setConfirmId] = useState(null)
   const [busyId, setBusyId] = useState(null)
   const [togglingId, setTogglingId] = useState(null)
@@ -49,7 +50,9 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
 
   const visible = rows.filter(
     (r) =>
-      (!cat || r.category_id === cat) && (!q || r.title.toLowerCase().includes(q.toLowerCase())),
+      (!cat || r.category_id === cat) &&
+      (!q || r.title.toLowerCase().includes(q.toLowerCase())) &&
+      (vis === 'all' || (vis === 'visible' ? !r.hidden : r.hidden)),
   )
 
   const pageCount = Math.max(1, Math.ceil(visible.length / pageSize))
@@ -61,7 +64,7 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
   // never land on an out-of-range page.
   useEffect(() => {
     setPage(1)
-  }, [q, cat, pageSize])
+  }, [q, cat, vis, pageSize])
 
   async function onDelete(row) {
     setBusyId(row.id)
@@ -101,7 +104,13 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
 
   return (
     <div className="admin-dash">
-      <StatCards total={total} visibleCount={visibleCount} hiddenCount={hiddenCount} />
+      <StatCards
+        total={total}
+        visibleCount={visibleCount}
+        hiddenCount={hiddenCount}
+        filter={vis}
+        onFilter={setVis}
+      />
 
       <div className="admin-card">
         <div className="admin-toolbar">
