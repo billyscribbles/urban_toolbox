@@ -5,8 +5,8 @@ import StoreDiscount from './StoreDiscount.jsx'
 
 // Centered dialog that hosts the store-wide discount form. Mirrors EditorTray's
 // dialog semantics (Esc-to-close, backdrop, body scroll lock, focus the close
-// button, restore focus on exit). Always rendered open — the parent mounts it
-// only while the modal should be visible.
+// button, restore focus on exit). Prop-driven: open whenever `open` is set —
+// StatCards owns that state, and the dialog stays mounted so its exit animates.
 export default function DiscountModal({ open, onSaved, onClose }) {
   const reduce = useReducedMotion()
   const closeRef = useRef(null)
