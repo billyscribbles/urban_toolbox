@@ -1,14 +1,22 @@
-# Image hero + category carousel — SDD progress ledger (worktree)
-Plan: docs/superpowers/plans/2026-07-15-image-hero-category-carousel.md
-Branch: feat/image-hero-category-carousel (worktree .claude/worktrees/hero-carousel — moved here after the admin-dashboard session took over the main checkout)
-Branch base (vs main): f61011d
-Task 1: complete (inline, commit 26438b7 — image-gen MCP down, used existing brand photos per fallback)
-Task 2: complete (commit 797b085, review clean)
-Task 3: complete (commits 7499cb2 + 1b460bf, review clean; Minor: scrim rgba(13,13,13) ≠ --color-ink-strong #111 — cosmetic)
-Task 4: complete (commit 916027a, review clean)
-Task 5: complete (commit c4ce7d8, review clean)
-Task 6: complete (549777b prettier fix; lint/format/test 67/67/build PASS; Lighthouse perf 100 / a11y 96 / SEO 100; responsive + 404 verified on preview)
-Task 7 (user revision mid-flight): dark-panel hero per Billy's new mock — IN PROGRESS
-Task 7: complete (commit 0f6eb03 dark-panel hero revision per Billy's mock; gate re-run PASS: format/build/Lighthouse 100-96-100)
-Task 7 gate re-check + final review fix: marquee 4-track fix for >1708px viewports (commit pending)
-Task 7 FINAL: complete (commit 986d3bd; gate PASS — lint/format/test 67/67/build; Lighthouse perf 100 / a11y 96 / SEO 100; wide-viewport gap fix verified exposedGap=0 @2560px). Whole-branch review clean apart from triaged Minors.
+# Admin Full-Screen + Edit-Tray — progress ledger
+
+Plan: docs/superpowers/plans/2026-07-16-admin-fullscreen-edit-tray.md
+Branch: admin-fullscreen-edit-tray
+
+## Tasks
+- Task 1: complete (commit 1cc25a2, review clean; Minors: test could also assert Footer absence — plan-mandated test text; strict '/admin' equality fine for current routes)
+- Task 2: complete (commit 0cb36a4, review clean; Minor: onCancel in effect deps — benign, form state is local to ProductEditor)
+- Task 3: complete (commit a31de61, review clean; Minors below)
+- Task 4: complete (commit c6f4887, review clean; Minors: empty .admin-badges cell shows nothing vs old '—'; duplicate inline marginTop — both for CSS pass)
+- Task 5: complete (commit 483732b, review clean; migration FILE only — NOT applied to remote, apply at deploy w/ user)
+- Task 6: complete (commit f0b8429, review clean; Minors: icon=state/label=action pattern (fine); literal 'Hidden' text in both stat+badge — note for future getByText)
+- Task 7: complete (commit c3201d9, review inline — hex-grep clean, all classes styled, hidden dims via color+thumb not tr-opacity, reduced-motion guard present, build OK)
+- Task 8: automated gate PASS (lint/format/118 tests/build). Final whole-branch review: ready-to-merge after fixes. Fix commit 8615c0e (#1 title from site.brand.name; #2 storefront hidden-filter arg assertion + red-check). Deferred Minors: loaded-not-reset, empty-badge-dash, EditorTray onCancel dep. REMAINING (user-gated): apply migration 0002 to live DB + browser drive-through + merge/deploy.
+
+## Minor findings (for final review triage)
+- T1: appFrame test asserts nav absence only, not Footer (plan-dictated); pathname==='/admin' strict-equality (fine, no nested admin routes)
+- T2: EditorTray effect deps [open, onCancel] vs QuoteDrawer [isOpen]; benign since typing doesn't re-render AdminPage while tray open. Watch if Task 3 refresh churns rows mid-edit.
+- T3: top-bar title 'Urban Toolbox — Admin' is a hardcoded literal (CLAUDE.md 'no hardcoded client strings'); consider `{site.brand.name} — Admin`. FIX candidate for final wave.
+- T3: `loaded` not reset on sign-out/sign-in; harmless until ProductList consumes `loading` (Task 4). Verify Task 4 doesn't surface stale state.
+- T5: productStore.test.js .eq() mock accepts any args (won't catch wrong-field/inverted-bool filter regression); matches file's loose style. Cheap fix: eq spy + toHaveBeenCalledWith('hidden', false). FIX candidate.
+- T5 DEPLOY GATE: supabase/migrations/0002_product_hidden.sql must be applied to the live DB before/with deploy, else storefront fetch (.eq('hidden',false)) errors. Confirm with user.
