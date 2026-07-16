@@ -36,11 +36,13 @@
 ## Task 1: Page-title header
 
 **Files:**
+
 - Modify: `src/pages/admin/AdminPage.jsx:54-77`
 - Modify: `src/pages/admin/Admin.css` (topbar section `:10-76`)
 - Test: `src/test/admin.test.jsx` (signed-in describe block `:56-80`)
 
 **Interfaces:**
+
 - Consumes: `site.brand.logoMark`, `site.brand.logoText` (already imported), `signOut` (already imported).
 - Produces: header markup with a "Dashboard" `<h1>` and "Welcome back, Admin." sub-line; a `← Return to site` link (role `link`) and a `Sign out` button (role `button`) — both names unchanged so existing tests keep resolving.
 
@@ -49,17 +51,17 @@
 In `src/test/admin.test.jsx`, inside `describe('AdminPage — signed in', …)`, add:
 
 ```jsx
-  it('shows the Dashboard page heading and welcome line', async () => {
-    renderSignedIn()
-    expect(await screen.findByRole('heading', { name: /dashboard/i })).toBeInTheDocument()
-    expect(screen.getByText(/welcome back, admin/i)).toBeInTheDocument()
-  })
+it('shows the Dashboard page heading and welcome line', async () => {
+  renderSignedIn()
+  expect(await screen.findByRole('heading', { name: /dashboard/i })).toBeInTheDocument()
+  expect(screen.getByText(/welcome back, admin/i)).toBeInTheDocument()
+})
 
-  it('has no axe violations on the dashboard', async () => {
-    const { container } = renderSignedIn()
-    await screen.findByRole('heading', { name: /dashboard/i })
-    expect(await axe(container)).toHaveNoViolations()
-  })
+it('has no axe violations on the dashboard', async () => {
+  const { container } = renderSignedIn()
+  await screen.findByRole('heading', { name: /dashboard/i })
+  expect(await axe(container)).toHaveNoViolations()
+})
 ```
 
 - [ ] **Step 2: Run the test to verify it fails**
@@ -72,29 +74,23 @@ Expected: FAIL — no heading named "Dashboard".
 In `src/pages/admin/AdminPage.jsx`, replace the `<header className="admin-topbar">…</header>` block (lines 55-77) with:
 
 ```jsx
-          <header className="admin-topbar">
-            <div className="admin-topbar__lead">
-              <img
-                className="admin-topbar__mark"
-                src={site.brand.logoMark}
-                alt=""
-                width="40"
-                height="40"
-              />
-              <div className="admin-topbar__heading">
-                <h1 className="admin-topbar__title">Dashboard</h1>
-                <p className="admin-topbar__welcome">Welcome back, Admin.</p>
-              </div>
-            </div>
-            <div className="admin-topbar__actions">
-              <Link className="admin-topbar__pill" to="/">
-                ← Return to site
-              </Link>
-              <button type="button" className="admin__ghost" onClick={signOut}>
-                Sign out
-              </button>
-            </div>
-          </header>
+<header className="admin-topbar">
+  <div className="admin-topbar__lead">
+    <img className="admin-topbar__mark" src={site.brand.logoMark} alt="" width="40" height="40" />
+    <div className="admin-topbar__heading">
+      <h1 className="admin-topbar__title">Dashboard</h1>
+      <p className="admin-topbar__welcome">Welcome back, Admin.</p>
+    </div>
+  </div>
+  <div className="admin-topbar__actions">
+    <Link className="admin-topbar__pill" to="/">
+      ← Return to site
+    </Link>
+    <button type="button" className="admin__ghost" onClick={signOut}>
+      Sign out
+    </button>
+  </div>
+</header>
 ```
 
 - [ ] **Step 4: Replace the topbar CSS**
@@ -171,6 +167,7 @@ git commit -m "feat(admin): page-title header on the dashboard topbar"
 ## Task 2: Stat cards + discount card + modal
 
 **Files:**
+
 - Create: `src/pages/admin/StatCards.jsx`
 - Create: `src/pages/admin/DiscountModal.jsx`
 - Modify: `src/pages/admin/StoreDiscount.jsx:29-47` (add `onSaved`)
@@ -179,6 +176,7 @@ git commit -m "feat(admin): page-title header on the dashboard topbar"
 - Test: `src/test/admin.test.jsx` (ProductList describe `:107`)
 
 **Interfaces:**
+
 - `StatCards` — props `{ total: number, visibleCount: number, hiddenCount: number }`. Renders four cards; keeps `data-testid="stat-total|stat-visible|stat-hidden"` on the numbers. Owns the store discount value display + the "Manage discount" button that opens `DiscountModal`.
 - `DiscountModal` — props `{ onSaved: (pct: number) => void, onClose: () => void }`. Centered dialog; body is `<StoreDiscount onSaved={…} />`.
 - `StoreDiscount` — add optional prop `onSaved?: (pct: number) => void`, invoked after a successful `saveStoreDiscount(pct)` with the applied `pct`.
@@ -235,10 +233,10 @@ export default function StoreDiscount({ onSaved }) {
 and inside `apply`, after `await saveStoreDiscount(pct)`:
 
 ```jsx
-      await saveStoreDiscount(pct)
-      setValue(pct ? String(pct) : '')
-      setStatus(pct ? `Store-wide ${pct}% discount is live.` : 'Store-wide discount cleared.')
-      onSaved?.(pct)
+await saveStoreDiscount(pct)
+setValue(pct ? String(pct) : '')
+setStatus(pct ? `Store-wide ${pct}% discount is live.` : 'Store-wide discount cleared.')
+onSaved?.(pct)
 ```
 
 - [ ] **Step 4: Create DiscountModal**
@@ -415,7 +413,7 @@ import StatCards from './StatCards.jsx'
 Replace the `.admin-dash-head` block (lines 65-87) with:
 
 ```jsx
-      <StatCards total={total} visibleCount={visibleCount} hiddenCount={hiddenCount} />
+<StatCards total={total} visibleCount={visibleCount} hiddenCount={hiddenCount} />
 ```
 
 (The `total`, `hiddenCount`, `visibleCount` consts at lines 59-61 stay as-is.)
@@ -611,11 +609,13 @@ git commit -m "feat(admin): icon-tile stat cards + store-wide discount modal"
 ## Task 3: Toolbar-in-card, SKU subline, icon-only actions
 
 **Files:**
+
 - Modify: `src/pages/admin/ProductList.jsx:1-2, 89-121, 148-265`
 - Modify: `src/pages/admin/Admin.css` (toolbar + table + actions)
 - Test: `src/test/admin.test.jsx` (ProductList describe)
 
 **Interfaces:**
+
 - Consumes: `Search` icon from `lucide-react` (add to the existing import).
 - Produces: product-cell subline `SKU: {row.id}`; row actions as three icon-only buttons with `aria-label`s — eye toggle `Show/Hide {title}` (unchanged names), edit `Edit {title}`, delete `Delete {title}` with a two-step Confirm/Cancel.
 
@@ -624,38 +624,38 @@ git commit -m "feat(admin): icon-tile stat cards + store-wide discount modal"
 In `src/test/admin.test.jsx`, inside `describe('ProductList', …)`, add:
 
 ```jsx
-  it('shows the product id as a SKU subline', () => {
-    render(
-      <MemoryRouter>
-        <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
-      </MemoryRouter>,
-    )
-    expect(screen.getByText(/SKU:\s*a/i)).toBeInTheDocument()
-  })
+it('shows the product id as a SKU subline', () => {
+  render(
+    <MemoryRouter>
+      <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
+    </MemoryRouter>,
+  )
+  expect(screen.getByText(/SKU:\s*a/i)).toBeInTheDocument()
+})
 
-  it('edits from the row pencil button', async () => {
-    const user = userEvent.setup()
-    const onEdit = vi.fn()
-    render(
-      <MemoryRouter>
-        <ProductList rows={listRows} onEdit={onEdit} onNew={() => {}} onChanged={() => {}} />
-      </MemoryRouter>,
-    )
-    await user.click(screen.getByRole('button', { name: /edit whale tail lock/i }))
-    expect(onEdit).toHaveBeenCalledWith(listRows[0])
-  })
+it('edits from the row pencil button', async () => {
+  const user = userEvent.setup()
+  const onEdit = vi.fn()
+  render(
+    <MemoryRouter>
+      <ProductList rows={listRows} onEdit={onEdit} onNew={() => {}} onChanged={() => {}} />
+    </MemoryRouter>,
+  )
+  await user.click(screen.getByRole('button', { name: /edit whale tail lock/i }))
+  expect(onEdit).toHaveBeenCalledWith(listRows[0])
+})
 
-  it('deletes in two steps from the trash button', async () => {
-    const user = userEvent.setup()
-    render(
-      <MemoryRouter>
-        <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
-      </MemoryRouter>,
-    )
-    await user.click(screen.getByRole('button', { name: /delete whale tail lock/i }))
-    expect(await screen.findByRole('button', { name: /confirm delete/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument()
-  })
+it('deletes in two steps from the trash button', async () => {
+  const user = userEvent.setup()
+  render(
+    <MemoryRouter>
+      <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
+    </MemoryRouter>,
+  )
+  await user.click(screen.getByRole('button', { name: /delete whale tail lock/i }))
+  expect(await screen.findByRole('button', { name: /confirm delete/i })).toBeInTheDocument()
+  expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument()
+})
 ```
 
 - [ ] **Step 2: Run the tests to verify they fail**
@@ -969,11 +969,13 @@ git commit -m "feat(admin): toolbar-in-card, SKU subline, icon-only row actions"
 ## Task 4: Client-side pagination
 
 **Files:**
+
 - Modify: `src/pages/admin/ProductList.jsx` (state, slice, footer)
 - Modify: `src/pages/admin/Admin.css` (pagination styles)
 - Test: `src/test/admin.test.jsx` (ProductList describe)
 
 **Interfaces:**
+
 - Consumes: the filtered `visible` array (already computed).
 - Produces: a `<nav aria-label="Pagination">` footer with `Showing X to Y of N products`, prev/next chevron buttons, numbered page buttons (`aria-current="page"` on the active one), and a page-size `<select>` (10 / 25 / 50, default 10).
 
@@ -982,52 +984,52 @@ git commit -m "feat(admin): toolbar-in-card, SKU subline, icon-only row actions"
 In `src/test/admin.test.jsx`, add a `paged` fixture and tests inside `describe('ProductList', …)`:
 
 ```jsx
-  it('paginates to 10 rows per page by default and pages through the rest', async () => {
-    const user = userEvent.setup()
-    const many = Array.from({ length: 14 }, (_, i) => ({
-      id: `p${i}`,
-      category_id: 'locks',
-      title: `Product ${i}`,
-      price: 10,
-      discount_pct: null,
-      featured: false,
-      hidden: false,
-      product_images: [],
-    }))
-    render(
-      <MemoryRouter>
-        <ProductList rows={many} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
-      </MemoryRouter>,
-    )
-    expect(screen.getByText('Product 0')).toBeInTheDocument()
-    expect(screen.queryByText('Product 12')).toBeNull()
-    expect(screen.getByText(/showing 1 to 10 of 14/i)).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: /go to page 2/i }))
-    expect(screen.getByText('Product 12')).toBeInTheDocument()
-    expect(screen.queryByText('Product 0')).toBeNull()
-  })
+it('paginates to 10 rows per page by default and pages through the rest', async () => {
+  const user = userEvent.setup()
+  const many = Array.from({ length: 14 }, (_, i) => ({
+    id: `p${i}`,
+    category_id: 'locks',
+    title: `Product ${i}`,
+    price: 10,
+    discount_pct: null,
+    featured: false,
+    hidden: false,
+    product_images: [],
+  }))
+  render(
+    <MemoryRouter>
+      <ProductList rows={many} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
+    </MemoryRouter>,
+  )
+  expect(screen.getByText('Product 0')).toBeInTheDocument()
+  expect(screen.queryByText('Product 12')).toBeNull()
+  expect(screen.getByText(/showing 1 to 10 of 14/i)).toBeInTheDocument()
+  await user.click(screen.getByRole('button', { name: /go to page 2/i }))
+  expect(screen.getByText('Product 12')).toBeInTheDocument()
+  expect(screen.queryByText('Product 0')).toBeNull()
+})
 
-  it('resets to page 1 when the search query changes', async () => {
-    const user = userEvent.setup()
-    const many = Array.from({ length: 14 }, (_, i) => ({
-      id: `p${i}`,
-      category_id: 'locks',
-      title: `Product ${i}`,
-      price: 10,
-      discount_pct: null,
-      featured: false,
-      hidden: false,
-      product_images: [],
-    }))
-    render(
-      <MemoryRouter>
-        <ProductList rows={many} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
-      </MemoryRouter>,
-    )
-    await user.click(screen.getByRole('button', { name: /go to page 2/i }))
-    await userEvent.type(screen.getByLabelText(/search/i), 'Product 1')
-    expect(screen.getByText(/showing 1 to/i)).toBeInTheDocument()
-  })
+it('resets to page 1 when the search query changes', async () => {
+  const user = userEvent.setup()
+  const many = Array.from({ length: 14 }, (_, i) => ({
+    id: `p${i}`,
+    category_id: 'locks',
+    title: `Product ${i}`,
+    price: 10,
+    discount_pct: null,
+    featured: false,
+    hidden: false,
+    product_images: [],
+  }))
+  render(
+    <MemoryRouter>
+      <ProductList rows={many} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
+    </MemoryRouter>,
+  )
+  await user.click(screen.getByRole('button', { name: /go to page 2/i }))
+  await userEvent.type(screen.getByLabelText(/search/i), 'Product 1')
+  expect(screen.getByText(/showing 1 to/i)).toBeInTheDocument()
+})
 ```
 
 - [ ] **Step 2: Run the tests to verify they fail**
@@ -1040,23 +1042,23 @@ Expected: FAIL — no "Showing 1 to 10 of 14" text; all 14 rows render.
 In `src/pages/admin/ProductList.jsx`, add state near the other `useState` calls (after line 17):
 
 ```jsx
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
+const [page, setPage] = useState(1)
+const [pageSize, setPageSize] = useState(10)
 ```
 
 After the `visible` const (line 25), add the derived slice and reset effect:
 
 ```jsx
-  const pageCount = Math.max(1, Math.ceil(visible.length / pageSize))
-  const clampedPage = Math.min(page, pageCount)
-  const start = (clampedPage - 1) * pageSize
-  const paged = visible.slice(start, start + pageSize)
+const pageCount = Math.max(1, Math.ceil(visible.length / pageSize))
+const clampedPage = Math.min(page, pageCount)
+const start = (clampedPage - 1) * pageSize
+const paged = visible.slice(start, start + pageSize)
 
-  // Any change to the filters or page size sends the user back to page 1 so they
-  // never land on an out-of-range page.
-  useEffect(() => {
-    setPage(1)
-  }, [q, cat, pageSize])
+// Any change to the filters or page size sends the user back to page 1 so they
+// never land on an out-of-range page.
+useEffect(() => {
+  setPage(1)
+}, [q, cat, pageSize])
 ```
 
 Add the `useEffect` import at line 1:
@@ -1072,63 +1074,63 @@ In the table body, change `{visible.map((row) => (` to `{paged.map((row) => (`.
 Immediately after the closing `</table>`, before the card's closing `</div>`, add:
 
 ```jsx
-          <nav className="admin-pager" aria-label="Pagination">
-            <span className="admin-pager__count">
-              Showing {visible.length === 0 ? 0 : start + 1} to{' '}
-              {Math.min(start + pageSize, visible.length)} of {visible.length} products
-            </span>
-            <div className="admin-pager__controls">
-              <button
-                type="button"
-                className="admin__icon"
-                aria-label="Previous page"
-                disabled={clampedPage === 1}
-                onClick={() => setPage(clampedPage - 1)}
-              >
-                <ChevronLeft size={15} strokeWidth={2} aria-hidden="true" />
-              </button>
-              {pageItems(clampedPage, pageCount).map((it, i) =>
-                it === '…' ? (
-                  <span key={`gap-${i}`} className="admin-pager__gap" aria-hidden="true">
-                    …
-                  </span>
-                ) : (
-                  <button
-                    key={it}
-                    type="button"
-                    className={`admin-pager__num${it === clampedPage ? ' admin-pager__num--on' : ''}`}
-                    aria-label={`Go to page ${it}`}
-                    aria-current={it === clampedPage ? 'page' : undefined}
-                    onClick={() => setPage(it)}
-                  >
-                    {it}
-                  </button>
-                ),
-              )}
-              <button
-                type="button"
-                className="admin__icon"
-                aria-label="Next page"
-                disabled={clampedPage === pageCount}
-                onClick={() => setPage(clampedPage + 1)}
-              >
-                <ChevronRight size={15} strokeWidth={2} aria-hidden="true" />
-              </button>
-            </div>
-            <label className="sr-only" htmlFor="admin-pagesize">
-              Products per page
-            </label>
-            <select
-              id="admin-pagesize"
-              className="admin__select admin-pager__size"
-              value={pageSize}
-              onChange={(e) => setPageSize(Number(e.target.value))}
-            >
-              <option value={10}>10 / page</option>
-              <option value={25}>25 / page</option>
-              <option value={50}>50 / page</option>
-            </select>
-          </nav>
+<nav className="admin-pager" aria-label="Pagination">
+  <span className="admin-pager__count">
+    Showing {visible.length === 0 ? 0 : start + 1} to {Math.min(start + pageSize, visible.length)}{' '}
+    of {visible.length} products
+  </span>
+  <div className="admin-pager__controls">
+    <button
+      type="button"
+      className="admin__icon"
+      aria-label="Previous page"
+      disabled={clampedPage === 1}
+      onClick={() => setPage(clampedPage - 1)}
+    >
+      <ChevronLeft size={15} strokeWidth={2} aria-hidden="true" />
+    </button>
+    {pageItems(clampedPage, pageCount).map((it, i) =>
+      it === '…' ? (
+        <span key={`gap-${i}`} className="admin-pager__gap" aria-hidden="true">
+          …
+        </span>
+      ) : (
+        <button
+          key={it}
+          type="button"
+          className={`admin-pager__num${it === clampedPage ? ' admin-pager__num--on' : ''}`}
+          aria-label={`Go to page ${it}`}
+          aria-current={it === clampedPage ? 'page' : undefined}
+          onClick={() => setPage(it)}
+        >
+          {it}
+        </button>
+      ),
+    )}
+    <button
+      type="button"
+      className="admin__icon"
+      aria-label="Next page"
+      disabled={clampedPage === pageCount}
+      onClick={() => setPage(clampedPage + 1)}
+    >
+      <ChevronRight size={15} strokeWidth={2} aria-hidden="true" />
+    </button>
+  </div>
+  <label className="sr-only" htmlFor="admin-pagesize">
+    Products per page
+  </label>
+  <select
+    id="admin-pagesize"
+    className="admin__select admin-pager__size"
+    value={pageSize}
+    onChange={(e) => setPageSize(Number(e.target.value))}
+  >
+    <option value={10}>10 / page</option>
+    <option value={25}>25 / page</option>
+    <option value={50}>50 / page</option>
+  </select>
+</nav>
 ```
 
 - [ ] **Step 5: Add the ChevronLeft/Right import and the page-window helper**
@@ -1268,6 +1270,7 @@ Expected: build succeeds; vendor chunks split as before.
 - [ ] **Step 5: Browser drive-through (manual, via the run/verify skill)**
 
 Start the app, sign in to `/admin`, and confirm against the mockup:
+
 - Header shows "Dashboard" + "Welcome back, Admin." with Return-to-site pill + Sign out.
 - Four stat cards with icon tiles; counts correct.
 - "Manage discount" opens the modal; Apply saves and the card's `%` updates; Esc/backdrop/X close it; focus returns to the button.

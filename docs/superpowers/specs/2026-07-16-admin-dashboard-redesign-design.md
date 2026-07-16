@@ -23,6 +23,7 @@ into `AdminPage`'s topbar. All styling uses existing `theme.config.js` tokens vi
 `Admin.css` — no raw hex, no new libraries, JSX only.
 
 Rejected alternatives:
+
 - Full split into 6+ component files — over-engineering for a single-admin tool.
 - Pure-CSS reskin — cannot produce the icon-tile cards, pagination, or discount
   modal, so it cannot match the mockup.
@@ -41,6 +42,7 @@ Rejected alternatives:
 ### 1. Topbar → page header (`AdminPage.jsx`, `Admin.css`)
 
 Replace the current brand-lockup topbar content with the mockup header row:
+
 - Left: a **small** logo mark (kept for identity) + `Dashboard` (h1) +
   `Welcome back, Admin.` sub-line. The greeting name is the literal role label
   `Admin` (consistent with the existing topbar `Admin` tag), not a client string.
@@ -54,12 +56,12 @@ Topbar stays sticky. Header title/sub use display/body fonts + ink tokens.
 Responsive 4-across grid, collapsing to 2 / 1 columns on narrow widths. Each card
 = a rounded-square icon tile + text block.
 
-| Card | Tile bg | Icon (lucide) | Big value | Label / sub |
-|---|---|---|---|---|
-| Total products | `--color-ink-strong` (icon white) | `Package` | `total` | Total products / All products in store |
-| Visible products | `--color-accent-soft` (icon accent) | `Eye` | `visibleCount` | Visible products / Currently visible online |
-| Hidden products | `--color-border-light` (icon muted) | `EyeOff` | `hiddenCount` | Hidden products / Not visible to customers |
-| Store-wide discount | `--color-accent-soft` (icon accent) | `Tag` | `{pct}%` | Store-wide discount + **Manage discount** button |
+| Card                | Tile bg                             | Icon (lucide) | Big value      | Label / sub                                      |
+| ------------------- | ----------------------------------- | ------------- | -------------- | ------------------------------------------------ |
+| Total products      | `--color-ink-strong` (icon white)   | `Package`     | `total`        | Total products / All products in store           |
+| Visible products    | `--color-accent-soft` (icon accent) | `Eye`         | `visibleCount` | Visible products / Currently visible online      |
+| Hidden products     | `--color-border-light` (icon muted) | `EyeOff`      | `hiddenCount`  | Hidden products / Not visible to customers       |
+| Store-wide discount | `--color-accent-soft` (icon accent) | `Tag`         | `{pct}%`       | Store-wide discount + **Manage discount** button |
 
 Counts are derived in `ProductList` from `rows` (as today) and passed down.
 Existing `data-testid="stat-total" | "stat-visible" | "stat-hidden"` hooks are
@@ -97,6 +99,7 @@ as the table, as a card header separated by a divider.
 ### 5. Client-side pagination (`ProductList.jsx`, `Admin.css`)
 
 Footer bar below the table:
+
 - Left: `Showing {start} to {end} of {N} products`.
 - Center/right: prev chevron · page-number buttons with `…` truncation · next
   chevron. Active page marked `aria-current="page"`.
@@ -118,6 +121,7 @@ Footer bar below the table:
 ## Testing impact
 
 `src/test/admin.test.jsx` needs updates for:
+
 - New stat-card structure (labels/sublabels) — keep asserting via `data-testid`.
 - Discount now behind a **Manage discount** button + modal (open modal before
   asserting the input).
@@ -125,6 +129,7 @@ Footer bar below the table:
   that assume all rows are present must page or assert within the first page.
 
 New behavior to cover:
+
 - Pagination slices correctly; page resets on filter change.
 - Discount modal opens/closes and applies a value.
 - Delete two-step still works from the trash icon.
