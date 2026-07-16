@@ -68,6 +68,18 @@ describe('AdminPage — signed in', () => {
     expect(screen.getByRole('button', { name: /sign out/i })).toBeInTheDocument()
   })
 
+  it('shows the Dashboard page heading and welcome line', async () => {
+    renderSignedIn()
+    expect(await screen.findByRole('heading', { name: /dashboard/i })).toBeInTheDocument()
+    expect(screen.getByText(/welcome back, admin/i)).toBeInTheDocument()
+  })
+
+  it('has no axe violations on the dashboard', async () => {
+    const { container } = renderSignedIn()
+    await screen.findByRole('heading', { name: /dashboard/i })
+    expect(await axe(container)).toHaveNoViolations()
+  })
+
   it('opens the editor tray on New product and closes it on Escape', async () => {
     const user = userEvent.setup()
     renderSignedIn()

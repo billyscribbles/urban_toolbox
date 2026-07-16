@@ -53,7 +53,7 @@ export default function AdminPage() {
       ) : (
         <>
           <header className="admin-topbar">
-            <div className="admin-topbar__brand">
+            <div className="admin-topbar__lead">
               <img
                 className="admin-topbar__mark"
                 src={site.brand.logoMark}
@@ -61,13 +61,13 @@ export default function AdminPage() {
                 width="40"
                 height="40"
               />
-              <span className="admin-topbar__lockup">
-                <span className="admin-topbar__word">{site.brand.logoText}</span>
-                <span className="admin-topbar__tag">Admin</span>
-              </span>
+              <div className="admin-topbar__heading">
+                <h1 className="admin-topbar__title">Dashboard</h1>
+                <p className="admin-topbar__welcome">Welcome back, Admin.</p>
+              </div>
             </div>
             <div className="admin-topbar__actions">
-              <Link className="admin-topbar__link" to="/">
+              <Link className="admin-topbar__pill" to="/">
                 ← Return to site
               </Link>
               <button type="button" className="admin__ghost" onClick={signOut}>
