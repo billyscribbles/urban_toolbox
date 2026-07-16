@@ -29,11 +29,11 @@ function groupSections(sections) {
 }
 
 // The sticky category sub-nav. A single category (CategoryPage) shows a flat
-// always-visible pill row. Vehicle pages span two categories, so their nav
-// collapses behind a "Browse by category" toggle to stay clean — expanded, the
-// pills split into labelled Toolboxes / Accessories groups.
+// always-visible pill row. Vehicle pages span two categories, so their nav is a
+// pair of "Browse Toolboxes" / "Browse Accessories" buttons — one open at a
+// time — each revealing that group's category pills below.
 function RangeNav({ title, sections }) {
-  const [open, setOpen] = useState(false)
+  const [openLabel, setOpenLabel] = useState(null)
   const groups = sections.some((s) => s.group) ? groupSections(sections) : null
 
   if (!groups) {
@@ -51,33 +51,43 @@ function RangeNav({ title, sections }) {
   return (
     <nav className="range-nav" aria-label={`${title} sections`}>
       <div className="container">
-        <button
-          type="button"
-          className="range-nav__toggle"
-          aria-expanded={open}
-          aria-controls="range-nav-panel"
-          onClick={() => setOpen((v) => !v)}
-        >
-          Browse by category
-          <ChevronDown
-            size={16}
-            strokeWidth={2.5}
-            className="range-nav__chevron"
-            aria-hidden="true"
-          />
-        </button>
-        <div id="range-nav-panel" className="range-nav__panel" hidden={!open}>
-          {groups.map((g) => (
-            <div className="range-nav__group" key={g.label}>
-              <span className="range-nav__group-label">{g.label}</span>
-              <div className="range-nav__pills">
-                {g.sections.map((s) => (
-                  <Pill key={s.id} section={s} onNavigate={() => setOpen(false)} />
-                ))}
-              </div>
-            </div>
-          ))}
+        <div className="range-nav__toggles">
+          {groups.map((g, i) => {
+            const open = openLabel === g.label
+            return (
+              <button
+                key={g.label}
+                type="button"
+                className="range-nav__toggle"
+                aria-expanded={open}
+                aria-controls={`range-nav-panel-${i}`}
+                onClick={() => setOpenLabel(open ? null : g.label)}
+              >
+                Browse {g.label}
+                <ChevronDown
+                  size={18}
+                  strokeWidth={2.5}
+                  className="range-nav__chevron"
+                  aria-hidden="true"
+                />
+              </button>
+            )
+          })}
         </div>
+        {groups.map((g, i) => (
+          <div
+            key={g.label}
+            id={`range-nav-panel-${i}`}
+            className="range-nav__panel"
+            hidden={openLabel !== g.label}
+          >
+            <div className="range-nav__pills">
+              {g.sections.map((s) => (
+                <Pill key={s.id} section={s} onNavigate={() => setOpenLabel(null)} />
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </nav>
   )
@@ -87,7 +97,12 @@ export default function ProductRange({ data, status = 'ready', onRetry }) {
   const { header, sections } = data
   return (
     <>
-      <PageHero eyebrow={header.eyebrow} title={header.title} intro={header.intro} />
+      <PageHero
+        eyebrow={header.eyebrow}
+        title={header.title}
+        intro={header.intro}
+        bgImage={header.bgImage}
+      />
 
       <RangeNav title={header.title} sections={sections} />
 

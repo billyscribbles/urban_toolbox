@@ -15,22 +15,42 @@
   padding-bottom: 14px;
 }
 
-/* Vehicle pages collapse the long category list behind a toggle. Collapsed by
-   default so the sticky bar stays a single slim row. */
+/* Vehicle pages span two categories — a pair of substantial "Browse …" buttons
+   (one open at a time) reveal that group's pills, keeping the bar uncluttered. */
+.range-nav__toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
 .range-nav__toggle {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 13px 0;
+  gap: 10px;
+  padding: 14px 26px;
   font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-ink-strong);
-  background: none;
-  border: none;
+  background: var(--color-white);
+  border: 1.5px solid var(--color-border-light);
+  border-radius: var(--radius-full);
   cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.range-nav__toggle:hover,
+.range-nav__toggle[aria-expanded='true'] {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-white);
 }
 
 .range-nav__chevron {
@@ -40,14 +60,11 @@
   transform: rotate(180deg);
 }
 
-/* Expanded panel — the grouped pills sit below the toggle. */
+/* Expanded panel — the group's category pills, revealed under the buttons. */
 .range-nav__panel {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-bottom: 16px;
+  padding-bottom: 18px;
 }
-/* `display: flex` would otherwise override the `hidden` attribute's UA style. */
+/* Guard against a default display value overriding the `hidden` attribute. */
 .range-nav__panel[hidden] {
   display: none;
 }
@@ -58,28 +75,6 @@
   }
 }
 
-.range-nav__group {
-  display: flex;
-  align-items: baseline;
-  gap: 16px;
-}
-
-.range-nav__group + .range-nav__group {
-  padding-top: 10px;
-  border-top: 1px solid var(--color-border-light);
-}
-
-.range-nav__group-label {
-  flex-shrink: 0;
-  width: 96px;
-  font-family: var(--font-body);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-gray-muted);
-}
-
 .range-nav__pills {
   display: flex;
   flex-wrap: wrap;
@@ -87,13 +82,9 @@
 }
 
 @media (max-width: 560px) {
-  .range-nav__group {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .range-nav__group-label {
-    width: auto;
+  .range-nav__toggle {
+    flex: 1 1 100%;
+    justify-content: center;
   }
 }
 
