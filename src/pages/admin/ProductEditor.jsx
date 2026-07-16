@@ -192,6 +192,18 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
         </p>
       )}
 
+      <fieldset className="admin-editor__vehicles">
+        <legend className="admin__label">Show on vehicle pages</legend>
+        <label className="admin-editor__check">
+          <input type="checkbox" checked={form.fitsUte} onChange={set('fitsUte')} />
+          Fits utes
+        </label>
+        <label className="admin-editor__check">
+          <input type="checkbox" checked={form.fitsCaravan} onChange={set('fitsCaravan')} />
+          Fits caravans
+        </label>
+      </fieldset>
+
       <label className="admin__label" htmlFor="pe-summary">
         Summary (card subtitle)
       </label>
@@ -303,18 +315,6 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
         <input type="checkbox" checked={form.featured} onChange={set('featured')} />
         Featured product
       </label>
-
-      <fieldset className="admin-editor__vehicles">
-        <legend className="admin__label">Show on vehicle pages</legend>
-        <label className="admin-editor__check">
-          <input type="checkbox" checked={form.fitsUte} onChange={set('fitsUte')} />
-          Fits utes
-        </label>
-        <label className="admin-editor__check">
-          <input type="checkbox" checked={form.fitsCaravan} onChange={set('fitsCaravan')} />
-          Fits caravans
-        </label>
-      </fieldset>
 
       {isNew ? (
         <p className="admin-photos__hint">Save the product first, then reopen it to add photos.</p>

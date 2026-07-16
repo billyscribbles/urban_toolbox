@@ -14,6 +14,7 @@ const VEHICLES = {
       'Every toolbox, canopy and accessory we build for utes — under-tray boxes, top and side openers, drawers and locks. All Australian-made in aluminium and built to order. Add what fits your setup to a no-obligation quote.',
     seo: 'Aluminium ute toolboxes, canopies and accessories — Australian-made, built to order in Dandenong South. Add to a no-obligation quote.',
     path: '/utes',
+    heroImage: '/brand/hero-vehicle-ute.webp',
   },
   caravan: {
     title: 'For Caravans',
@@ -22,6 +23,7 @@ const VEHICLES = {
       'Toolboxes, storage and accessories suited to caravans and campers — checkerplate boxes, water tanks, drawers and locks. All Australian-made in aluminium and built to order. Add what fits your rig to a no-obligation quote.',
     seo: 'Aluminium caravan toolboxes, storage and accessories — Australian-made, built to order in Dandenong South. Add to a no-obligation quote.',
     path: '/caravans',
+    heroImage: '/brand/hero-vehicle-caravan.webp',
   },
 }
 
@@ -38,7 +40,12 @@ export default function VehiclePage({ vehicle }) {
   const sections = getVehicleSections(vehicle)
 
   const data = {
-    header: { eyebrow: copy.eyebrow, title: copy.title, intro: copy.intro },
+    header: {
+      eyebrow: copy.eyebrow,
+      title: copy.title,
+      intro: copy.intro,
+      bgImage: copy.heroImage,
+    },
     sections,
   }
 
