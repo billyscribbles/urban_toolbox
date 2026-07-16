@@ -68,15 +68,14 @@ describe('AdminPage — signed in', () => {
     expect(screen.getByRole('button', { name: /sign out/i })).toBeInTheDocument()
   })
 
-  it('shows the Dashboard page heading and welcome line', async () => {
+  it('shows the Admin page heading', async () => {
     renderSignedIn()
-    expect(await screen.findByRole('heading', { name: /dashboard/i })).toBeInTheDocument()
-    expect(screen.getByText(/welcome back, admin/i)).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: /^admin$/i })).toBeInTheDocument()
   })
 
   it('has no axe violations on the dashboard', async () => {
     const { container } = renderSignedIn()
-    await screen.findByRole('heading', { name: /dashboard/i })
+    await screen.findByRole('heading', { name: /^admin$/i })
     expect(await axe(container)).toHaveNoViolations()
   })
 

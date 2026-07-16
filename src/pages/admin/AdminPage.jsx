@@ -61,10 +61,7 @@ export default function AdminPage() {
                 width="40"
                 height="40"
               />
-              <div className="admin-topbar__heading">
-                <h1 className="admin-topbar__title">Dashboard</h1>
-                <p className="admin-topbar__welcome">Welcome back, Admin.</p>
-              </div>
+              <h1 className="admin-topbar__title">Admin</h1>
             </div>
             <div className="admin-topbar__actions">
               <Link className="admin-topbar__pill" to="/">
