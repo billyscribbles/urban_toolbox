@@ -3,6 +3,7 @@ import { Plus, Trash2 } from 'lucide-react'
 import { getTree, getLeaves } from '../../lib/catalog.js'
 import { slugify, validateProduct } from '../../lib/productForm.js'
 import { saveProduct } from '../../lib/adminApi.js'
+import { publicPhotoUrl } from '../../lib/supabaseClient.js'
 import PhotoManager from './PhotoManager.jsx'
 
 function toForm(row) {
@@ -46,6 +47,11 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
   const [saveError, setSaveError] = useState('')
   const [busy, setBusy] = useState(false)
   const [images, setImages] = useState(row?.product_images ?? [])
+
+  // The storefront card thumbnail (position 0) — shown as a hero at the top of
+  // the tray so the product reads at a glance on open. Updates live as photos
+  // are reordered/deleted in the PhotoManager below.
+  const primaryImage = [...images].sort((a, b) => a.position - b.position)[0]
 
   const leaves = useMemo(() => getTree().flatMap((t) => getLeaves(t)), [])
 
@@ -112,6 +118,16 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
 
   return (
     <form className="admin-editor editor-tray__form" onSubmit={onSubmit} noValidate>
+      {!isNew && primaryImage && (
+        <div className="admin-editor__hero">
+          <img
+            className="admin-editor__hero-img"
+            src={publicPhotoUrl(primaryImage.storage_path)}
+            alt=""
+          />
+        </div>
+      )}
+
       <label className="admin__label" htmlFor="pe-title">
         Title
       </label>

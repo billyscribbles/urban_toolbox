@@ -319,6 +319,25 @@ describe('ProductEditor', () => {
     expect(await screen.findByText(/set a price before/i)).toBeInTheDocument()
   })
 
+  it('shows a hero preview of the primary photo when editing', () => {
+    const row = {
+      id: 'x',
+      title: 'Job Site Box',
+      category_id: 'locks',
+      product_images: [
+        { id: 'i2', storage_path: 'products/x/b.jpg', position: 1, alt: '' },
+        { id: 'i1', storage_path: 'products/x/a.jpg', position: 0, alt: '' },
+      ],
+    }
+    const { container } = render(
+      <ProductEditor row={row} rows={[row]} onDone={() => {}} onCancel={() => {}} />,
+    )
+    const hero = container.querySelector('.admin-editor__hero-img')
+    expect(hero).not.toBeNull()
+    // Position 0 wins as the hero, regardless of array order.
+    expect(hero.getAttribute('src')).toContain('products/x/a.jpg')
+  })
+
   it('saves a valid new product with generated id and slug', async () => {
     const onDone = vi.fn()
     render(<ProductEditor row={null} rows={[]} onDone={onDone} onCancel={() => {}} />)
