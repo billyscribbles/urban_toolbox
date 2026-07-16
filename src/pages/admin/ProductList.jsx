@@ -100,7 +100,7 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
   const visibleCount = total - hiddenCount
 
   return (
-    <div>
+    <div className="admin-dash">
       <StatCards total={total} visibleCount={visibleCount} hiddenCount={hiddenCount} />
 
       <div className="admin-card">
@@ -147,161 +147,168 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
           </p>
         )}
 
-        {loading ? (
-          <ul className="admin-skel" aria-hidden="true">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <li key={i} className="admin-skel__row" />
-            ))}
-          </ul>
-        ) : rows.length === 0 ? (
-          <div className="admin-empty">
-            <p className="admin-empty__title">No products yet</p>
-            <p className="admin-empty__sub">Add your first catalogue product to get started.</p>
-            <button
-              type="button"
-              className="admin__primary"
-              style={{ marginTop: 0 }}
-              onClick={onNew}
-            >
-              <Plus size={15} strokeWidth={2.5} aria-hidden="true" /> Add your first product
-            </button>
-          </div>
-        ) : visible.length === 0 ? (
-          <p className="admin__empty">No products match your search.</p>
-        ) : (
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th scope="col">
-                  <span className="sr-only">Photo</span>
-                </th>
-                <th scope="col">Product</th>
-                <th scope="col" className="admin-table__hide-sm">
-                  Category
-                </th>
-                <th scope="col">Price</th>
-                <th scope="col">Status</th>
-                <th scope="col">
-                  <span className="sr-only">Actions</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {paged.map((row) => (
-                // Clicking a row opens its editor; clicks that land on a control
-                // (toggle/edit/delete) are ignored so those keep their own action.
-                // The row-level Edit button stays the keyboard/AT-accessible path.
-                <tr
-                  key={row.id}
-                  className={`admin-table__row${row.hidden ? ' admin-table__row--hidden' : ''}`}
-                  onClick={(e) => {
-                    if (!e.target.closest('button, a')) onEdit(row)
-                  }}
-                >
-                  <td>
-                    {thumb(row) ? (
-                      <img className="admin-table__thumb" src={thumb(row)} alt="" />
-                    ) : (
-                      <span className="admin-table__thumb" aria-hidden="true" />
-                    )}
-                  </td>
-                  <td className="admin-table__product">
-                    <span className="admin-table__title">{row.title}</span>
-                    <span className="admin-table__sku">SKU: {row.id}</span>
-                  </td>
-                  <td className="admin-table__hide-sm">
-                    {leafLabel.get(row.category_id) ?? row.category_id}
-                  </td>
-                  <td>{row.price == null ? '—' : formatPrice(Number(row.price))}</td>
-                  <td>
-                    <div className="admin-badges">
-                      {row.hidden ? (
-                        <span className="admin-badge admin-badge--hidden">Hidden</span>
-                      ) : (
-                        <span className="admin-badge admin-badge--live">
-                          <span className="admin-badge__dot" aria-hidden="true" /> Live
-                        </span>
-                      )}
-                      {row.featured && (
-                        <span className="admin-badge admin-badge--featured">
-                          <Star size={12} strokeWidth={2} fill="currentColor" aria-hidden="true" />{' '}
-                          Featured
-                        </span>
-                      )}
-                      {row.discount_pct ? (
-                        <span className="admin-badge admin-badge--off">
-                          {Number(row.discount_pct)}% off
-                        </span>
-                      ) : null}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="admin-table__actions">
-                      {confirmId === row.id ? (
-                        <>
-                          <button
-                            type="button"
-                            className="admin__danger"
-                            disabled={busyId === row.id}
-                            onClick={() => onDelete(row)}
-                          >
-                            {busyId === row.id ? 'Deleting…' : 'Confirm delete'}
-                          </button>
-                          <button
-                            type="button"
-                            className="admin__ghost"
-                            onClick={() => setConfirmId(null)}
-                          >
-                            Cancel
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <button
-                            type="button"
-                            className="admin__icon"
-                            disabled={togglingId === row.id}
-                            aria-pressed={!row.hidden}
-                            aria-label={row.hidden ? `Show ${row.title}` : `Hide ${row.title}`}
-                            onClick={() => onToggleHidden(row)}
-                          >
-                            {row.hidden ? (
-                              <EyeOff size={15} strokeWidth={2} aria-hidden="true" />
-                            ) : (
-                              <Eye size={15} strokeWidth={2} aria-hidden="true" />
-                            )}
-                          </button>
-                          <button
-                            type="button"
-                            className="admin__icon"
-                            aria-label={`Edit ${row.title}`}
-                            onClick={() => onEdit(row)}
-                          >
-                            <Pencil size={14} strokeWidth={2} aria-hidden="true" />
-                          </button>
-                          <button
-                            type="button"
-                            className="admin__icon admin__icon--danger"
-                            aria-label={`Delete ${row.title}`}
-                            onClick={() => setConfirmId(row.id)}
-                          >
-                            <Trash2 size={15} strokeWidth={2} aria-hidden="true" />
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </tr>
+        <div className="admin-card__scroll">
+          {loading ? (
+            <ul className="admin-skel" aria-hidden="true">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <li key={i} className="admin-skel__row" />
               ))}
-            </tbody>
-          </table>
-        )}
+            </ul>
+          ) : rows.length === 0 ? (
+            <div className="admin-empty">
+              <p className="admin-empty__title">No products yet</p>
+              <p className="admin-empty__sub">Add your first catalogue product to get started.</p>
+              <button
+                type="button"
+                className="admin__primary"
+                style={{ marginTop: 0 }}
+                onClick={onNew}
+              >
+                <Plus size={15} strokeWidth={2.5} aria-hidden="true" /> Add your first product
+              </button>
+            </div>
+          ) : visible.length === 0 ? (
+            <p className="admin__empty">No products match your search.</p>
+          ) : (
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th scope="col">
+                    <span className="sr-only">Photo</span>
+                  </th>
+                  <th scope="col">Product</th>
+                  <th scope="col" className="admin-table__hide-sm">
+                    Category
+                  </th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">
+                    <span className="sr-only">Actions</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {paged.map((row) => (
+                  // Clicking a row opens its editor; clicks that land on a control
+                  // (toggle/edit/delete) are ignored so those keep their own action.
+                  // The row-level Edit button stays the keyboard/AT-accessible path.
+                  <tr
+                    key={row.id}
+                    className={`admin-table__row${row.hidden ? ' admin-table__row--hidden' : ''}`}
+                    onClick={(e) => {
+                      if (!e.target.closest('button, a')) onEdit(row)
+                    }}
+                  >
+                    <td>
+                      {thumb(row) ? (
+                        <img className="admin-table__thumb" src={thumb(row)} alt="" />
+                      ) : (
+                        <span className="admin-table__thumb" aria-hidden="true" />
+                      )}
+                    </td>
+                    <td className="admin-table__product">
+                      <span className="admin-table__title">{row.title}</span>
+                      <span className="admin-table__sku">SKU: {row.id}</span>
+                    </td>
+                    <td className="admin-table__hide-sm">
+                      {leafLabel.get(row.category_id) ?? row.category_id}
+                    </td>
+                    <td>{row.price == null ? '—' : formatPrice(Number(row.price))}</td>
+                    <td>
+                      <div className="admin-badges">
+                        {row.hidden ? (
+                          <span className="admin-badge admin-badge--hidden">Hidden</span>
+                        ) : (
+                          <span className="admin-badge admin-badge--live">
+                            <span className="admin-badge__dot" aria-hidden="true" /> Live
+                          </span>
+                        )}
+                        {row.featured && (
+                          <span className="admin-badge admin-badge--featured">
+                            <Star
+                              size={12}
+                              strokeWidth={2}
+                              fill="currentColor"
+                              aria-hidden="true"
+                            />{' '}
+                            Featured
+                          </span>
+                        )}
+                        {row.discount_pct ? (
+                          <span className="admin-badge admin-badge--off">
+                            {Number(row.discount_pct)}% off
+                          </span>
+                        ) : null}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="admin-table__actions">
+                        {confirmId === row.id ? (
+                          <>
+                            <button
+                              type="button"
+                              className="admin__danger"
+                              disabled={busyId === row.id}
+                              onClick={() => onDelete(row)}
+                            >
+                              {busyId === row.id ? 'Deleting…' : 'Confirm delete'}
+                            </button>
+                            <button
+                              type="button"
+                              className="admin__ghost"
+                              onClick={() => setConfirmId(null)}
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              type="button"
+                              className="admin__icon"
+                              disabled={togglingId === row.id}
+                              aria-pressed={!row.hidden}
+                              aria-label={row.hidden ? `Show ${row.title}` : `Hide ${row.title}`}
+                              onClick={() => onToggleHidden(row)}
+                            >
+                              {row.hidden ? (
+                                <EyeOff size={15} strokeWidth={2} aria-hidden="true" />
+                              ) : (
+                                <Eye size={15} strokeWidth={2} aria-hidden="true" />
+                              )}
+                            </button>
+                            <button
+                              type="button"
+                              className="admin__icon"
+                              aria-label={`Edit ${row.title}`}
+                              onClick={() => onEdit(row)}
+                            >
+                              <Pencil size={14} strokeWidth={2} aria-hidden="true" />
+                            </button>
+                            <button
+                              type="button"
+                              className="admin__icon admin__icon--danger"
+                              aria-label={`Delete ${row.title}`}
+                              onClick={() => setConfirmId(row.id)}
+                            >
+                              <Trash2 size={15} strokeWidth={2} aria-hidden="true" />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
 
         {!loading && rows.length > 0 && visible.length > 0 && (
           <nav className="admin-pager" aria-label="Pagination">
             <span className="admin-pager__count">
-              Showing {visible.length === 0 ? 0 : start + 1} to{' '}
-              {Math.min(start + pageSize, visible.length)} of {visible.length} products
+              Showing {start + 1} to {Math.min(start + pageSize, visible.length)} of{' '}
+              {visible.length} products
             </span>
             <div className="admin-pager__controls">
               <button

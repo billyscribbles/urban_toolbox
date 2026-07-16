@@ -2,7 +2,10 @@
    soft card surfaces + subtle shadows, tokens only. Single-admin catalogue tool. */
 
 .admin {
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   background: var(--color-off-white);
   color: var(--color-ink);
 }
@@ -70,7 +73,21 @@
 
 /* Body */
 .admin__body {
-  padding: clamp(20px, 4vw, 40px) clamp(20px, 4vw, 48px) 80px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(16px, 3vw, 28px) clamp(20px, 4vw, 48px);
+}
+
+/* Dashboard column — fills the body so only the table scrolls while the stat
+   cards, toolbar and pager stay put (whole dashboard fits one screen). */
+.admin-dash {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
 }
 
 /* Shared controls */
@@ -233,13 +250,12 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
-  margin-bottom: 20px;
 }
 .admin-statcard {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 18px 20px;
+  gap: 14px;
+  padding: 12px 16px;
   background: var(--color-white);
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-md);
@@ -250,8 +266,8 @@
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 52px;
-  height: 52px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-md);
 }
 .admin-statcard__tile--dark {
@@ -274,7 +290,7 @@
 }
 .admin-statcard__num {
   font-family: var(--font-display);
-  font-size: 28px;
+  font-size: 24px;
   line-height: 1;
   color: var(--color-ink-strong);
 }
@@ -392,6 +408,7 @@
 /* Toolbar — sits inside the table card as a header row */
 .admin-toolbar {
   display: flex;
+  flex: none;
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
@@ -425,16 +442,27 @@
 
 /* Card surface wrapping the table / skeleton */
 .admin-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
   background: var(--color-white);
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
+/* Only the table body scrolls; the toolbar (above) and pager (below) stay put. */
+.admin-card__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
 
 /* Pagination footer */
 .admin-pager {
   display: flex;
+  flex: none;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
@@ -490,6 +518,9 @@
   font-size: 15px;
 }
 .admin-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   text-align: left;
   padding: 14px 16px;
   font-size: 12px;
@@ -617,9 +648,6 @@
   gap: 6px;
   text-align: center;
   padding: 64px 24px;
-  background: var(--color-white);
-  border: 1px dashed var(--color-border-light);
-  border-radius: var(--radius-md);
 }
 .admin-empty__title {
   font-family: var(--font-display);
