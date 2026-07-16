@@ -53,6 +53,11 @@ export const site = {
         ],
       },
     ],
+    // Compliance links shown in the footer's bottom bar.
+    legal: [
+      { label: 'Privacy Policy', to: '/privacy' },
+      { label: 'Terms', to: '/terms' },
+    ],
     copyright: `© ${new Date().getFullYear()} Urban Toolboxes. A division of Urban Trading & Construction Pty Ltd.`,
     // Right-hand line in the footer's bottom bar.
     madeLine: 'Australian Made · Dandenong South, VIC',

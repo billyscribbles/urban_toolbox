@@ -80,7 +80,18 @@ export default function Footer() {
         </div>
 
         <div className="footer__bottom">
-          <span className="footer__meta">{footer.copyright}</span>
+          <span className="footer__meta footer__meta--copy">
+            {footer.copyright}
+            {footer.legal?.length > 0 && (
+              <span className="footer__legal">
+                {footer.legal.map((l) => (
+                  <SmartLink key={l.to || l.href} to={l.href || l.to} className="footer__legal-link">
+                    {l.label}
+                  </SmartLink>
+                ))}
+              </span>
+            )}
+          </span>
           <span className="footer__meta footer__meta--right">
             {footer.madeLine}
             {footer.credit && (

@@ -125,6 +125,29 @@
   gap: 8px;
 }
 
+/* Copyright + inline legal links share the bottom-bar's left side. */
+.footer__meta--copy {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.footer__legal {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.footer__legal-link {
+  color: #6a6a66;
+  transition: color var(--transition-fast);
+}
+
+.footer__legal-link:hover {
+  color: var(--color-accent);
+}
+
 .footer__dot {
   color: #4a4a46;
 }
