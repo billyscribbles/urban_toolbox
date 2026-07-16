@@ -12,6 +12,7 @@ import { testimonials } from '../content/testimonials.js'
 import { faq } from '../content/faq.js'
 import { legal } from '../content/legal.js'
 import { homeCarousel } from '../content/homeCarousel.js'
+import { shopByVehicle } from '../content/shopByVehicle.js'
 import { categories } from '../data/categories.js'
 import { getCategoryBySlug } from '../lib/catalog.js'
 
@@ -95,6 +96,23 @@ describe('content — section copy contract', () => {
       const slug = tile.to.replace(/^\//, '').split('/').pop()
       expect(getCategoryBySlug(slug), `no category for route ${tile.to}`).toBeTruthy()
       expect(existsSync(join(process.cwd(), 'public', tile.img)), `missing image ${tile.img}`).toBe(
+        true,
+      )
+    }
+  })
+
+  it('shopByVehicle has cards routing to /utes and /caravans with images on disk', () => {
+    expect(shopByVehicle.eyebrow).toBeTruthy()
+    expect(shopByVehicle.heading).toBeTruthy()
+    expect(shopByVehicle.cards).toHaveLength(2)
+    const routes = shopByVehicle.cards.map((c) => c.to)
+    expect(routes).toContain('/utes')
+    expect(routes).toContain('/caravans')
+    for (const card of shopByVehicle.cards) {
+      expect(card.label).toBeTruthy()
+      expect(card.sub).toBeTruthy()
+      expect(card.imgAlt).toBeTruthy()
+      expect(existsSync(join(process.cwd(), 'public', card.img)), `missing image ${card.img}`).toBe(
         true,
       )
     }

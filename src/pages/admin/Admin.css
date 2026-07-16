@@ -846,6 +846,18 @@
   accent-color: var(--color-accent);
 }
 
+/* Vehicle-fit toggles — grouped so it reads as one control (both default on;
+   uncheck to hide a product from a vehicle's explore page). */
+.admin-editor__vehicles {
+  margin-top: 20px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+}
+.admin-editor__vehicles .admin-editor__check:first-of-type {
+  margin-top: 8px;
+}
+
 /* Photo manager */
 .admin-photos {
   margin-top: 24px;

@@ -3,14 +3,7 @@ import { useParams } from 'react-router-dom'
 import SEO from '../lib/seo.jsx'
 import ProductRange from '../components/ProductRange.jsx'
 import NotFoundPage from './NotFoundPage.jsx'
-import {
-  getCategoryBySlug,
-  getCategoryPath,
-  getLeaves,
-  getProductsForLeaf,
-  getProductsUnder,
-  isLeaf,
-} from '../lib/catalog.js'
+import { buildSections, getCategoryBySlug, getCategoryPath } from '../lib/catalog.js'
 import { useProductCatalog, loadProducts, retryLoad } from '../lib/productStore.js'
 
 // One page renders any catalog category — the Toolboxes root (slug prop, every
@@ -35,20 +28,7 @@ export default function CategoryPage({ slug: slugProp, intro }) {
   const path = getCategoryPath(slug)
   const top = path[0] || node
 
-  const grouped = (node.children ?? []).some((child) => !isLeaf(child))
-  const sections = grouped
-    ? node.children.map((child) => ({
-        id: child.slug,
-        label: child.label,
-        heading: child.label,
-        products: getProductsUnder(child),
-      }))
-    : getLeaves(node).map((leaf) => ({
-        id: leaf.slug,
-        label: leaf.label,
-        heading: leaf.label,
-        products: getProductsForLeaf(leaf.id),
-      }))
+  const sections = buildSections(node)
 
   const data = {
     header: {

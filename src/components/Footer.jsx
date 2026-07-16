@@ -85,7 +85,11 @@ export default function Footer() {
             {footer.legal?.length > 0 && (
               <span className="footer__legal">
                 {footer.legal.map((l) => (
-                  <SmartLink key={l.to || l.href} to={l.href || l.to} className="footer__legal-link">
+                  <SmartLink
+                    key={l.to || l.href}
+                    to={l.href || l.to}
+                    className="footer__legal-link"
+                  >
                     {l.label}
                   </SmartLink>
                 ))}

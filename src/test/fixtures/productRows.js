@@ -38,6 +38,10 @@ export const productRows = [
     discount_pct: 15,
     standard_dims: '1200 × 500 × 700mm',
     featured: true,
+    // Caravan-only — exercises the vehicle filter (the other row omits the
+    // flags entirely, so it defaults to fits-both).
+    fits_ute: false,
+    fits_caravan: true,
     sort_order: 0,
     product_images: [
       {

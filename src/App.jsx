@@ -62,6 +62,7 @@ function DeferredDrawers() {
 }
 
 const CategoryPage = lazyWithRetry(() => import('./pages/CategoryPage.jsx'))
+const VehiclePage = lazyWithRetry(() => import('./pages/VehiclePage.jsx'))
 const FabricationPage = lazyWithRetry(() => import('./pages/FabricationPage.jsx'))
 const AboutPage = lazyWithRetry(() => import('./pages/AboutPage.jsx'))
 const QuotePage = lazyWithRetry(() => import('./pages/QuotePage.jsx'))
@@ -142,6 +143,11 @@ function AppBody() {
               <Route path="/toolboxes/:subSlug" element={<CategoryPage />} />
               <Route path="/accessories" element={<CategoryPage slug="accessories" />} />
 
+              {/* Explore-by-vehicle pages — the whole range filtered to
+                  products flagged for utes / caravans in the admin. */}
+              <Route path="/utes" element={<VehiclePage vehicle="ute" />} />
+              <Route path="/caravans" element={<VehiclePage vehicle="caravan" />} />
+
               <Route path="/fabrication" element={<FabricationPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/quote" element={<QuotePage />} />
@@ -153,8 +159,7 @@ function AppBody() {
               {/* Legacy product routes retired in the catalog restructure —
                   redirected to their nearest new home so inbound links and search
                   rankings survive. */}
-              <Route path="/caravan-toolboxes" element={<Navigate to="/toolboxes" replace />} />
-              <Route path="/utes" element={<Navigate to="/toolboxes" replace />} />
+              <Route path="/caravan-toolboxes" element={<Navigate to="/caravans" replace />} />
               <Route
                 path="/trucks"
                 element={<Navigate to="/toolboxes/truck-toolboxes" replace />}

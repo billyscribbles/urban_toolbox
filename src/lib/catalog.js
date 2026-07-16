@@ -106,6 +106,41 @@ export function getProductsUnder(node) {
   return getProducts().filter((p) => ids.has(p.categoryId))
 }
 
+// The section list a ProductRange renders for a node: one section per direct
+// child when children nest (Toolboxes → subcategories), otherwise one per leaf
+// (Accessories → its leaves). `filter`, when given, keeps only matching products
+// and drops sections left empty — that's how the vehicle pages slice the range.
+// Without a filter, every section is returned as-is (a category page still shows
+// an empty subcategory so its pill stays present).
+export function buildSections(node, filter = null) {
+  if (!node) return []
+  const apply = (products) => (filter ? products.filter(filter) : products)
+  const grouped = (node.children ?? []).some((child) => !isLeaf(child))
+  const sections = grouped
+    ? node.children.map((child) => ({
+        id: child.slug,
+        label: child.label,
+        heading: child.label,
+        products: apply(getProductsUnder(child)),
+      }))
+    : getLeaves(node).map((leaf) => ({
+        id: leaf.slug,
+        label: leaf.label,
+        heading: leaf.label,
+        products: apply(getProductsForLeaf(leaf.id)),
+      }))
+  return filter ? sections.filter((s) => s.products.length > 0) : sections
+}
+
+// Every category's sections, filtered to products that fit the given vehicle
+// ('ute' | 'caravan'). Powers the /utes and /caravans explore pages: one flat
+// pill nav spanning Toolboxes + Accessories, each section keeping only the
+// products flagged for that vehicle.
+export function getVehicleSections(vehicle) {
+  const key = vehicle === 'caravan' ? 'fitsCaravan' : 'fitsUte'
+  return getTopCategories().flatMap((top) => buildSections(top, (p) => p[key] !== false))
+}
+
 // A top category whose children are ALL leaves renders as one page with the
 // leaves as in-page sections (that's Accessories). Otherwise each subcategory is
 // its own page (that's Toolboxes).

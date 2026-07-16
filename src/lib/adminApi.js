@@ -84,6 +84,8 @@ function toRow(p) {
     discount_pct: p.discountPct,
     standard_dims: p.standardDims ?? '',
     featured: !!p.featured,
+    fits_ute: p.fitsUte !== false,
+    fits_caravan: p.fitsCaravan !== false,
     sort_order: p.sortOrder ?? 0,
   }
 }

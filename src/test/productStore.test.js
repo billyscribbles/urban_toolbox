@@ -55,6 +55,17 @@ describe('normalizeRow — DB row to storefront product', () => {
     expect(p.price).toBeNull()
     expect(p.quote.priceFrom).toBeNull()
   })
+
+  it('maps vehicle-fit flags, defaulting to fits-both when the columns are absent', () => {
+    // productRows[0] omits the flags entirely → both true.
+    const both = normalizeRow(productRows[0])
+    expect(both.fitsUte).toBe(true)
+    expect(both.fitsCaravan).toBe(true)
+    // productRows[1] is caravan-only.
+    const caravanOnly = normalizeRow(productRows[1])
+    expect(caravanOnly.fitsUte).toBe(false)
+    expect(caravanOnly.fitsCaravan).toBe(true)
+  })
 })
 
 describe('fixture stays honest against the category tree', () => {

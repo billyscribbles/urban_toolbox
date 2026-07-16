@@ -11,8 +11,10 @@ vi.mock('../lib/supabaseClient.js', () => ({
 }))
 
 const { __setStateForTests, normalizeRow } = await import('../lib/productStore.js')
-const { getProductsForLeaf } = await import('../lib/catalog.js')
+const { getProductsForLeaf, getVehicleSections } = await import('../lib/catalog.js')
 const { default: CategoryPage } = await import('../pages/CategoryPage.jsx')
+
+const idsIn = (sections) => sections.flatMap((s) => s.products.map((p) => p.id))
 
 function renderPage(slug) {
   return render(
@@ -48,5 +50,26 @@ describe('live catalog wiring', () => {
     __setStateForTests({ status: 'error', products: [] })
     renderPage('accessories')
     expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument()
+  })
+})
+
+describe('getVehicleSections — vehicle-filtered range', () => {
+  it('keeps only products flagged for the vehicle and drops empty sections', () => {
+    __setStateForTests({ status: 'ready', products: productRows.map(normalizeRow) })
+
+    // job-site-toolbox-1 is caravan-only (fits_ute: false); the other row omits
+    // the flags and so fits both.
+    const uteIds = idsIn(getVehicleSections('ute'))
+    expect(uteIds).toContain('ute-under-tray-boxes-1')
+    expect(uteIds).not.toContain('job-site-toolbox-1')
+
+    const caravanIds = idsIn(getVehicleSections('caravan'))
+    expect(caravanIds).toContain('ute-under-tray-boxes-1')
+    expect(caravanIds).toContain('job-site-toolbox-1')
+
+    // No section is returned empty — the pill nav only shows populated groups.
+    for (const s of getVehicleSections('ute')) {
+      expect(s.products.length).toBeGreaterThan(0)
+    }
   })
 })

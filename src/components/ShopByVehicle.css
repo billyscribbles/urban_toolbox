@@ -1,0 +1,123 @@
+/* Home "shop by vehicle" band — two image cards linking to /utes & /caravans. */
+
+.vehicles__head {
+  max-width: 760px;
+  margin-bottom: 40px;
+}
+
+.vehicles__heading {
+  margin-top: 12px;
+}
+
+.vehicles__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* Each card is a full-bleed photo with a dark scrim and overlaid copy. */
+.vehicles__card {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  aspect-ratio: 16 / 10;
+  box-shadow: var(--shadow-lg);
+  isolation: isolate;
+}
+
+.vehicles__media {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.vehicles__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-base);
+}
+
+.vehicles__card:hover .vehicles__img,
+.vehicles__card:focus-visible .vehicles__img {
+  transform: scale(1.04);
+}
+
+.vehicles__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(13, 13, 13, 0.82) 0%,
+    rgba(13, 13, 13, 0.35) 45%,
+    rgba(13, 13, 13, 0.05) 100%
+  );
+}
+
+.vehicles__body {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 28px;
+  color: var(--color-white);
+}
+
+.vehicles__label {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3vw, 34px);
+  line-height: 1.05;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+.vehicles__sub {
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 42ch;
+}
+
+.vehicles__cta {
+  margin-top: 8px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  transition: gap var(--transition-fast);
+}
+
+.vehicles__card:hover .vehicles__cta,
+.vehicles__card:focus-visible .vehicles__cta {
+  color: var(--color-white);
+}
+
+/* Keyboard focus needs a visible ring since the whole card is the target. */
+.vehicles__card:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 700px) {
+  .vehicles__grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .vehicles__body {
+    padding: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vehicles__img {
+    transition: none;
+  }
+  .vehicles__card:hover .vehicles__img,
+  .vehicles__card:focus-visible .vehicles__img {
+    transform: none;
+  }
+}

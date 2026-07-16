@@ -54,6 +54,10 @@ export function normalizeRow(row, storeDiscountPct = 0) {
     price,
     discountPct,
     featured: !!row.featured,
+    // Vehicle-fit flags drive the /utes and /caravans explore pages. Missing
+    // (older rows read before the migration) counts as fits-both.
+    fitsUte: row.fits_ute !== false,
+    fitsCaravan: row.fits_caravan !== false,
     quote: {
       id: row.id,
       priceFrom: discountedPrice(price, discountPct) ?? price,

@@ -20,6 +20,8 @@ function toForm(row) {
       discountPct: '',
       standardDims: '',
       featured: false,
+      fitsUte: true,
+      fitsCaravan: true,
     }
   }
   return {
@@ -34,6 +36,8 @@ function toForm(row) {
     discountPct: row.discount_pct ?? '',
     standardDims: row.standard_dims ?? '',
     featured: !!row.featured,
+    fitsUte: row.fits_ute !== false,
+    fitsCaravan: row.fits_caravan !== false,
   }
 }
 
@@ -102,6 +106,8 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
         discountPct: check.discountPct,
         standardDims: form.standardDims,
         featured: form.featured,
+        fitsUte: form.fitsUte,
+        fitsCaravan: form.fitsCaravan,
         sortOrder: isNew
           ? rows.filter((r) => r.category_id === form.categoryId).length
           : row.sort_order,
@@ -297,6 +303,18 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
         <input type="checkbox" checked={form.featured} onChange={set('featured')} />
         Featured product
       </label>
+
+      <fieldset className="admin-editor__vehicles">
+        <legend className="admin__label">Show on vehicle pages</legend>
+        <label className="admin-editor__check">
+          <input type="checkbox" checked={form.fitsUte} onChange={set('fitsUte')} />
+          Fits utes
+        </label>
+        <label className="admin-editor__check">
+          <input type="checkbox" checked={form.fitsCaravan} onChange={set('fitsCaravan')} />
+          Fits caravans
+        </label>
+      </fieldset>
 
       {isNew ? (
         <p className="admin-photos__hint">Save the product first, then reopen it to add photos.</p>

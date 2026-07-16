@@ -1,6 +1,7 @@
 import SEO from '../lib/seo.jsx'
 import SplitHero from '../components/SplitHero.jsx'
 import CategoryCarousel from '../components/CategoryCarousel.jsx'
+import ShopByVehicle from '../components/ShopByVehicle.jsx'
 import TrustBar from '../components/TrustBar.jsx'
 import WhyChoose from '../components/WhyChoose.jsx'
 import DistanceCta from '../components/DistanceCta.jsx'
@@ -17,6 +18,7 @@ export default function Home() {
         <TrustBar />
       </div>
       <CategoryCarousel />
+      <ShopByVehicle />
       <WhyChoose />
       <DistanceCta />
       <StoryBlock />
