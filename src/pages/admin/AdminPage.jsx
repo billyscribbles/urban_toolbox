@@ -58,10 +58,13 @@ export default function AdminPage() {
                 className="admin-topbar__mark"
                 src={site.brand.logoMark}
                 alt=""
-                width="28"
-                height="28"
+                width="40"
+                height="40"
               />
-              <span className="admin-topbar__name">{`${site.brand.name} — Admin`}</span>
+              <span className="admin-topbar__lockup">
+                <span className="admin-topbar__word">{site.brand.logoText}</span>
+                <span className="admin-topbar__tag">Admin</span>
+              </span>
             </div>
             <div className="admin-topbar__actions">
               <Link className="admin-topbar__link" to="/">

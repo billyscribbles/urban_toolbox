@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { site } from '../../config/site.config.js'
 import { signIn } from '../../lib/adminApi.js'
 
 export default function AdminLogin() {
@@ -20,7 +21,17 @@ export default function AdminLogin() {
   return (
     <div className="admin-login">
       <form className="admin-login__form" onSubmit={onSubmit}>
-        <h1 className="admin__title">Admin sign in</h1>
+        <div className="admin-login__brand">
+          <img
+            className="admin-login__mark"
+            src={site.brand.logoMark}
+            alt=""
+            width="48"
+            height="48"
+          />
+          <h1 className="admin__title">{site.brand.logoText}</h1>
+        </div>
+        <p className="admin-login__intro">Admin · sign in to manage the catalogue.</p>
         <label className="admin__label" htmlFor="admin-email">
           Email
         </label>

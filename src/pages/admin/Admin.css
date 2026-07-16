@@ -26,17 +26,36 @@
   align-items: center;
   gap: 10px;
 }
+/* The brand mark is a white emblem built for the dark storefront header; invert
+   it to solid black so it reads on the admin's white chrome. */
 .admin-topbar__mark {
-  width: 28px;
-  height: 28px;
+  width: 52px;
+  height: 52px;
   object-fit: contain;
+  filter: invert(1);
 }
-.admin-topbar__name {
+.admin-topbar__lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.admin-topbar__word {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 19px;
   text-transform: uppercase;
   letter-spacing: 0.02em;
   color: var(--color-ink-strong);
+}
+.admin-topbar__tag {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  color: var(--color-accent-hover);
+  background: var(--color-accent-soft);
+  border-radius: var(--radius-full);
 }
 .admin-topbar__actions {
   display: flex;
@@ -68,6 +87,11 @@
   font-size: 14px;
   margin: 14px 0 4px;
   color: var(--color-ink);
+}
+.admin__label-hint {
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--color-ink-muted);
 }
 .admin__input,
 .admin__select,
@@ -126,6 +150,28 @@
 .admin__ghost:hover {
   border-color: var(--color-accent);
 }
+/* Square icon-only button — same height as ghost/danger so action rows align. */
+.admin__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: var(--color-ink);
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+.admin__icon:hover {
+  border-color: var(--color-accent);
+}
+.admin__icon:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
 .admin__danger {
   color: var(--color-danger);
 }
@@ -159,16 +205,44 @@
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
 }
+.admin-login__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.admin-login__mark {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  filter: invert(1);
+}
 .admin-login__form .admin__title {
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: 22px;
+  line-height: 1.1;
   text-transform: uppercase;
   color: var(--color-ink-strong);
-  margin-bottom: 8px;
+  margin: 0;
+}
+.admin-login__intro {
+  font-size: 14px;
+  color: var(--color-ink-muted);
+  margin-bottom: 20px;
 }
 .admin-login__form .admin__primary {
   width: 100%;
   justify-content: center;
+}
+
+/* Dashboard head — stats on the left, store-wide discount on the right */
+.admin-dash-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
 /* Stats bar */
@@ -176,7 +250,55 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 20px;
+}
+
+/* Store-wide discount control */
+.admin-discount {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+.admin-discount__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--color-ink-muted);
+}
+.admin-discount__label svg {
+  color: var(--color-accent);
+}
+.admin-discount__field {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.admin-discount__input {
+  width: 78px;
+  padding-right: 26px;
+  text-align: right;
+}
+.admin-discount__pct {
+  position: absolute;
+  right: 11px;
+  color: var(--color-ink-muted);
+  pointer-events: none;
+}
+.admin-discount__apply {
+  margin-top: 0;
+}
+.admin-discount__status {
+  flex-basis: 100%;
+  margin-top: 0;
+  font-size: 13px;
+  color: var(--color-accent-hover);
 }
 .admin-stat {
   display: flex;
@@ -255,8 +377,23 @@
 .admin-table tbody tr {
   transition: background var(--transition-fast);
 }
+.admin-table tbody tr.admin-table__row {
+  cursor: pointer;
+}
 .admin-table tbody tr:hover {
   background: var(--color-off-white);
+}
+/* Right-aligned, evenly spaced action buttons that never wrap mid-row. */
+.admin-table__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  white-space: nowrap;
+}
+.admin-table th:last-child,
+.admin-table td:last-child {
+  text-align: right;
 }
 .admin-table__title {
   font-weight: 600;
@@ -285,6 +422,16 @@
   font-weight: 600;
   padding: 3px 9px;
   border-radius: var(--radius-full);
+}
+.admin-badge--live {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+}
+.admin-badge__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
 }
 .admin-badge--featured {
   background: var(--color-accent-soft);
@@ -388,7 +535,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  width: min(640px, 100vw);
+  width: min(880px, 100vw);
   height: 100%;
   background: var(--color-white);
   box-shadow: var(--shadow-lg);
@@ -470,6 +617,53 @@
   margin-top: 24px;
   padding-top: 18px;
   border-top: 1px solid var(--color-border-light);
+}
+
+/* Drag-and-drop upload zone */
+.admin-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  padding: 26px 20px;
+  margin-top: 4px;
+  color: var(--color-ink-muted);
+  background: var(--color-off-white);
+  border: 1.5px dashed var(--color-border-light);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast);
+}
+.admin-drop:hover {
+  border-color: var(--color-accent);
+}
+.admin-drop--active {
+  border-color: var(--color-accent);
+  border-style: solid;
+  background: var(--color-accent-soft);
+}
+.admin-drop__icon {
+  color: var(--color-accent);
+}
+.admin-drop__title {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-ink);
+}
+.admin-drop__link {
+  color: var(--color-accent-hover);
+  text-decoration: underline;
+}
+.admin-drop__sub {
+  font-size: 13px;
+}
+/* Keyboard focus on the visually-hidden input (which follows it) lights up the dropzone. */
+.admin-drop:has(+ input:focus-visible) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 .admin-photos__list {
   list-style: none;

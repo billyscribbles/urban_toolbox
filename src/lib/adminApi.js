@@ -79,6 +79,7 @@ function toRow(p) {
     summary: p.summary ?? '',
     specs: p.specs ?? [],
     features: p.features ?? [],
+    model: p.model ?? '',
     price: p.price,
     discount_pct: p.discountPct,
     standard_dims: p.standardDims ?? '',
@@ -87,14 +88,35 @@ function toRow(p) {
   }
 }
 
-export async function saveProduct(p, { isNew } = {}) {
+// `prevId` lets an edit rename the primary key: we update the row matched by the
+// old id, and the FK's ON UPDATE CASCADE repoints product_images to the new id.
+export async function saveProduct(p, { isNew, prevId } = {}) {
   const c = await client()
   const row = toRow(p)
   const { error } = isNew
     ? await c.from('products').insert(row)
-    : await c.from('products').update(row).eq('id', p.id)
+    : await c
+        .from('products')
+        .update(row)
+        .eq('id', prevId ?? p.id)
   if (!error) retryLoad()
   return { error }
+}
+
+// Store-wide discount — a single settings row read by the storefront.
+export async function fetchStoreDiscount() {
+  const c = await client()
+  const { data, error } = await c.from('store_settings').select('discount_pct').maybeSingle()
+  if (error) throw new Error(error.message)
+  const pct = data?.discount_pct == null ? 0 : Number(data.discount_pct)
+  return Number.isFinite(pct) ? pct : 0
+}
+
+export async function saveStoreDiscount(pct) {
+  const c = await client()
+  const { error } = await c.from('store_settings').update({ discount_pct: pct }).eq('id', true)
+  if (error) throw new Error(error.message)
+  retryLoad()
 }
 
 // Toggle a product's storefront visibility without touching any other field.

@@ -18,6 +18,8 @@ vi.mock('../lib/adminApi.js', () => ({
   saveProduct: vi.fn(async () => ({ error: null })),
   deleteProduct: vi.fn(),
   setProductHidden: vi.fn(async () => {}),
+  fetchStoreDiscount: vi.fn(async () => 0),
+  saveStoreDiscount: vi.fn(async () => {}),
   uploadPhotos: vi.fn(),
   deletePhoto: vi.fn(),
   swapPhotoPositions: vi.fn(),

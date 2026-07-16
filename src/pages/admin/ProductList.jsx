@@ -4,6 +4,7 @@ import { getTree, getLeaves } from '../../lib/catalog.js'
 import { publicPhotoUrl } from '../../lib/supabaseClient.js'
 import { formatPrice } from '../../lib/pricing.js'
 import { deleteProduct, setProductHidden } from '../../lib/adminApi.js'
+import StoreDiscount from './StoreDiscount.jsx'
 
 // Full-width, filterable table of every product. Delete is two-step (Delete ->
 // Confirm) instead of window.confirm so nothing blocks the tab.
@@ -61,25 +62,28 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
 
   return (
     <div>
-      <div className="admin-stats">
-        <div className="admin-stat">
-          <span className="admin-stat__num" data-testid="stat-total">
-            {total}
-          </span>
-          <span className="admin-stat__label">Total</span>
+      <div className="admin-dash-head">
+        <div className="admin-stats">
+          <div className="admin-stat">
+            <span className="admin-stat__num" data-testid="stat-total">
+              {total}
+            </span>
+            <span className="admin-stat__label">Total</span>
+          </div>
+          <div className="admin-stat">
+            <span className="admin-stat__num" data-testid="stat-visible">
+              {visibleCount}
+            </span>
+            <span className="admin-stat__label">Visible</span>
+          </div>
+          <div className="admin-stat">
+            <span className="admin-stat__num" data-testid="stat-hidden">
+              {hiddenCount}
+            </span>
+            <span className="admin-stat__label">Hidden</span>
+          </div>
         </div>
-        <div className="admin-stat">
-          <span className="admin-stat__num" data-testid="stat-visible">
-            {visibleCount}
-          </span>
-          <span className="admin-stat__label">Visible</span>
-        </div>
-        <div className="admin-stat">
-          <span className="admin-stat__num" data-testid="stat-hidden">
-            {hiddenCount}
-          </span>
-          <span className="admin-stat__label">Hidden</span>
-        </div>
+        <StoreDiscount />
       </div>
 
       <div className="admin-toolbar">
@@ -161,7 +165,16 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
             </thead>
             <tbody>
               {visible.map((row) => (
-                <tr key={row.id} className={row.hidden ? 'admin-table__row--hidden' : undefined}>
+                // Clicking a row opens its editor; clicks that land on a control
+                // (toggle/edit/delete) are ignored so those keep their own action.
+                // The row-level Edit button stays the keyboard/AT-accessible path.
+                <tr
+                  key={row.id}
+                  className={`admin-table__row${row.hidden ? ' admin-table__row--hidden' : ''}`}
+                  onClick={(e) => {
+                    if (!e.target.closest('button, a')) onEdit(row)
+                  }}
+                >
                   <td>
                     {thumb(row) ? (
                       <img className="admin-table__thumb" src={thumb(row)} alt="" />
@@ -176,6 +189,13 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
                   <td>{row.price == null ? '—' : formatPrice(Number(row.price))}</td>
                   <td>
                     <div className="admin-badges">
+                      {row.hidden ? (
+                        <span className="admin-badge admin-badge--hidden">Hidden</span>
+                      ) : (
+                        <span className="admin-badge admin-badge--live">
+                          <span className="admin-badge__dot" aria-hidden="true" /> Live
+                        </span>
+                      )}
                       {row.featured && (
                         <span className="admin-badge admin-badge--featured">
                           <Star size={12} strokeWidth={2} fill="currentColor" aria-hidden="true" />{' '}
@@ -187,16 +207,13 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
                           {Number(row.discount_pct)}% off
                         </span>
                       ) : null}
-                      {row.hidden && (
-                        <span className="admin-badge admin-badge--hidden">Hidden</span>
-                      )}
                     </div>
                   </td>
                   <td>
-                    <div className="admin-photos__buttons">
+                    <div className="admin-table__actions">
                       <button
                         type="button"
-                        className="admin__ghost"
+                        className="admin__icon"
                         disabled={togglingId === row.id}
                         aria-pressed={!row.hidden}
                         aria-label={row.hidden ? `Show ${row.title}` : `Hide ${row.title}`}

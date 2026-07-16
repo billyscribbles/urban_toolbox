@@ -9,6 +9,8 @@ function toForm(row) {
   if (!row) {
     return {
       title: '',
+      id: '',
+      model: '',
       categoryId: '',
       summary: '',
       specs: [],
@@ -21,6 +23,8 @@ function toForm(row) {
   }
   return {
     title: row.title,
+    id: row.id,
+    model: row.model ?? '',
     categoryId: row.category_id,
     summary: row.summary ?? '',
     specs: row.specs ?? [],
@@ -75,13 +79,17 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
     setBusy(true)
     setSaveError('')
     const slug = isNew ? slugify(form.title) : row.slug
+    // Id is editable and optional: a custom value is slugified for URL/storage
+    // safety; blank falls back to the title (new) or the existing id (edit).
+    const id = slugify(form.id) || (isNew ? slug : row.id)
     const { error } = await saveProduct(
       {
-        id: isNew ? slug : row.id,
+        id,
         slug,
         title: form.title,
         categoryId: form.categoryId,
         summary: form.summary,
+        model: form.model.trim(),
         specs: form.specs.filter((s) => s.label.trim() || s.value.trim()),
         features,
         price: check.price,
@@ -92,7 +100,7 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
           ? rows.filter((r) => r.category_id === form.categoryId).length
           : row.sort_order,
       },
-      { isNew },
+      isNew ? { isNew } : { isNew, prevId: row.id },
     )
     setBusy(false)
     if (error) {
@@ -113,6 +121,32 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
           {errors.title}
         </p>
       )}
+
+      <div className="admin-editor__row">
+        <div>
+          <label className="admin__label" htmlFor="pe-id">
+            Product ID <span className="admin__label-hint">optional</span>
+          </label>
+          <input
+            id="pe-id"
+            className="admin__input"
+            value={form.id}
+            onChange={set('id')}
+            placeholder={isNew ? 'Auto from title' : undefined}
+          />
+        </div>
+        <div>
+          <label className="admin__label" htmlFor="pe-model">
+            Model name <span className="admin__label-hint">optional</span>
+          </label>
+          <input
+            id="pe-model"
+            className="admin__input"
+            value={form.model}
+            onChange={set('model')}
+          />
+        </div>
+      </div>
 
       <label className="admin__label" htmlFor="pe-category">
         Category
@@ -149,7 +183,7 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
       <div className="admin-editor__row">
         <div>
           <label className="admin__label" htmlFor="pe-price">
-            Price (AUD, ex GST — blank for “Enquire for pricing”)
+            Price (AUD) <span className="admin__label-hint">blank = enquire</span>
           </label>
           <input
             id="pe-price"

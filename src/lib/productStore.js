@@ -28,11 +28,15 @@ function getSnapshot() {
 // components already consume. quote.priceFrom carries the EFFECTIVE price
 // (discounted when a discount is set) so the tray and the quote email show
 // what the customer would actually pay.
-export function normalizeRow(row) {
+export function normalizeRow(row, storeDiscountPct = 0) {
   const photos = [...(row.product_images ?? [])].sort((a, b) => a.position - b.position)
   const first = photos[0]
   const price = row.price == null ? null : Number(row.price)
-  const discountPct = row.discount_pct == null ? null : Number(row.discount_pct)
+  const productPct = row.discount_pct == null ? null : Number(row.discount_pct)
+  // The customer always gets the better of the product's own discount and the
+  // store-wide discount. 0 collapses to null so no "Save 0%" badge appears.
+  const effectivePct = Math.max(productPct ?? 0, Number(storeDiscountPct) || 0)
+  const discountPct = effectivePct > 0 ? effectivePct : null
   return {
     id: row.id,
     categoryId: row.category_id,
@@ -55,6 +59,19 @@ export function normalizeRow(row) {
       priceFrom: discountedPrice(price, discountPct) ?? price,
       standardDims: row.standard_dims || '',
     },
+  }
+}
+
+// Store-wide discount, applied to every product at display time. Best-effort:
+// any failure (missing table, offline) falls back to no discount rather than
+// blocking the catalogue load.
+async function fetchStoreDiscount(supabase) {
+  try {
+    const { data } = await supabase.from('store_settings').select('discount_pct').maybeSingle()
+    const pct = data?.discount_pct == null ? 0 : Number(data.discount_pct)
+    return Number.isFinite(pct) ? pct : 0
+  } catch {
+    return 0
   }
 }
 
@@ -82,7 +99,8 @@ export async function loadProducts({ force = false } = {}) {
     setState({ status: 'error', products: [] })
     return
   }
-  setState({ status: 'ready', products: data.map(normalizeRow) })
+  const storeDiscountPct = await fetchStoreDiscount(supabase)
+  setState({ status: 'ready', products: data.map((row) => normalizeRow(row, storeDiscountPct)) })
 }
 
 export function retryLoad() {

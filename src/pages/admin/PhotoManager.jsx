@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { ArrowDown, ArrowUp, Trash2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, ImagePlus, Trash2 } from 'lucide-react'
 import { publicPhotoUrl } from '../../lib/supabaseClient.js'
 import {
   uploadPhotos,
@@ -13,6 +13,7 @@ import {
 export default function PhotoManager({ productId, title, images, onImagesChange }) {
   const fileRef = useRef(null)
   const [busy, setBusy] = useState(false)
+  const [dragging, setDragging] = useState(false)
   const [error, setError] = useState('')
   const sorted = [...images].sort((a, b) => a.position - b.position)
 
@@ -29,16 +30,40 @@ export default function PhotoManager({ productId, title, images, onImagesChange 
     }
   }
 
-  function onFiles(e) {
-    const files = [...e.target.files]
-    if (!files.length) return
+  const ACCEPT = ['image/jpeg', 'image/png', 'image/webp']
+
+  function handleFiles(files) {
+    const images = files.filter((f) => ACCEPT.includes(f.type))
+    if (!images.length) return
     // Positions aren't renumbered on delete, so append after the current max
     // rather than at `sorted.length` — otherwise a delete-then-upload reuses an
     // existing position and two rows collide.
     const nextPosition = sorted.length ? Math.max(...sorted.map((p) => p.position)) + 1 : 0
-    run(() => uploadPhotos(productId, files, nextPosition, title)).then(() => {
+    run(() => uploadPhotos(productId, images, nextPosition, title)).then(() => {
       if (fileRef.current) fileRef.current.value = ''
     })
+  }
+
+  function onInputChange(e) {
+    handleFiles([...e.target.files])
+  }
+
+  function onDrop(e) {
+    e.preventDefault()
+    setDragging(false)
+    if (busy) return
+    handleFiles([...e.dataTransfer.files])
+  }
+
+  function onDragOver(e) {
+    e.preventDefault()
+    if (!busy) setDragging(true)
+  }
+
+  function onDragLeave(e) {
+    // Ignore drags moving between child nodes of the dropzone.
+    if (e.currentTarget.contains(e.relatedTarget)) return
+    setDragging(false)
   }
 
   function onMove(i, dir) {
@@ -49,21 +74,35 @@ export default function PhotoManager({ productId, title, images, onImagesChange 
 
   return (
     <div className="admin-photos">
-      <label className="admin__label" htmlFor="pe-photos">
+      <span className="admin__label" id="pe-photos-label">
         Photos {busy && <span aria-live="polite">— working…</span>}
+      </span>
+      <label
+        className={`admin-drop${dragging ? ' admin-drop--active' : ''}`}
+        htmlFor="pe-photos"
+        onDragOver={onDragOver}
+        onDragLeave={onDragLeave}
+        onDrop={onDrop}
+      >
+        <ImagePlus className="admin-drop__icon" size={26} strokeWidth={1.6} aria-hidden="true" />
+        <span className="admin-drop__title">
+          Drag photos here, or <span className="admin-drop__link">browse</span>
+        </span>
+        <span className="admin-drop__sub">
+          JPEG, PNG or WebP · the first photo becomes the card thumbnail · resized automatically
+        </span>
       </label>
       <input
         id="pe-photos"
         ref={fileRef}
+        className="sr-only"
         type="file"
         accept="image/jpeg,image/png,image/webp"
+        aria-labelledby="pe-photos-label"
         multiple
         disabled={busy}
-        onChange={onFiles}
+        onChange={onInputChange}
       />
-      <p className="admin-photos__hint">
-        The first photo is the storefront card thumbnail. Uploads are resized automatically.
-      </p>
       {error && (
         <p className="admin__error" role="alert">
           {error}
