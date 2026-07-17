@@ -85,26 +85,27 @@
   filter: brightness(1.02) contrast(1.02) saturate(0.94);
 }
 
-/* Readability scrim, layered: a bottom-left ellipse anchored behind the text
-   lockup, plus a gentle full-width bottom fade so the paragraph and button stay
-   legible. Both taper out before the centre/right so the product stays bright. */
+/* Readability scrim: a tight ellipse hugging the text lockup so the darkening
+   sits mainly behind the word, plus a whisper-light full-width bottom fade to
+   anchor the paragraph and button. Both taper out fast so the rest of the photo
+   stays crisp and bright. */
 .hero-panel::after {
   content: '';
   position: absolute;
   inset: 0;
   background:
     radial-gradient(
-      92% 128% at 12% 90%,
-      rgba(13, 13, 13, 0.92) 0%,
-      rgba(13, 13, 13, 0.62) 30%,
-      rgba(13, 13, 13, 0.22) 50%,
-      rgba(13, 13, 13, 0) 68%
+      68% 92% at 8% 86%,
+      rgba(13, 13, 13, 0.9) 0%,
+      rgba(13, 13, 13, 0.5) 26%,
+      rgba(13, 13, 13, 0.14) 46%,
+      rgba(13, 13, 13, 0) 60%
     ),
     linear-gradient(
       to top,
-      rgba(13, 13, 13, 0.5) 0%,
-      rgba(13, 13, 13, 0.16) 22%,
-      rgba(13, 13, 13, 0) 42%
+      rgba(13, 13, 13, 0.3) 0%,
+      rgba(13, 13, 13, 0.06) 16%,
+      rgba(13, 13, 13, 0) 30%
     );
   pointer-events: none;
 }
@@ -114,26 +115,26 @@
 .hero-panel--caravan::after {
   background:
     radial-gradient(
-      92% 128% at 12% 90%,
-      rgba(13, 13, 13, 0.92) 0%,
-      rgba(13, 13, 13, 0.62) 30%,
-      rgba(13, 13, 13, 0.22) 50%,
-      rgba(13, 13, 13, 0) 68%
+      68% 92% at 8% 86%,
+      rgba(13, 13, 13, 0.9) 0%,
+      rgba(13, 13, 13, 0.5) 26%,
+      rgba(13, 13, 13, 0.14) 46%,
+      rgba(13, 13, 13, 0) 60%
     ),
-    linear-gradient(to top, rgba(13, 13, 13, 0.5) 0%, rgba(13, 13, 13, 0) 42%),
+    linear-gradient(to top, rgba(13, 13, 13, 0.3) 0%, rgba(13, 13, 13, 0) 30%),
     linear-gradient(120deg, rgba(196, 164, 119, 0.1) 0%, rgba(196, 164, 119, 0) 46%);
 }
 
 .hero-panel--ute::after {
   background:
     radial-gradient(
-      92% 128% at 12% 90%,
-      rgba(13, 13, 13, 0.92) 0%,
-      rgba(13, 13, 13, 0.62) 30%,
-      rgba(13, 13, 13, 0.22) 50%,
-      rgba(13, 13, 13, 0) 68%
+      68% 92% at 8% 86%,
+      rgba(13, 13, 13, 0.9) 0%,
+      rgba(13, 13, 13, 0.5) 26%,
+      rgba(13, 13, 13, 0.14) 46%,
+      rgba(13, 13, 13, 0) 60%
     ),
-    linear-gradient(to top, rgba(13, 13, 13, 0.5) 0%, rgba(13, 13, 13, 0) 42%),
+    linear-gradient(to top, rgba(13, 13, 13, 0.3) 0%, rgba(13, 13, 13, 0) 30%),
     linear-gradient(240deg, rgba(120, 150, 180, 0.09) 0%, rgba(120, 150, 180, 0) 46%);
 }
 
