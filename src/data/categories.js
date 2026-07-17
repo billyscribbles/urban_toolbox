@@ -121,6 +121,20 @@ export const categories = [
           },
         ],
       },
+      {
+        id: 'camper-trailer-boxes',
+        label: 'Camper & Trailer Boxes',
+        slug: 'camper-trailer-boxes',
+        children: [
+          {
+            id: 'trailer-boxes-draw-bar-boxes',
+            label: 'Trailer Boxes / Draw Bar Boxes',
+            slug: 'trailer-boxes-draw-bar-boxes',
+          },
+          { id: 'caravan-boxes', label: 'Caravan Boxes', slug: 'caravan-boxes' },
+          { id: 'generator-boxes', label: 'Generator Boxes', slug: 'generator-boxes' },
+        ],
+      },
       { id: 'toolbox-canopies', label: 'Toolbox Canopies', slug: 'toolbox-canopies' },
     ],
   },
