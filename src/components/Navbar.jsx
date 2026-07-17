@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { ChevronDown } from 'lucide-react'
 import { site } from '../config/site.config.js'
-import { getMegaMenu } from '../lib/catalog.js'
+import { getMegaMenu, getVehicleMenu } from '../lib/catalog.js'
 import { useQuote, openQuote } from '../lib/quoteStore.js'
 import SmartLink from './SmartLink.jsx'
 import './Navbar.css'
@@ -74,9 +74,11 @@ function Brand({ brand }) {
 function MegaPanel({ panel, onNavigate }) {
   return (
     <div className="navbar__mega-inner">
-      <Link to={panel.to} className="navbar__mega-all" onClick={onNavigate}>
-        View all {panel.label}
-      </Link>
+      {panel.showAll && (
+        <Link to={panel.to} className="navbar__mega-all" onClick={onNavigate}>
+          View all {panel.label}
+        </Link>
+      )}
       <div className="navbar__mega-list">
         {panel.columns.map((col) => (
           <Link key={col.to} to={col.to} className="navbar__mega-topic" onClick={onNavigate}>
@@ -100,7 +102,9 @@ export default function Navbar() {
   const listRef = useRef(null)
 
   // Resolve each nav item to its dropdown panel once (a null panel = flat link).
-  const navItems = nav.map((l) => ({ ...l, panel: l.menu ? getMegaMenu(l.menu) : null }))
+  // 'vehicle' is the hand-built Caravans/Utes menu; everything else is catalog-driven.
+  const resolvePanel = (menu) => (menu === 'vehicle' ? getVehicleMenu() : getMegaMenu(menu))
+  const navItems = nav.map((l) => ({ ...l, panel: l.menu ? resolvePanel(l.menu) : null }))
 
   // The home page has a full-bleed dark hero behind the bar, so the navbar
   // rides transparent over it and only fills in once the user scrolls (or

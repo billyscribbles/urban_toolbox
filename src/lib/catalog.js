@@ -196,5 +196,22 @@ export function getMegaMenu(topSlug) {
       })),
     }
   })
-  return { label: top.label, to: `/${top.slug}`, columns, flattened }
+  return { label: top.label, to: `/${top.slug}`, columns, flattened, showAll: true }
+}
+
+// The "Shop by Vehicle" dropdown. Unlike the catalog menus this isn't derived
+// from the category tree — customers buy for a caravan *or* a ute, so the two
+// vehicle pages (each filters the whole catalog by vehicle) are the only
+// entries. There's no combined "all vehicles" index, so the panel carries no
+// `showAll` flag and the desktop dropdown omits its "View all" row.
+export function getVehicleMenu() {
+  return {
+    label: 'Shop by Vehicle',
+    to: '/caravans',
+    columns: [
+      { label: 'For Caravans', to: '/caravans', items: [] },
+      { label: 'For Utes', to: '/utes', items: [] },
+    ],
+    flattened: true,
+  }
 }

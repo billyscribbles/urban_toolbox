@@ -18,10 +18,13 @@ export const site = {
   // Home is intentionally omitted — the logo links back to it, so the bar stays
   // uncluttered. Footer keeps an explicit Home link for completeness.
   //
-  // A `menu` key opts an item into the catalog-driven dropdown mega-menu: the
-  // Navbar renders a panel from `getMegaMenu(<menu>)` (src/lib/catalog.js) while
-  // still linking the item itself to `to`. Items without `menu` stay flat links.
+  // A `menu` key opts an item into a dropdown panel. Catalog menus
+  // ('toolboxes'/'accessories') render from `getMegaMenu(<menu>)`; 'vehicle'
+  // renders the hand-built `getVehicleMenu()` (Caravans/Utes) — see
+  // src/lib/catalog.js. Either way the item itself still links to `to`. Items
+  // without `menu` stay flat links.
   nav: [
+    { label: 'Shop by Vehicle', to: '/caravans', menu: 'vehicle' },
     { label: 'Toolboxes', to: '/toolboxes', menu: 'toolboxes' },
     { label: 'Accessories', to: '/accessories', menu: 'accessories' },
     { label: 'Fabrication', to: '/fabrication' },
