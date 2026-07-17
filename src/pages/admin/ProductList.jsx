@@ -16,6 +16,15 @@ import { formatPrice } from '../../lib/pricing.js'
 import { deleteProduct, setProductHidden } from '../../lib/adminApi.js'
 import StatCards from './StatCards.jsx'
 
+// Short, unambiguous date — e.g. "17 Jul 2026". Falls back to an em dash when a
+// row predates the created_at column or the value is unparseable.
+function formatDate(value) {
+  if (!value) return '—'
+  const d = new Date(value)
+  if (Number.isNaN(d.getTime())) return '—'
+  return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
+}
+
 // Compact page-number window: always the first and last page, the current page
 // with a neighbour either side, and '…' gaps where pages are skipped.
 function pageItems(current, count) {
@@ -189,6 +198,9 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
                   <th scope="col" className="admin-table__hide-sm">
                     Category
                   </th>
+                  <th scope="col" className="admin-table__hide-sm">
+                    Added
+                  </th>
                   <th scope="col">Price</th>
                   <th scope="col">Status</th>
                   <th scope="col">
@@ -221,6 +233,9 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
                     </td>
                     <td className="admin-table__hide-sm">
                       {leafLabel.get(row.category_id) ?? row.category_id}
+                    </td>
+                    <td className="admin-table__hide-sm admin-table__date">
+                      {formatDate(row.created_at)}
                     </td>
                     <td>{row.price == null ? '—' : formatPrice(Number(row.price))}</td>
                     <td>

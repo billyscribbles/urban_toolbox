@@ -614,6 +614,11 @@
   font-size: 12px;
   color: var(--color-ink-muted);
 }
+.admin-table__date {
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
 .admin__icon--danger {
   color: var(--color-danger);
 }
