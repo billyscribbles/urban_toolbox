@@ -106,6 +106,25 @@ export function getProductsUnder(node) {
   return getProducts().filter((p) => ids.has(p.categoryId))
 }
 
+// The "related products" rail for a product page: other products sharing the
+// product's leaf category, broadening to the parent subcategory when the leaf
+// is too thin to fill the row. The current product is always excluded, featured
+// products float first, and the list is capped at `limit`.
+export function getRelatedProducts(product, limit = 3) {
+  if (!product) return []
+  const leaf = getCategoryById(product.categoryId)
+  let pool = getProductsForLeaf(product.categoryId).filter((p) => p.id !== product.id)
+  if (pool.length < limit && leaf) {
+    const path = getCategoryPath(leaf.slug)
+    const parent = path[path.length - 2]
+    if (parent) {
+      const seen = new Set([product.id, ...pool.map((p) => p.id)])
+      pool = [...pool, ...getProductsUnder(parent).filter((p) => !seen.has(p.id))]
+    }
+  }
+  return [...pool].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)).slice(0, limit)
+}
+
 // The section list a ProductRange renders for a node: one section per direct
 // child when children nest (Toolboxes → subcategories), otherwise one per leaf
 // (Accessories → its leaves). `filter`, when given, keeps only matching products

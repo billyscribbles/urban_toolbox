@@ -32,6 +32,22 @@
   transform: scale(1.04);
 }
 
+/* Product cards aren't whole-card links (the add-to-quote button lives inside),
+   so the photo and title carry the link to the product page instead. */
+.card__media-link {
+  display: block;
+}
+.card__media-link:hover .card__img {
+  transform: scale(1.04);
+}
+.card__title-link {
+  text-decoration: none;
+  color: inherit;
+}
+.card__title-link:hover .card__title {
+  color: var(--color-accent);
+}
+
 .card__media {
   position: relative;
   border-bottom: 1px solid var(--color-border-light);
@@ -193,6 +209,7 @@
   font-size: 0.82rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  text-decoration: none;
   color: var(--color-ink-strong);
   background: transparent;
   border: 1.5px solid var(--color-border-light);
@@ -221,7 +238,8 @@
   .card--link:hover {
     transform: none;
   }
-  .card--link:hover .card__img {
+  .card--link:hover .card__img,
+  .card__media-link:hover .card__img {
     transform: none;
   }
 }

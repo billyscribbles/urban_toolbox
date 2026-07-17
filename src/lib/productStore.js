@@ -26,8 +26,8 @@ function getSnapshot() {
 
 // DB row (+ joined product_images) -> the product shape the storefront
 // components already consume. quote.priceFrom carries the EFFECTIVE price
-// (discounted when a discount is set) so the tray and the quote email show
-// what the customer would actually pay.
+// (discounted when a discount is set) so the product page and the quote email
+// show what the customer would actually pay.
 export function normalizeRow(row, storeDiscountPct = 0) {
   const photos = [...(row.product_images ?? [])].sort((a, b) => a.position - b.position)
   const first = photos[0]

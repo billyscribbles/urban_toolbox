@@ -1,7 +1,7 @@
 import { formatPrice, discountedPrice } from '../lib/pricing.js'
 import './PriceTag.css'
 
-// The one price renderer, shared by Card and DetailDrawer. Three states:
+// The one price renderer, shared by Card and the product page. Three states:
 // no price -> enquiry line; price -> "from $X + GST"; price + discount ->
 // struck-through original, sale price, save badge.
 export default function PriceTag({ price, discountPct }) {

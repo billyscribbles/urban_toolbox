@@ -11,7 +11,8 @@ vi.mock('../lib/supabaseClient.js', () => ({
 }))
 
 const { __setStateForTests, normalizeRow } = await import('../lib/productStore.js')
-const { getProductsForLeaf, getVehicleSections } = await import('../lib/catalog.js')
+const { getProductsForLeaf, getVehicleSections, getRelatedProducts, getProductByToken } =
+  await import('../lib/catalog.js')
 const { default: CategoryPage } = await import('../pages/CategoryPage.jsx')
 
 const idsIn = (sections) => sections.flatMap((s) => s.products.map((p) => p.id))
@@ -50,6 +51,43 @@ describe('live catalog wiring', () => {
     __setStateForTests({ status: 'error', products: [] })
     renderPage('accessories')
     expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument()
+  })
+})
+
+describe('getRelatedProducts — same-category rail', () => {
+  it('excludes the current product and respects the limit', () => {
+    const rows = ['a', 'b', 'c', 'd'].map((id) => ({
+      id,
+      category_id: 'full-lid-opening',
+      title: id.toUpperCase(),
+      slug: id,
+      product_images: [],
+    }))
+    __setStateForTests({ status: 'ready', products: rows.map((r) => normalizeRow(r)) })
+
+    const current = getProductByToken('a')
+    const related = getRelatedProducts(current, 2)
+    expect(related.map((p) => p.id)).not.toContain('a')
+    expect(related).toHaveLength(2)
+  })
+
+  it('floats featured products to the front', () => {
+    const rows = [
+      { id: 'a', category_id: 'full-lid-opening', title: 'A', slug: 'a', product_images: [] },
+      { id: 'b', category_id: 'full-lid-opening', title: 'B', slug: 'b', product_images: [] },
+      {
+        id: 'c',
+        category_id: 'full-lid-opening',
+        title: 'C',
+        slug: 'c',
+        featured: true,
+        product_images: [],
+      },
+    ]
+    __setStateForTests({ status: 'ready', products: rows.map((r) => normalizeRow(r)) })
+
+    const related = getRelatedProducts(getProductByToken('a'), 3)
+    expect(related[0].id).toBe('c')
   })
 })
 
