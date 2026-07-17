@@ -25,21 +25,29 @@ const NEW_CATEGORIES = ['generator-boxes', 'trailer-boxes-draw-bar-boxes', 'cara
 const RETIRED_IDS = ['camper-ute-toolbox-1', 'camper-ute-toolbox-2', 'camper-ute-toolbox-3']
 
 const url = process.env.VITE_SUPABASE_URL
-const key = process.env.VITE_SUPABASE_ANON_KEY
+// A service-role / secret key bypasses RLS and is the reliable path for a
+// server-side seed. Falls back to anon key + admin sign-in when it's absent.
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY
+const key = serviceKey || process.env.VITE_SUPABASE_ANON_KEY
 const email = process.env.SEED_ADMIN_EMAIL
 const password = process.env.SEED_ADMIN_PASSWORD
-if (!url || !key || !email || !password) {
+if (!url || !key || (!serviceKey && (!email || !password))) {
   console.error(
-    'Missing env. Need VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, SEED_ADMIN_EMAIL, SEED_ADMIN_PASSWORD.',
+    'Missing env. Need VITE_SUPABASE_URL plus either SUPABASE_SERVICE_ROLE_KEY, or ' +
+      'VITE_SUPABASE_ANON_KEY + SEED_ADMIN_EMAIL + SEED_ADMIN_PASSWORD.',
   )
   process.exit(1)
 }
 
-const supabase = createClient(url, key)
-const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
-if (authError) {
-  console.error('Admin sign-in failed:', authError.message)
-  process.exit(1)
+const supabase = createClient(url, key, { auth: { persistSession: false } })
+if (serviceKey) {
+  console.log('Using service-role key (RLS bypassed).')
+} else {
+  const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
+  if (authError) {
+    console.error('Admin sign-in failed:', authError.message)
+    process.exit(1)
+  }
 }
 
 // publicPath like "/images/catalog/x.jpg" -> upload x.jpg + x-400.webp +
