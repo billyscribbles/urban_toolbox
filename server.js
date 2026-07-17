@@ -21,7 +21,9 @@ const PORT = process.env.PORT || 4173
 // Legacy URL -> canonical target. Every value must be a real 200 route (or a
 // deeper redirect) so we never build a redirect loop.
 const REDIRECTS = {
-  '/ute-accesories': '/ute-accessories', // old misspelling Google indexed
+  '/ute-accesories': '/accessories', // old misspelling Google indexed → accessories
+  '/ute-accessories': '/accessories', // retired vehicle page → accessories
+  '/caravan-toolboxes': '/caravans', // retired product page → caravans vehicle page
   '/laser-cutting': '/fabrication#laser-cutting', // now a section of /fabrication
   '/folding': '/fabrication#folding', // now a section of /fabrication
   '/photos': '/', // no equivalent page — send to home
