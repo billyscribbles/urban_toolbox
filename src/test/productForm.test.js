@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { slugify, validateProduct } from '../lib/productForm.js'
+import { slugify, uniqueValue, friendlySaveError, validateProduct } from '../lib/productForm.js'
 
 const LEAVES = ['job-site-toolbox', 'locks']
 
@@ -12,6 +12,36 @@ describe('slugify', () => {
   it('trims leading/trailing hyphens and caps length', () => {
     expect(slugify('  --Hello World!--  ')).toBe('hello-world')
     expect(slugify('x'.repeat(200)).length).toBeLessThanOrEqual(80)
+  })
+})
+
+describe('uniqueValue', () => {
+  it('returns the base when nothing has taken it', () => {
+    expect(uniqueValue('ute-box', ['other'])).toBe('ute-box')
+  })
+  it('suffixes past every taken variant', () => {
+    expect(uniqueValue('ute-box', ['ute-box'])).toBe('ute-box-2')
+    expect(uniqueValue('ute-box', ['ute-box', 'ute-box-2'])).toBe('ute-box-3')
+  })
+  it('keeps the suffixed value inside the length cap', () => {
+    const long = 'x'.repeat(80)
+    const out = uniqueValue(long, [long])
+    expect(out.length).toBeLessThanOrEqual(80)
+    expect(out.endsWith('-2')).toBe(true)
+  })
+})
+
+describe('friendlySaveError', () => {
+  it('rewrites the slug and id unique violations', () => {
+    expect(
+      friendlySaveError('duplicate key value violates unique constraint "products_slug_key"'),
+    ).toMatch(/already exists/)
+    expect(
+      friendlySaveError('duplicate key value violates unique constraint "products_pkey"'),
+    ).toMatch(/Product ID is already taken/)
+  })
+  it('passes anything else through unchanged', () => {
+    expect(friendlySaveError('network error')).toBe('network error')
   })
 })
 

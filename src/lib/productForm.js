@@ -12,6 +12,33 @@ export function slugify(title) {
     .replace(/-+$/, '')
 }
 
+// Titles repeat across sizes, so two products can slugify to the same string —
+// and the first 80 chars of two long titles can collide even when they differ.
+// Suffix -2, -3, … so the DB's unique constraints never see a duplicate.
+export function uniqueValue(base, taken, maxLength = 80) {
+  const used = new Set(taken)
+  if (!used.has(base)) return base
+  for (let n = 2; n < 1000; n++) {
+    const suffix = `-${n}`
+    const stem = base.slice(0, maxLength - suffix.length).replace(/-+$/, '')
+    const candidate = `${stem}${suffix}`
+    if (!used.has(candidate)) return candidate
+  }
+  return base
+}
+
+// Postgres surfaces unique violations as raw constraint text. Translate the two
+// the admin can actually act on; anything else passes through unchanged.
+export function friendlySaveError(message = '') {
+  if (message.includes('products_slug_key')) {
+    return 'A product with this name already exists. Change the title to make it unique.'
+  }
+  if (message.includes('products_pkey')) {
+    return 'That Product ID is already taken. Choose a different one.'
+  }
+  return message
+}
+
 function toNumber(value) {
   if (value === '' || value == null) return null
   const n = Number(value)

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
 import { getTree, getLeaves } from '../../lib/catalog.js'
-import { slugify, validateProduct } from '../../lib/productForm.js'
+import { slugify, uniqueValue, friendlySaveError, validateProduct } from '../../lib/productForm.js'
 import { saveProduct } from '../../lib/adminApi.js'
 import { publicPhotoUrl } from '../../lib/supabaseClient.js'
 import PhotoManager from './PhotoManager.jsx'
@@ -88,10 +88,22 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
 
     setBusy(true)
     setSaveError('')
-    const slug = isNew ? slugify(form.title) : row.slug
+    // Slugs and ids are unique in the DB, so resolve collisions against the
+    // other rows here rather than letting Postgres reject the write.
+    const others = (rows ?? []).filter((r) => r.id !== row?.id)
+    const slug = isNew
+      ? uniqueValue(
+          slugify(form.title),
+          others.map((r) => r.slug),
+        )
+      : row.slug
     // Id is editable and optional: a custom value is slugified for URL/storage
     // safety; blank falls back to the title (new) or the existing id (edit).
-    const id = slugify(form.id) || (isNew ? slug : row.id)
+    const requestedId = slugify(form.id) || (isNew ? slug : row.id)
+    const id = uniqueValue(
+      requestedId,
+      others.map((r) => r.id),
+    )
     const { error } = await saveProduct(
       {
         id,
@@ -116,7 +128,7 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
     )
     setBusy(false)
     if (error) {
-      setSaveError(error.message)
+      setSaveError(friendlySaveError(error.message))
       return
     }
     onDone()
