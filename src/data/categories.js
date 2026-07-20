@@ -147,6 +147,22 @@ export const categories = [
       { id: 'mounting-kit', label: 'Mounting Kits', slug: 'mounting-kit' },
       { id: 'locks', label: 'Locks', slug: 'locks' },
       { id: 'drawer-units', label: 'Drawer Units', slug: 'drawer-units' },
+      {
+        id: 'drawers',
+        label: 'Drawers',
+        slug: 'drawers',
+        children: [
+          // Slugs are unique tree-wide (getCategoryBySlug walks every node), so
+          // these carry a `drawer-` prefix rather than colliding with the
+          // Accessories-level `accessories` / `locks` nodes.
+          {
+            id: 'drawer-accessories',
+            label: 'Accessories',
+            slug: 'drawer-accessories',
+          },
+          { id: 'drawer-locks', label: 'Locks', slug: 'drawer-locks' },
+        ],
+      },
       { id: 'shelving-units', label: 'Shelving Units', slug: 'shelving-units' },
       { id: 'gas-strut', label: 'Gas Struts', slug: 'gas-strut' },
       { id: 'ladder-rack', label: 'Ladder Racks', slug: 'ladder-rack' },

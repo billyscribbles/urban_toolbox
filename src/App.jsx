@@ -117,10 +117,9 @@ function AppBody() {
             <Routes>
               <Route path="/" element={<Home />} />
 
-              {/* Data-driven catalog. Toolboxes has an overview of its
-                  subcategories, each of which is its own CategoryPage; Accessories
-                  is flattened, so its single page renders every leaf as a
-                  section. Both are driven entirely by src/data/catalog.js. */}
+              {/* Data-driven catalog. Both tops show an overview of their
+                  subcategories, each of which is its own CategoryPage. Driven
+                  entirely by src/data/categories.js. */}
               <Route
                 path="/toolboxes"
                 element={
@@ -132,6 +131,7 @@ function AppBody() {
               />
               <Route path="/toolboxes/:subSlug" element={<CategoryPage />} />
               <Route path="/accessories" element={<CategoryPage slug="accessories" />} />
+              <Route path="/accessories/:subSlug" element={<CategoryPage />} />
 
               {/* Individual product page — shareable, replaces the old
                   ?product= detail drawer. Token is the product slug (or id). */}
