@@ -53,7 +53,6 @@ export const categories = [
             slug: 'tub-liner-ute-toolbox',
           },
           { id: 'job-site-toolbox', label: 'Job Site Toolbox', slug: 'job-site-toolbox' },
-          { id: 'camper-ute-toolbox', label: 'Camper Ute Toolbox', slug: 'camper-ute-toolbox' },
           {
             id: 'cross-deck-gullwing',
             label: 'Cross Deck Gullwing',
@@ -81,6 +80,8 @@ export const categories = [
           { id: 'multi-lid-boxes', label: 'Multi-Lid Boxes', slug: 'multi-lid-boxes' },
         ],
       },
+      { id: 'camper-ute-toolbox', label: 'Camper Ute Toolbox', slug: 'camper-ute-toolbox' },
+      { id: 'tradie-ute-box', label: 'Tradie Ute Box', slug: 'tradie-ute-box' },
       {
         id: 'truck-toolboxes',
         label: 'Truck Toolboxes',
