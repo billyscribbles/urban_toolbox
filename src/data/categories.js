@@ -175,6 +175,9 @@ export const categories = [
         slug: 'fuel-gas-tool-holder',
       },
       { id: 'jack-off-legs', label: 'Jack-Off Legs', slug: 'jack-off-legs' },
+      { id: 'trays', label: 'Trays', slug: 'trays' },
+      { id: 'canopy', label: 'Canopy', slug: 'canopy' },
+      { id: 'service-canopy', label: 'Service Canopy', slug: 'service-canopy' },
     ],
   },
 ]
