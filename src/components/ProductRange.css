@@ -116,12 +116,17 @@
   row-gap: 14px;
 }
 
-/* Anchor targets clear both sticky bars (navbar + sub-nav) when jumped to.
-   Override the site-wide 96px .section padding — back-to-back product grids
-   read tighter with far less air between one section's cards and the next
-   section's heading. */
-.range-section {
+/* Anchor targets clear both sticky bars (navbar + sub-nav) when jumped to —
+   .range-group-anchor is the zero-height group target rendered ahead of each
+   vehicle-page group's first section. Override the site-wide 96px .section
+   padding — back-to-back product grids read tighter with far less air between
+   one section's cards and the next section's heading. */
+.range-section,
+.range-group-anchor {
   scroll-margin-top: 150px;
+}
+
+.range-section {
   padding: 52px 0;
 }
 
@@ -147,7 +152,8 @@
   .range-nav {
     top: 60px;
   }
-  .range-section {
+  .range-section,
+  .range-group-anchor {
     scroll-margin-top: 128px;
   }
 }

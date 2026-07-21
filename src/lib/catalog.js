@@ -20,6 +20,11 @@ export function isLeaf(node) {
   return !node?.children?.length
 }
 
+// Nodes tagged `vehicle` ('ute' | 'caravan') are vehicle-exclusive: hidden from
+// the generic mega-menu and category pages, surfaced only on that vehicle's
+// page. Untagged nodes are visible everywhere.
+const visibleFor = (node, vehicle = null) => !node.vehicle || node.vehicle === vehicle
+
 // Depth-first search of the whole tree by slug (slugs are unique across the tree).
 export function getCategoryBySlug(slug) {
   const walk = (nodes) => {
@@ -130,25 +135,30 @@ export function getRelatedProducts(product, limit = 3) {
 // (Accessories → its leaves). `filter`, when given, keeps only matching products
 // and drops sections left empty — that's how the vehicle pages slice the range.
 // Without a filter, every section is returned as-is (a category page still shows
-// an empty subcategory so its pill stays present).
-export function buildSections(node, filter = null) {
+// an empty subcategory so its pill stays present). `vehicle` widens visibility
+// to that vehicle's exclusive nodes; their sections come back `pinned` so the
+// vehicle page keeps them even before their first product lands.
+export function buildSections(node, filter = null, vehicle = null) {
   if (!node) return []
   const apply = (products) => (filter ? products.filter(filter) : products)
-  const grouped = (node.children ?? []).some((child) => !isLeaf(child))
+  const kids = (node.children ?? []).filter((child) => visibleFor(child, vehicle))
+  const grouped = kids.some((child) => !isLeaf(child))
   const sections = grouped
-    ? node.children.map((child) => ({
+    ? kids.map((child) => ({
         id: child.slug,
         label: child.label,
         heading: child.label,
+        pinned: !!child.vehicle,
         products: apply(getProductsUnder(child)),
       }))
-    : getLeaves(node).map((leaf) => ({
+    : (isLeaf(node) ? [node] : kids.flatMap(getLeaves)).map((leaf) => ({
         id: leaf.slug,
         label: leaf.label,
         heading: leaf.label,
+        pinned: !!leaf.vehicle,
         products: apply(getProductsForLeaf(leaf.id)),
       }))
-  return filter ? sections.filter((s) => s.products.length > 0) : sections
+  return filter ? sections.filter((s) => s.products.length > 0 || s.pinned) : sections
 }
 
 // Every category's sections, filtered to products that fit the given vehicle
@@ -159,9 +169,18 @@ export function getVehicleSections(vehicle) {
   const key = vehicle === 'caravan' ? 'fitsCaravan' : 'fitsUte'
   // Tag each section with its top-level category ('Toolboxes' / 'Accessories')
   // so the range nav can split the pills into labelled groups.
-  return getTopCategories().flatMap((top) =>
-    buildSections(top, (p) => p[key] !== false).map((s) => ({ ...s, group: top.label })),
-  )
+  const v = vehicle === 'caravan' ? 'caravan' : 'ute'
+  return getTopCategories()
+    .filter((top) => visibleFor(top, v))
+    .flatMap((top) =>
+      buildSections(top, (p) => p[key] !== false, v).map((s) => ({
+        ...s,
+        group: top.label,
+        // Anchor id for the whole group on the vehicle page (the nav's
+        // "Toolboxes" / "Accessories" deep links land on it).
+        groupSlug: top.slug,
+      })),
+    )
 }
 
 // A top category whose children are ALL leaves renders as one page with the
@@ -182,36 +201,44 @@ export function getMegaMenu(topSlug) {
   if (!top) return null
   const flattened = isFlattenedTop(topSlug)
 
-  const columns = (top.children ?? []).map((child) => {
-    if (flattened || isLeaf(child)) {
-      const to = flattened ? `/${top.slug}#${child.slug}` : `/${top.slug}/${child.slug}`
-      return { label: child.label, to, items: [] }
-    }
-    return {
-      label: child.label,
-      to: `/${top.slug}/${child.slug}`,
-      items: child.children.map((leaf) => ({
-        label: leaf.label,
-        to: `/${top.slug}/${child.slug}#${leaf.slug}`,
-      })),
-    }
-  })
+  const columns = (top.children ?? [])
+    .filter((child) => visibleFor(child))
+    .map((child) => {
+      if (flattened || isLeaf(child)) {
+        const to = flattened ? `/${top.slug}#${child.slug}` : `/${top.slug}/${child.slug}`
+        return { label: child.label, to, items: [] }
+      }
+      return {
+        label: child.label,
+        to: `/${top.slug}/${child.slug}`,
+        items: child.children.map((leaf) => ({
+          label: leaf.label,
+          to: `/${top.slug}/${child.slug}#${leaf.slug}`,
+        })),
+      }
+    })
   return { label: top.label, to: `/${top.slug}`, columns, flattened, showAll: true }
 }
 
-// The "Shop by Vehicle" dropdown. Unlike the catalog menus this isn't derived
-// from the category tree — customers buy for a caravan *or* a ute, so the two
-// vehicle pages (each filters the whole catalog by vehicle) are the only
-// entries. There's no combined "all vehicles" index, so the panel carries no
-// `showAll` flag and the desktop dropdown omits its "View all" row.
+// The "Shop by Vehicle" dropdown. One column per vehicle page, each listing
+// the top-level groups that page offers (Caravans: the generic catalog tops;
+// Utes: those plus the ute-exclusive tops), deep-linked to the group anchors.
+// `listItems` tells the desktop panel to render those items downwards under
+// each vehicle heading — catalog panels stay compact. There's no combined
+// "all vehicles" index, so no `showAll` flag / "View all" row.
 export function getVehicleMenu() {
+  const column = (label, path, vehicle) => ({
+    label,
+    to: path,
+    items: getTopCategories()
+      .filter((top) => visibleFor(top, vehicle))
+      .map((top) => ({ label: top.label, to: `${path}#${top.slug}` })),
+  })
   return {
     label: 'Shop by Vehicle',
     to: '/caravans',
-    columns: [
-      { label: 'For Caravans', to: '/caravans', items: [] },
-      { label: 'For Utes', to: '/utes', items: [] },
-    ],
+    columns: [column('Caravans', '/caravans', 'caravan'), column('Utes', '/utes', 'ute')],
     flattened: true,
+    listItems: true,
   }
 }

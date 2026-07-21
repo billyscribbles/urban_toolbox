@@ -67,10 +67,11 @@ function Brand({ brand }) {
   )
 }
 
-// The contents of an open desktop dropdown — a compact list of topic links only
-// (Toolboxes → its subcategories; Accessories → its items). The leaf-level
-// categories aren't listed here; they surface on each category page's pill
-// sub-nav. `col.items` is left on the view model for future use.
+// The contents of an open desktop dropdown. Catalog panels (Toolboxes,
+// Accessories) stay a compact list of topic links only — leaf categories
+// surface on each category page's pill sub-nav. A panel flagged `listItems`
+// (Shop by Vehicle) also renders each column's items downwards under its
+// heading (Caravans / Utes → the groups their pages offer).
 function MegaPanel({ panel, onNavigate }) {
   return (
     <div className="navbar__mega-inner">
@@ -81,9 +82,22 @@ function MegaPanel({ panel, onNavigate }) {
       )}
       <div className="navbar__mega-list">
         {panel.columns.map((col) => (
-          <Link key={col.to} to={col.to} className="navbar__mega-topic" onClick={onNavigate}>
-            {col.label}
-          </Link>
+          <div key={col.to} className="navbar__mega-col">
+            <Link to={col.to} className="navbar__mega-topic" onClick={onNavigate}>
+              {col.label}
+            </Link>
+            {panel.listItems && col.items.length > 0 && (
+              <ul className="navbar__mega-items">
+                {col.items.map((item) => (
+                  <li key={item.to}>
+                    <Link to={item.to} className="navbar__mega-item" onClick={onNavigate}>
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         ))}
       </div>
     </div>

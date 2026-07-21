@@ -120,12 +120,14 @@ describe('content — section copy contract', () => {
 })
 
 describe('catalog — category tree contract', () => {
-  it('has the two top categories with children', () => {
+  it('has the two catalog top categories with children', () => {
     const slugs = catalog.categories.map((c) => c.slug)
     expect(slugs).toContain('toolboxes')
     expect(slugs).toContain('accessories')
+    // Vehicle-exclusive tops (Trays, Canopy, …) are bare leaves by design —
+    // only the generic catalog tops must nest.
     for (const top of catalog.categories) {
-      expect(top.children.length).toBeGreaterThan(0)
+      if (!top.vehicle) expect(top.children.length).toBeGreaterThan(0)
     }
   })
 

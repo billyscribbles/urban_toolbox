@@ -11,8 +11,16 @@ vi.mock('../lib/supabaseClient.js', () => ({
 }))
 
 const { __setStateForTests, normalizeRow } = await import('../lib/productStore.js')
-const { getProductsForLeaf, getVehicleSections, getRelatedProducts, getProductByToken } =
-  await import('../lib/catalog.js')
+const {
+  getProductsForLeaf,
+  getVehicleSections,
+  getRelatedProducts,
+  getProductByToken,
+  getMegaMenu,
+  getVehicleMenu,
+  buildSections,
+  getCategoryBySlug,
+} = await import('../lib/catalog.js')
 const { default: CategoryPage } = await import('../pages/CategoryPage.jsx')
 
 const idsIn = (sections) => sections.flatMap((s) => s.products.map((p) => p.id))
@@ -106,8 +114,61 @@ describe('getVehicleSections — vehicle-filtered range', () => {
     expect(caravanIds).toContain('job-site-toolbox-1')
 
     // No section is returned empty — the pill nav only shows populated groups.
+    // Vehicle-exclusive sections are the one exception: they stay pinned so the
+    // category is browsable before its first product lands.
     for (const s of getVehicleSections('ute')) {
-      expect(s.products.length).toBeGreaterThan(0)
+      if (!s.pinned) expect(s.products.length).toBeGreaterThan(0)
     }
+  })
+
+  it('pins ute-exclusive categories to the ute page even before products exist', () => {
+    __setStateForTests({ status: 'ready', products: [] })
+
+    const uteSections = getVehicleSections('ute')
+    const uteIds = uteSections.map((s) => s.id)
+    expect(uteIds).toEqual(expect.arrayContaining(['trays', 'canopy', 'service-canopy']))
+
+    // Each is its own top-level group (not folded under Accessories), so the
+    // vehicle page nav renders it beside the Browse buttons, not inside one.
+    for (const id of ['trays', 'canopy', 'service-canopy']) {
+      const s = uteSections.find((x) => x.id === id)
+      expect(s.group).toBe(s.label)
+    }
+
+    const caravanIds = getVehicleSections('caravan').map((s) => s.id)
+    expect(caravanIds).not.toContain('trays')
+    expect(caravanIds).not.toContain('canopy')
+    expect(caravanIds).not.toContain('service-canopy')
+  })
+
+  it('vehicle menu lists each page’s top-level groups under its heading', () => {
+    const menu = getVehicleMenu()
+    expect(menu.columns.map((c) => c.label)).toEqual(['Caravans', 'Utes'])
+
+    const [caravans, utes] = menu.columns
+    expect(caravans.items.map((i) => i.label)).toEqual(['Toolboxes', 'Accessories'])
+    expect(utes.items.map((i) => i.label)).toEqual([
+      'Toolboxes',
+      'Accessories',
+      'Trays',
+      'Canopy',
+      'Service Canopy',
+    ])
+    for (const item of utes.items) expect(item.to).toMatch(/^\/utes#/)
+    for (const item of caravans.items) expect(item.to).toMatch(/^\/caravans#/)
+  })
+
+  it('hides vehicle-exclusive categories from the generic menu and category page', () => {
+    __setStateForTests({ status: 'ready', products: productRows.map(normalizeRow) })
+
+    const menuLabels = getMegaMenu('accessories').columns.map((c) => c.label)
+    expect(menuLabels).not.toContain('Trays')
+    expect(menuLabels).not.toContain('Canopy')
+    expect(menuLabels).not.toContain('Service Canopy')
+
+    const pageIds = buildSections(getCategoryBySlug('accessories')).map((s) => s.id)
+    expect(pageIds).not.toContain('trays')
+    expect(pageIds).not.toContain('canopy')
+    expect(pageIds).not.toContain('service-canopy')
   })
 })
