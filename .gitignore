@@ -23,3 +23,6 @@ dist-ssr
 
 # Local git worktrees created by Claude Code
 .claude/worktrees/
+
+# image-gen (nano-banana) scratch output
+generated_imgs/
