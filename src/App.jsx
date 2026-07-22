@@ -8,6 +8,12 @@ import ErrorBoundary from './components/ErrorBoundary.jsx'
 import RouteFallback from './components/RouteFallback.jsx'
 import { trackPageview } from './lib/analytics.js'
 import { useQuote } from './lib/quoteStore.js'
+import { categories } from './data/categories.js'
+
+// Vehicle-exclusive tops (Trays, Canopy, Service Canopy) are single-segment
+// top-level categories — each gets its own /<slug> CategoryPage route. Derived
+// from the tree so a new ute-exclusive top wires up its route automatically.
+const vehicleTops = categories.filter((c) => c.vehicle)
 
 // Retry lazy imports once, then force a reload if the chunk is gone.
 // Prevents white-pages on stale tabs after a redeploy.
@@ -132,6 +138,17 @@ function AppBody() {
               <Route path="/toolboxes/:subSlug" element={<CategoryPage />} />
               <Route path="/accessories" element={<CategoryPage slug="accessories" />} />
               <Route path="/accessories/:subSlug" element={<CategoryPage />} />
+
+              {/* Ute-exclusive tops — Trays, Canopy, Service Canopy. Each is a
+                  bare top-level category (no /toolboxes|/accessories parent), so
+                  it owns a single-segment route rendering its own CategoryPage. */}
+              {vehicleTops.map((top) => (
+                <Route
+                  key={top.slug}
+                  path={`/${top.slug}`}
+                  element={<CategoryPage slug={top.slug} />}
+                />
+              ))}
 
               {/* Individual product page — shareable, replaces the old
                   ?product= detail drawer. Token is the product slug (or id). */}

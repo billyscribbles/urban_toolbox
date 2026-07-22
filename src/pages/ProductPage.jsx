@@ -112,6 +112,10 @@ function ProductDetail({ product }) {
   const leaf = getCategoryById(product.categoryId)
   const path = leaf ? getCategoryPath(leaf.slug) : []
   const topLabel = getTopLabelForProduct(product)
+  // Ute-exclusive tops (Trays, Canopy, Service Canopy) live only under /utes, so
+  // their trail reads Home › Ute › <Top> › <Product> — insert the vehicle crumb
+  // ahead of the category path. Generic catalog tops go straight under Home.
+  const vehicleCrumb = path[0]?.vehicle === 'ute' ? { label: 'Ute', to: '/utes' } : null
   const priceFrom = product.quote?.priceFrom ?? null
 
   // Same descriptor Card builds — the shape the quote store consumes. `color`
@@ -146,6 +150,12 @@ function ProductDetail({ product }) {
 
       <nav className="product-page__crumbs container" aria-label="Breadcrumb">
         <Link to="/">Home</Link>
+        {vehicleCrumb && (
+          <span className="product-page__crumb">
+            <ChevronRight size={14} strokeWidth={2} aria-hidden="true" />
+            <Link to={vehicleCrumb.to}>{vehicleCrumb.label}</Link>
+          </span>
+        )}
         {path.map((node, i) => (
           <span key={node.id} className="product-page__crumb">
             <ChevronRight size={14} strokeWidth={2} aria-hidden="true" />
