@@ -19,16 +19,17 @@ export const site = {
   // uncluttered. Footer keeps an explicit Home link for completeness.
   //
   // A `menu` key opts an item into a dropdown panel. Catalog menus
-  // ('toolboxes'/'accessories') render from `getMegaMenu(<menu>)`; 'vehicle'
-  // renders the hand-built `getVehicleMenu()` (Caravans/Utes) — see
-  // src/lib/catalog.js. Either way the item itself still links to `to`. Items
-  // without `menu` stay flat links.
+  // ('toolboxes'/'accessories') render from `getMegaMenu(<menu>)`; the hand-built
+  // panels are 'vehicle' (getVehicleMenu → Caravans/Utes), 'custom'
+  // (getCustomMenu → Australian Made) and 'about' (getAboutMenu → About Us +
+  // Fabrication) — see src/lib/catalog.js. Either way the item itself still links
+  // to `to`. Items without `menu` stay flat links.
   nav: [
     { label: 'Shop by Vehicle', to: '/caravans', menu: 'vehicle' },
     { label: 'Toolboxes', to: '/toolboxes', menu: 'toolboxes' },
     { label: 'Accessories', to: '/accessories', menu: 'accessories' },
-    { label: 'Fabrication', to: '/fabrication' },
-    { label: 'About', to: '/about' },
+    { label: 'Custom', to: '/australian-made', menu: 'custom' },
+    { label: 'About', to: '/about', menu: 'about' },
   ],
 
   // Primary conversion action — the quote request form.
@@ -45,6 +46,7 @@ export const site = {
           { label: 'Toolboxes', to: '/toolboxes' },
           { label: 'Accessories', to: '/accessories' },
           { label: 'Fabrication', to: '/fabrication' },
+          { label: 'Australian Made', to: '/australian-made' },
         ],
       },
       {

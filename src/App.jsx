@@ -60,6 +60,7 @@ const CategoryPage = lazyWithRetry(() => import('./pages/CategoryPage.jsx'))
 const ProductPage = lazyWithRetry(() => import('./pages/ProductPage.jsx'))
 const VehiclePage = lazyWithRetry(() => import('./pages/VehiclePage.jsx'))
 const FabricationPage = lazyWithRetry(() => import('./pages/FabricationPage.jsx'))
+const AustralianMadePage = lazyWithRetry(() => import('./pages/AustralianMadePage.jsx'))
 const AboutPage = lazyWithRetry(() => import('./pages/AboutPage.jsx'))
 const QuotePage = lazyWithRetry(() => import('./pages/QuotePage.jsx'))
 const LegalPage = lazyWithRetry(() => import('./pages/LegalPage.jsx'))
@@ -160,6 +161,7 @@ function AppBody() {
               <Route path="/caravans" element={<VehiclePage vehicle="caravan" />} />
 
               <Route path="/fabrication" element={<FabricationPage />} />
+              <Route path="/australian-made" element={<AustralianMadePage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/quote" element={<QuotePage />} />
               {/* /contact is an enquiry intent — send it to the quote form. */}

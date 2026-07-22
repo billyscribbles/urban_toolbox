@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { ChevronDown } from 'lucide-react'
 import { site } from '../config/site.config.js'
-import { getMegaMenu, getVehicleMenu } from '../lib/catalog.js'
+import { getMegaMenu, getVehicleMenu, getCustomMenu, getAboutMenu } from '../lib/catalog.js'
 import { useQuote, openQuote } from '../lib/quoteStore.js'
 import SmartLink from './SmartLink.jsx'
 import './Navbar.css'
@@ -116,8 +116,14 @@ export default function Navbar() {
   const listRef = useRef(null)
 
   // Resolve each nav item to its dropdown panel once (a null panel = flat link).
-  // 'vehicle' is the hand-built Caravans/Utes menu; everything else is catalog-driven.
-  const resolvePanel = (menu) => (menu === 'vehicle' ? getVehicleMenu() : getMegaMenu(menu))
+  // 'vehicle', 'custom' and 'about' are hand-built menus; everything else is
+  // catalog-driven.
+  const resolvePanel = (menu) => {
+    if (menu === 'vehicle') return getVehicleMenu()
+    if (menu === 'custom') return getCustomMenu()
+    if (menu === 'about') return getAboutMenu()
+    return getMegaMenu(menu)
+  }
   const navItems = nav.map((l) => ({ ...l, panel: l.menu ? resolvePanel(l.menu) : null }))
 
   // The home page has a full-bleed dark hero behind the bar, so the navbar

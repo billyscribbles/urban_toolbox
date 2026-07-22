@@ -184,4 +184,15 @@ export const categories = [
   { id: 'trays', label: 'Trays', slug: 'trays', vehicle: 'ute' },
   { id: 'canopy', label: 'Canopy', slug: 'canopy', vehicle: 'ute' },
   { id: 'service-canopy', label: 'Service Canopy', slug: 'service-canopy', vehicle: 'ute' },
+  // `exclusive: 'australian-made'` scopes this leaf to its own /australian-made
+  // page (same hide-from-generic mechanism as `vehicle`, just a non-vehicle
+  // scope). It stays a real leaf, so the admin category dropdown lists it and
+  // products can be filed under it — but it never leaks into the Toolboxes /
+  // Accessories menus or the Utes / Caravans pages.
+  {
+    id: 'australian-made',
+    label: 'Australian Made',
+    slug: 'australian-made',
+    exclusive: 'australian-made',
+  },
 ]

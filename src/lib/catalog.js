@@ -20,10 +20,15 @@ export function isLeaf(node) {
   return !node?.children?.length
 }
 
-// Nodes tagged `vehicle` ('ute' | 'caravan') are vehicle-exclusive: hidden from
-// the generic mega-menu and category pages, surfaced only on that vehicle's
-// page. Untagged nodes are visible everywhere.
-const visibleFor = (node, vehicle = null) => !node.vehicle || node.vehicle === vehicle
+// Nodes tagged `vehicle` ('ute' | 'caravan') or `exclusive` (e.g.
+// 'australian-made') are scope-exclusive: hidden from the generic mega-menu and
+// category pages, surfaced only on the page that passes their scope. Untagged
+// nodes are visible everywhere.
+const scopeOf = (node) => node?.vehicle || node?.exclusive || null
+const visibleFor = (node, scope = null) => {
+  const s = scopeOf(node)
+  return !s || s === scope
+}
 
 // Depth-first search of the whole tree by slug (slugs are unique across the tree).
 export function getCategoryBySlug(slug) {
@@ -240,5 +245,28 @@ export function getVehicleMenu() {
     columns: [column('Caravans', '/caravans', 'caravan'), column('Utes', '/utes', 'ute')],
     flattened: true,
     listItems: true,
+  }
+}
+
+// The "Custom" dropdown. Hand-built (not catalog-driven): the Australian Made
+// line lives here as a plain topic link. No sub-items, so no `showAll` row.
+export function getCustomMenu() {
+  return {
+    label: 'Custom',
+    to: '/australian-made',
+    columns: [{ label: 'Australian Made', to: '/australian-made', items: [] }],
+  }
+}
+
+// The "About" dropdown. Hand-built: the About page plus the Fabrication service
+// page as plain topic links. No sub-items, so no `showAll` row.
+export function getAboutMenu() {
+  return {
+    label: 'About',
+    to: '/about',
+    columns: [
+      { label: 'About Us', to: '/about', items: [] },
+      { label: 'Fabrication', to: '/fabrication', items: [] },
+    ],
   }
 }

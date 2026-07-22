@@ -20,6 +20,8 @@ const {
   getVehicleMenu,
   buildSections,
   getCategoryBySlug,
+  getTree,
+  getLeaves,
 } = await import('../lib/catalog.js')
 const { default: CategoryPage } = await import('../pages/CategoryPage.jsx')
 
@@ -156,6 +158,25 @@ describe('getVehicleSections — vehicle-filtered range', () => {
     ])
     for (const item of utes.items) expect(item.to).toMatch(/^\/utes#/)
     for (const item of caravans.items) expect(item.to).toMatch(/^\/caravans#/)
+  })
+
+  it('hides the exclusive Australian Made category from generic + vehicle surfaces but keeps it admin-selectable', () => {
+    __setStateForTests({ status: 'ready', products: productRows.map(normalizeRow) })
+
+    // The admin category dropdown is built from every tree leaf — so the
+    // exclusive node must still be a selectable leaf.
+    const leafIds = getTree().flatMap((t) => getLeaves(t).map((l) => l.id))
+    expect(leafIds).toContain('australian-made')
+
+    // …but it never leaks into the generic menus or the vehicle pages/menus.
+    for (const top of ['toolboxes', 'accessories']) {
+      expect(getMegaMenu(top).columns.map((c) => c.label)).not.toContain('Australian Made')
+    }
+    for (const v of ['ute', 'caravan']) {
+      expect(idsIn(getVehicleSections(v))).not.toContain('australian-made')
+    }
+    const vehicleGroupLabels = getVehicleMenu().columns.flatMap((c) => c.items.map((i) => i.label))
+    expect(vehicleGroupLabels).not.toContain('Australian Made')
   })
 
   it('hides vehicle-exclusive categories from the generic menu and category page', () => {
