@@ -88,6 +88,14 @@ describe('quoteStore — actions', () => {
     expect(snap().items).toHaveLength(1)
   })
 
+  it('carries a selected colour, defaulting to null when none is given', () => {
+    addItem({ ...TB295, color: 'silver' })
+    expect(snap().items[0].color).toBe('silver')
+    clearItems()
+    addItem(TB150)
+    expect(snap().items[0].color).toBeNull()
+  })
+
   it('updates, removes and clears items', () => {
     addItem(TB295)
     updateItem('tb-295', { qty: 3, dims: { w: '2100', h: '560', d: '1000' }, notes: 'raise lid' })
@@ -151,6 +159,23 @@ describe('quoteStore — serializeQuoteItems', () => {
         '1× Tray A (Utes) — size TBC — price on enquiry — Notes: —',
       ].join('\n'),
     )
+  })
+
+  it('inserts a Colour segment only when the item carries one', () => {
+    const base = {
+      id: 'x',
+      name: 'X',
+      category: 'Ute',
+      priceFrom: 100,
+      standardDims: '1×1×1',
+      dims: { w: '', h: '', d: '' },
+      qty: 1,
+      notes: '',
+    }
+    expect(serializeQuoteItems([{ ...base, color: 'black' }])).toBe(
+      '1× X (Ute) — 1×1×1mm — from $100+GST — Colour: Black — Notes: —',
+    )
+    expect(serializeQuoteItems([base])).toBe('1× X (Ute) — 1×1×1mm — from $100+GST — Notes: —')
   })
 })
 

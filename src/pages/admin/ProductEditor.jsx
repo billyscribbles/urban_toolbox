@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
 import { getTree, getLeaves } from '../../lib/catalog.js'
+import { PRODUCT_COLORS, normalizeColors } from '../../data/colors.js'
 import { slugify, uniqueValue, friendlySaveError, validateProduct } from '../../lib/productForm.js'
 import { saveProduct } from '../../lib/adminApi.js'
 import { publicPhotoUrl } from '../../lib/supabaseClient.js'
@@ -22,6 +23,7 @@ function toForm(row) {
       featured: false,
       fitsUte: true,
       fitsCaravan: true,
+      colors: [],
     }
   }
   return {
@@ -38,6 +40,7 @@ function toForm(row) {
     featured: !!row.featured,
     fitsUte: row.fits_ute !== false,
     fitsCaravan: row.fits_caravan !== false,
+    colors: normalizeColors(row.colors),
   }
 }
 
@@ -71,6 +74,14 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
   }
   function removeSpec(i) {
     setForm({ ...form, specs: form.specs.filter((_, idx) => idx !== i) })
+  }
+
+  // Add/remove a colour key, keeping the array in the canonical display order.
+  function toggleColor(key) {
+    const next = form.colors.includes(key)
+      ? form.colors.filter((c) => c !== key)
+      : [...form.colors, key]
+    setForm({ ...form, colors: normalizeColors(next) })
   }
 
   async function onSubmit(e) {
@@ -120,6 +131,7 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
         featured: form.featured,
         fitsUte: form.fitsUte,
         fitsCaravan: form.fitsCaravan,
+        colors: form.colors,
         sortOrder: isNew
           ? rows.filter((r) => r.category_id === form.categoryId).length
           : row.sort_order,
@@ -214,6 +226,22 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
           <input type="checkbox" checked={form.fitsCaravan} onChange={set('fitsCaravan')} />
           Fits caravans
         </label>
+      </fieldset>
+
+      <fieldset className="admin-editor__vehicles">
+        <legend className="admin__label">
+          Available colours <span className="admin__label-hint">none = no selector shown</span>
+        </legend>
+        {PRODUCT_COLORS.map((c) => (
+          <label className="admin-editor__check" key={c.key}>
+            <input
+              type="checkbox"
+              checked={form.colors.includes(c.key)}
+              onChange={() => toggleColor(c.key)}
+            />
+            {c.label}
+          </label>
+        ))}
       </fieldset>
 
       <label className="admin__label" htmlFor="pe-summary">

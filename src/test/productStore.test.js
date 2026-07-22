@@ -66,6 +66,13 @@ describe('normalizeRow — DB row to storefront product', () => {
     expect(caravanOnly.fitsUte).toBe(false)
     expect(caravanOnly.fitsCaravan).toBe(true)
   })
+
+  it('normalizes colours to known keys in canonical order, empty when absent', () => {
+    // Row 1 stores ['black','nope','silver'] → cleaned + reordered.
+    expect(normalizeRow(productRows[1]).colors).toEqual(['silver', 'black'])
+    // Row 0 omits the column entirely → no colours.
+    expect(normalizeRow(productRows[0]).colors).toEqual([])
+  })
 })
 
 describe('fixture stays honest against the category tree', () => {

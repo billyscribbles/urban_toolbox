@@ -360,6 +360,30 @@ describe('ProductEditor', () => {
     expect(hero.getAttribute('src')).toContain('products/x/a.jpg')
   })
 
+  it('offers the three colour checkboxes, unchecked by default', () => {
+    render(<ProductEditor row={null} rows={[]} onDone={() => {}} onCancel={() => {}} />)
+    for (const label of ['Silver', 'White', 'Black']) {
+      const box = screen.getByLabelText(label)
+      expect(box).toBeInTheDocument()
+      expect(box).not.toBeChecked()
+    }
+  })
+
+  it('saves the ticked colours in canonical order', async () => {
+    const user = userEvent.setup()
+    render(<ProductEditor row={null} rows={[]} onDone={() => {}} onCancel={() => {}} />)
+    await user.type(screen.getByLabelText(/^title/i), 'Colour Box')
+    await user.selectOptions(screen.getByLabelText(/category/i), 'locks')
+    // Tick out of order — the payload must still come back silver-then-black.
+    await user.click(screen.getByLabelText('Black'))
+    await user.click(screen.getByLabelText('Silver'))
+    await user.click(screen.getByRole('button', { name: /save product/i }))
+    expect(saveProduct).toHaveBeenCalledWith(
+      expect.objectContaining({ colors: ['silver', 'black'] }),
+      { isNew: true },
+    )
+  })
+
   it('saves a valid new product with generated id and slug', async () => {
     const onDone = vi.fn()
     render(<ProductEditor row={null} rows={[]} onDone={onDone} onCancel={() => {}} />)

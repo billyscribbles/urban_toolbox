@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import { getSupabase, isConfigured, publicPhotoUrl } from './supabaseClient.js'
+import { normalizeColors } from '../data/colors.js'
 import { discountedPrice } from './pricing.js'
 
 // Live product catalog. Mirrors quoteStore's "single module-level state, dumb
@@ -58,6 +59,8 @@ export function normalizeRow(row, storeDiscountPct = 0) {
     // (older rows read before the migration) counts as fits-both.
     fitsUte: row.fits_ute !== false,
     fitsCaravan: row.fits_caravan !== false,
+    // Enabled powder-coat colours (empty when none marked → no selector shown).
+    colors: normalizeColors(row.colors),
     quote: {
       id: row.id,
       priceFrom: discountedPrice(price, discountPct) ?? price,

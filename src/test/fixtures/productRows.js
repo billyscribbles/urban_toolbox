@@ -42,6 +42,8 @@ export const productRows = [
     // flags entirely, so it defaults to fits-both).
     fits_ute: false,
     fits_caravan: true,
+    // Colours out of canonical order + a junk value — normalizeRow must clean it.
+    colors: ['black', 'nope', 'silver'],
     sort_order: 0,
     product_images: [
       {

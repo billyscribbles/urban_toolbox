@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react'
+import { colorLabel } from '../data/colors.js'
 
 // Cart-shaped enquiry store. A single module-level state object holds the item
 // list and the drawer's open flag; components subscribe via useQuote() and
@@ -61,6 +62,7 @@ export function addItem(descriptor) {
     imageFit: descriptor.imageFit ?? '',
     imageTone: descriptor.imageTone ?? '',
     imagePosition: descriptor.imagePosition ?? '',
+    color: descriptor.color ?? null,
     dims: { w: '', h: '', d: '' },
     qty: 1,
     notes: '',
@@ -108,7 +110,8 @@ export function serializeQuoteItems(items) {
             : 'size TBC'
       const price = it.priceFrom ? `from $${it.priceFrom}+GST` : 'price on enquiry'
       const notes = it.notes && it.notes.trim() ? it.notes.trim() : '—'
-      return `${it.qty}× ${it.name} (${it.category}) — ${dims} — ${price} — Notes: ${notes}`
+      const color = it.color ? ` — Colour: ${colorLabel(it.color)}` : ''
+      return `${it.qty}× ${it.name} (${it.category}) — ${dims} — ${price}${color} — Notes: ${notes}`
     })
     .join('\n')
 }

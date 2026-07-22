@@ -77,6 +77,7 @@ describe('saveProduct', () => {
         discountPct: 15,
         standardDims: '600 × 400',
         featured: true,
+        colors: ['black', 'nope', 'silver'],
         sortOrder: 3,
       },
       { isNew: true },
@@ -91,6 +92,8 @@ describe('saveProduct', () => {
       discount_pct: 15,
       standard_dims: '600 × 400',
       featured: true,
+      // Persisted cleaned + in canonical order.
+      colors: ['silver', 'black'],
       sort_order: 3,
     })
   })

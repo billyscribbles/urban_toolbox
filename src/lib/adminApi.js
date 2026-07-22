@@ -1,5 +1,6 @@
 import { getSupabase } from './supabaseClient.js'
 import { processPhoto, photoPaths } from './imageResize.js'
+import { normalizeColors } from '../data/colors.js'
 import { retryLoad } from './productStore.js'
 
 // Auth + CRUD surface for the /admin dashboard. Every write refreshes the
@@ -86,6 +87,7 @@ function toRow(p) {
     featured: !!p.featured,
     fits_ute: p.fitsUte !== false,
     fits_caravan: p.fitsCaravan !== false,
+    colors: normalizeColors(p.colors),
     sort_order: p.sortOrder ?? 0,
   }
 }

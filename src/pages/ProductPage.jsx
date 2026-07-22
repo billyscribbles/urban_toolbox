@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ChevronRight, ShieldCheck, Package, PhoneCall } from 'lucide-react'
 import SEO from '../lib/seo.jsx'
@@ -6,6 +6,7 @@ import ProductGallery from '../components/ProductGallery.jsx'
 import RelatedProducts from '../components/RelatedProducts.jsx'
 import PriceTag from '../components/PriceTag.jsx'
 import QuoteButton from '../components/QuoteButton.jsx'
+import ColorSelector from '../components/ColorSelector.jsx'
 import CtaBand from '../components/CtaBand.jsx'
 import NotFoundPage from './NotFoundPage.jsx'
 import {
@@ -98,12 +99,23 @@ export default function ProductPage() {
   const product = getProductByToken(slug)
   if (!product) return <NotFoundPage />
 
+  return <ProductDetail product={product} />
+}
+
+// Renders a resolved product. Split from ProductPage so the colour selection
+// can live in local state without hooks sitting behind the loading/404 guards.
+function ProductDetail({ product }) {
+  // Pre-select the first available colour; null when the product has none, in
+  // which case no selector renders and no colour rides into the quote.
+  const [color, setColor] = useState(() => product.colors?.[0] ?? null)
+
   const leaf = getCategoryById(product.categoryId)
   const path = leaf ? getCategoryPath(leaf.slug) : []
   const topLabel = getTopLabelForProduct(product)
   const priceFrom = product.quote?.priceFrom ?? null
 
-  // Same descriptor Card builds — the shape the quote store consumes.
+  // Same descriptor Card builds — the shape the quote store consumes. `color`
+  // rebuilds with each selection so QuoteButton adds the chosen finish.
   const quoteItem = {
     id: product.id,
     name: product.title,
@@ -115,6 +127,7 @@ export default function ProductPage() {
     imageFit: product.imageFit,
     imageTone: product.imageTone,
     imagePosition: product.imagePosition,
+    color,
   }
 
   const hasDetail = product.summary || product.features?.length > 0 || product.specs?.length > 0
@@ -175,6 +188,10 @@ export default function ProductPage() {
                     <p className="product-page__dims-value">{product.quote.standardDims}</p>
                   </div>
                 </>
+              )}
+
+              {product.colors?.length > 0 && (
+                <ColorSelector colors={product.colors} value={color} onChange={setColor} />
               )}
 
               <div className="product-page__actions">
