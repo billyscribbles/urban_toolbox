@@ -83,3 +83,12 @@
     gap: 24px;
   }
 }
+
+/* Three columns crush the stat values into 3-4 wrapped lines on a phone; drop to
+   two so each value keeps a comfortable width. */
+@media (max-width: 560px) {
+  .story__stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 22px 16px;
+  }
+}

@@ -84,9 +84,10 @@ select {
 /* ---------------------------------------------------------------- layout */
 
 .container {
+  --container-pad: 32px;
   max-width: 1240px;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 var(--container-pad);
 }
 
 .section {
@@ -281,7 +282,7 @@ select {
 
 @media (max-width: 900px) {
   .container {
-    padding: 0 24px;
+    --container-pad: 24px;
   }
   .section {
     padding: 68px 0;
@@ -290,7 +291,7 @@ select {
 
 @media (max-width: 560px) {
   .container {
-    padding: 0 20px;
+    --container-pad: 20px;
   }
 }
 

@@ -81,10 +81,48 @@
   gap: 8px;
 }
 
-@media (max-width: 560px) {
+/* On phones the grouped sub-nav must not eat the viewport: the sticky bar is
+   capped to two compact chip rows that scroll horizontally instead of wrapping
+   into a full-height stack. Row 1 = group toggles, row 2 = the open group's
+   pills. Both peek their overflow so the swipe affordance is obvious. */
+@media (max-width: 700px) {
+  .range-nav__toggles,
+  .range-nav__pills,
+  .range-nav__inner {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .range-nav__toggles::-webkit-scrollbar,
+  .range-nav__pills::-webkit-scrollbar,
+  .range-nav__inner::-webkit-scrollbar {
+    display: none;
+  }
+  .range-nav__toggles {
+    gap: 8px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  .range-nav__pills {
+    padding-bottom: 4px;
+  }
+  .range-nav__panel {
+    padding-bottom: 12px;
+  }
+  .range-nav__toggle,
+  .range-nav__pill {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+  /* Comfortable 44px tap targets on touch. */
   .range-nav__toggle {
-    flex: 1 1 100%;
-    justify-content: center;
+    padding: 12px 20px;
+  }
+  .range-nav__pill {
+    padding: 13px 16px;
+    font-size: 13px;
   }
 }
 

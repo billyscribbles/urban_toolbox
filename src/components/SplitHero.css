@@ -310,3 +310,14 @@
     display: none;
   }
 }
+
+/* On phones two stacked 62vh panels make a ~124vh hero the user must scroll
+   through before any content; trim each panel and guard a long heading. */
+@media (max-width: 480px) {
+  .hero-panel {
+    min-height: clamp(380px, 52vh, 460px);
+  }
+  .hero-panel__heading {
+    overflow-wrap: break-word;
+  }
+}

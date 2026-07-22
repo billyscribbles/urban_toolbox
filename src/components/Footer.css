@@ -181,11 +181,11 @@
   }
   .footer__link {
     display: inline-block;
-    padding: 8px 0;
+    padding: 11px 0;
   }
   .footer__contact-link,
   .footer__email {
     display: inline-block;
-    padding: 3px 0;
+    padding: 7px 0;
   }
 }

@@ -489,11 +489,13 @@
   box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
-/* Only the table body scrolls; the toolbar (above) and pager (below) stay put. */
+/* Only the table body scrolls; the toolbar (above) and pager (below) stay put.
+   Both axes scroll so a table wider than the card (narrow screens) keeps every
+   column reachable instead of clipping the right-hand Actions column. */
 .admin-card__scroll {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+  overflow: auto;
 }
 
 /* Pagination footer — one tight row: count · page numbers · compact size select */
@@ -966,11 +968,26 @@
   }
 }
 
+/* On tablet/phone the fixed-height (100vh) shell hid the pager behind the mobile
+   address bar and blocked scrolling to reach it. Let the whole dashboard scroll
+   as a normal page instead; the table keeps its own horizontal scroll. */
+@media (max-width: 900px) {
+  .admin {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+}
+
 @media (max-width: 700px) {
   .admin-editor__row {
     grid-template-columns: 1fr;
   }
   .admin-table__hide-sm {
     display: none;
+  }
+  /* Keep the remaining columns legible; the card scrolls horizontally to them. */
+  .admin-table {
+    min-width: 560px;
   }
 }
