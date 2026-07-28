@@ -2,6 +2,7 @@ import { getSupabase } from './supabaseClient.js'
 import { processPhoto, photoPaths } from './imageResize.js'
 import { normalizeColors } from '../data/colors.js'
 import { retryLoad } from './productStore.js'
+import { normalizeMessages } from './promoStore.js'
 
 // Auth + CRUD surface for the /admin dashboard. Every write refreshes the
 // storefront productStore so an open tab reflects edits without a reload.
@@ -121,6 +122,32 @@ export async function saveStoreDiscount(pct) {
   const { error } = await c.from('store_settings').update({ discount_pct: pct }).eq('id', true)
   if (error) throw new Error(error.message)
   retryLoad()
+}
+
+// Promo banner — the same store_settings singleton. Note there is deliberately
+// no retryLoad() here: that refreshes the product catalogue, which the banner
+// has nothing to do with, and /admin never renders PromoBanner anyway (AppBody
+// drops the marketing chrome on that route), so there's no open view to sync.
+export async function fetchPromoBanner() {
+  const c = await client()
+  const { data, error } = await c
+    .from('store_settings')
+    .select('promo_enabled, promo_messages')
+    .maybeSingle()
+  if (error) throw new Error(error.message)
+  return {
+    enabled: !!data?.promo_enabled,
+    messages: normalizeMessages(data?.promo_messages),
+  }
+}
+
+export async function savePromoBanner({ enabled, messages }) {
+  const c = await client()
+  const { error } = await c
+    .from('store_settings')
+    .update({ promo_enabled: !!enabled, promo_messages: normalizeMessages(messages) })
+    .eq('id', true)
+  if (error) throw new Error(error.message)
 }
 
 // Toggle a product's storefront visibility without touching any other field.

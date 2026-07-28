@@ -2,6 +2,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 const calls = { upserts: [], updates: [], deletes: [], removed: [] }
 
+// store_settings singleton reads/writes are configured per-test via these two
+// module-level slots (mirroring `calls` above) rather than fixed canned data,
+// since promo banner tests need to vary both the read payload and the write
+// outcome from one test to the next.
+let maybeSingleResult = { data: null, error: null }
+let updateError = null
+
 function tableApi(table) {
   return {
     insert: vi.fn((row) => {
@@ -11,7 +18,7 @@ function tableApi(table) {
     update: vi.fn((patch) => ({
       eq: vi.fn((col, val) => {
         calls.updates.push({ table, patch, col, val })
-        return Promise.resolve({ error: null })
+        return Promise.resolve({ error: updateError })
       }),
     })),
     delete: vi.fn(() => ({
@@ -27,6 +34,7 @@ function tableApi(table) {
       eq: vi.fn(() => ({
         order: vi.fn(() => Promise.resolve({ data: [], error: null })),
       })),
+      maybeSingle: vi.fn(() => Promise.resolve(maybeSingleResult)),
     })),
   }
 }
@@ -52,14 +60,24 @@ vi.mock('../lib/supabaseClient.js', () => ({
 }))
 vi.mock('../lib/productStore.js', () => ({ retryLoad: vi.fn() }))
 
-const { saveProduct, deletePhoto, deleteProduct, setProductHidden } =
-  await import('../lib/adminApi.js')
+const {
+  saveProduct,
+  deletePhoto,
+  deleteProduct,
+  setProductHidden,
+  fetchPromoBanner,
+  savePromoBanner,
+} = await import('../lib/adminApi.js')
+const { retryLoad } = await import('../lib/productStore.js')
 
 beforeEach(() => {
   calls.upserts.length = 0
   calls.updates.length = 0
   calls.deletes.length = 0
   calls.removed.length = 0
+  maybeSingleResult = { data: null, error: null }
+  updateError = null
+  retryLoad.mockClear()
 })
 
 describe('saveProduct', () => {
@@ -139,5 +157,45 @@ describe('setProductHidden', () => {
       col: 'id',
       val: 'x',
     })
+  })
+})
+
+describe('fetchPromoBanner', () => {
+  it('reads enabled + normalized messages', async () => {
+    maybeSingleResult = {
+      data: { promo_enabled: true, promo_messages: ['30% off', '  ', 'Aussie made'] },
+      error: null,
+    }
+    const promo = await fetchPromoBanner()
+    expect(promo).toEqual({ enabled: true, messages: ['30% off', 'Aussie made'] })
+  })
+
+  it('treats a pre-migration row missing the columns as disabled rather than throwing', async () => {
+    maybeSingleResult = { data: {}, error: null }
+    const promo = await fetchPromoBanner()
+    expect(promo).toEqual({ enabled: false, messages: [] })
+  })
+})
+
+describe('savePromoBanner', () => {
+  it('writes both columns to the singleton row and skips the catalogue refresh', async () => {
+    await savePromoBanner({ enabled: true, messages: ['30% off'] })
+    expect(calls.updates[0]).toMatchObject({
+      table: 'store_settings',
+      patch: { promo_enabled: true, promo_messages: ['30% off'] },
+      col: 'id',
+      val: true,
+    })
+    // Unlike saveStoreDiscount and every product mutation above, the banner
+    // must NOT trigger retryLoad() — /admin never renders it, so there's no
+    // storefront view to sync.
+    expect(retryLoad).not.toHaveBeenCalled()
+  })
+
+  it('throws the supabase error message on write failure', async () => {
+    updateError = { message: 'permission denied' }
+    await expect(savePromoBanner({ enabled: true, messages: ['x'] })).rejects.toThrow(
+      'permission denied',
+    )
   })
 })
