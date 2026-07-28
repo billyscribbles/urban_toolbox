@@ -113,4 +113,16 @@ describe('PromoBannerForm', () => {
     await user.click(screen.getByRole('button', { name: /^save/i }))
     expect(await screen.findByRole('alert')).toHaveTextContent('permission denied')
   })
+
+  it('leaves the form usable after a failed load', async () => {
+    fetchMock.mockReset().mockRejectedValue(new Error('permission denied'))
+    render(<PromoBannerForm />)
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('permission denied')
+    // The failure must not freeze the form forever — every control gated on
+    // `loaded` (disabled={!loaded || busy}) has to stay usable so the admin
+    // can retry, rather than being stuck disabled with no way out.
+    expect(screen.getByRole('button', { name: /^save$/i })).toBeEnabled()
+    expect(screen.getByLabelText(/^show the promo banner on the site$/i)).toBeEnabled()
+  })
 })
