@@ -1,15 +1,22 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-const { maybeSingleMock } = vi.hoisted(() => ({ maybeSingleMock: vi.fn() }))
+// clientState lets a single test flip getSupabase() to resolve null, simulating
+// an unconfigured backend, without a second vi.mock/module reset.
+const { maybeSingleMock, clientState } = vi.hoisted(() => ({
+  maybeSingleMock: vi.fn(),
+  clientState: { enabled: true },
+}))
 
 vi.mock('../lib/supabaseClient.js', () => ({
   getSupabase: () =>
-    Promise.resolve({
-      from: () => ({ select: () => ({ maybeSingle: maybeSingleMock }) }),
-    }),
+    Promise.resolve(
+      clientState.enabled
+        ? { from: () => ({ select: () => ({ maybeSingle: maybeSingleMock }) }) }
+        : null,
+    ),
 }))
 
-const { normalizeMessages, signatureOf, loadPromo, dismissPromo, __setStateForTests } =
+const { normalizeMessages, signatureOf, loadPromo, dismissPromo, usePromo, __setStateForTests } =
   await import('../lib/promoStore.js')
 
 describe('normalizeMessages', () => {
@@ -44,6 +51,7 @@ describe('loadPromo', () => {
   beforeEach(() => {
     localStorage.clear()
     maybeSingleMock.mockReset()
+    clientState.enabled = true
     __setStateForTests({})
   })
 
@@ -57,6 +65,9 @@ describe('loadPromo', () => {
       enabled: true,
       messages: ['30% off'],
     })
+    // The cache write is only half the contract — usePromo() must also see the
+    // update, since PromoBanner (Task 2) renders off the live snapshot, not localStorage.
+    expect(usePromo.__getSnapshot()).toMatchObject({ enabled: true, messages: ['30% off'] })
   })
 
   it('stays disabled when the query errors rather than throwing', async () => {
@@ -68,6 +79,27 @@ describe('loadPromo', () => {
   it('stays disabled when the client rejects rather than throwing', async () => {
     maybeSingleMock.mockRejectedValue(new Error('offline'))
     await expect(loadPromo()).resolves.toBeUndefined()
+  })
+
+  it('stays disabled and writes no cache when the backend is unconfigured', async () => {
+    clientState.enabled = false
+    await expect(loadPromo()).resolves.toBeUndefined()
+    expect(localStorage.getItem('urbantoolboxes:promo-cache')).toBeNull()
+    expect(maybeSingleMock).not.toHaveBeenCalled()
+    expect(usePromo.__getSnapshot()).toMatchObject({ enabled: false, messages: [] })
+  })
+})
+
+describe('initialState — corrupt cache', () => {
+  it('falls back to the empty default instead of throwing when the cache is invalid JSON', async () => {
+    localStorage.clear()
+    localStorage.setItem('urbantoolboxes:promo-cache', '{not json')
+    // initialState() runs at module load, so the corrupt value must be seeded
+    // BEFORE a fresh module instance evaluates it — reset the registry and
+    // re-import rather than calling anything on the already-loaded module.
+    vi.resetModules()
+    const { usePromo: freshUsePromo } = await import('../lib/promoStore.js')
+    expect(freshUsePromo.__getSnapshot()).toMatchObject({ enabled: false, messages: [] })
   })
 })
 

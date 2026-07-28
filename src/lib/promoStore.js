@@ -112,6 +112,8 @@ export function dismissPromo() {
 export function usePromo() {
   return useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
 }
+// Test-only escape hatch so pure-logic tests can read the snapshot without React.
+usePromo.__getSnapshot = getSnapshot
 
 // Test-only: reset the module without a network.
 export function __setStateForTests(next) {
