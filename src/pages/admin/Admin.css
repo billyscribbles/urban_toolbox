@@ -1000,3 +1000,51 @@
     min-width: 560px;
   }
 }
+
+/* Promo banner editor (inside AdminModal). */
+.admin-promo {
+  display: grid;
+  gap: 16px;
+}
+.admin-promo__list {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  margin: 0;
+}
+.admin-promo__row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.admin-promo__row .admin__input {
+  flex: 1;
+}
+.admin-promo__remove {
+  flex: none;
+}
+.admin-promo__preview {
+  display: grid;
+  gap: 6px;
+}
+/* Mirrors the storefront .promo bar so the admin sees the real thing. */
+.admin-promo__bar {
+  display: grid;
+  place-items: center;
+  min-height: 36px;
+  padding: 0 12px;
+  background: var(--color-accent);
+  color: var(--color-white);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+}
+.admin-promo__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
