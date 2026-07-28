@@ -1,5 +1,5 @@
 import SEO from '../lib/seo.jsx'
-import SplitHero from '../components/SplitHero.jsx'
+import Hero from '../components/Hero.jsx'
 import CategoryCarousel from '../components/CategoryCarousel.jsx'
 import TrustBar from '../components/TrustBar.jsx'
 import WhyChoose from '../components/WhyChoose.jsx'
@@ -13,7 +13,7 @@ export default function Home() {
     <main>
       <SEO />
       <div className="hero-fold">
-        <SplitHero />
+        <Hero />
         <TrustBar />
       </div>
       <CategoryCarousel />

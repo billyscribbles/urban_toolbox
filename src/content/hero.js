@@ -1,31 +1,22 @@
-// Home hero — a full-bleed 50/50 photo split, styled after the editorial
-// reference: warm-sand eyebrow, a single-word title-case heading, a short
-// description and one small white pill CTA per side, over a dark-scrimmed photo.
-// Each panel funnels into its explore-by-vehicle page (/caravans, /utes), which
-// shows the range filtered to products flagged for that vehicle. Images live
-// under /brand/hero-* with 800/1600 webp derivatives.
+// Home hero — one full-bleed photo with the lockup stacked lower-left: a green
+// eyebrow, a two-line uppercase heading, a short paragraph and two CTAs that
+// split the audience down the middle (caravan owners / ute owners) into their
+// explore-by-vehicle pages. The trust strip sits in its own band below.
+//
+// The photo lives at /brand/hero-home.jpg with 800/1600 webp derivatives beside
+// it (`yarn images`). Replacing the hero shot means dropping a new file at that
+// same path and re-running the script — nothing else moves.
 export const hero = {
-  // Decorative label inside the circular centre divider (aria-hidden).
-  centerLabel: '//',
-  panels: [
-    {
-      key: 'caravan',
-      eyebrow: 'Built for adventure',
-      heading: 'Caravans',
-      description:
-        'Premium caravan storage and toolboxes, built for comfort, freedom and the long haul.',
-      cta: { label: 'Explore Caravans', to: '/caravans' },
-      img: '/brand/hero-caravan.jpg',
-      alt: 'Off-road caravan beside a lake at sunset, black aluminium checkerplate toolboxes on the drawbar',
-    },
-    {
-      key: 'ute',
-      eyebrow: 'Tough. Reliable. Ready.',
-      heading: 'Utes',
-      description: 'Tough, custom-built ute storage engineered to work as hard as you do.',
-      cta: { label: 'Explore Utes', to: '/utes' },
-      img: '/brand/hero-ute.jpg',
-      alt: 'Grey dual-cab 4x4 ute in the desert fitted with black aluminium tray toolboxes and a roof rack',
-    },
+  eyebrow: 'Premium storage solutions',
+  // Two lines so the break is a deliberate part of the lockup rather than
+  // whatever the viewport width happens to do to it.
+  headingLines: ['Built to work.', 'Built to last.'],
+  description:
+    "Premium toolboxes and storage solutions for utes and caravans. Built tough for Australia's harshest conditions.",
+  ctas: [
+    { label: 'Explore Caravans', to: '/caravans' },
+    { label: 'Explore Utes', to: '/utes' },
   ],
+  img: '/brand/hero-home.jpg',
+  alt: 'Dual-cab ute fitted with a black aluminium canopy and tray, hitched to an off-road caravan on a red outback dirt road at sunset',
 }

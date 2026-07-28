@@ -31,8 +31,24 @@ const TARGETS = [
   // readdirSync is non-recursive, so the catalog subfolder needs its own entry.
   { dir: 'public/images/catalog', widths: [400, 800] },
   // The hero is full-bleed and the LCP image — it carries fine checkerplate
-  // detail that q68 visibly softens, so encode it at a higher quality.
-  { dir: 'public/brand', widths: [800, 1600], only: /^hero-/, quality: 90 },
+  // detail that q68 visibly softens, so encode it at a higher quality. The two
+  // extra flags buy that crispness cheaply: -sharp_yuv keeps chroma off the
+  // hard edges (a black canopy against a sunset sky is exactly where the
+  // default subsampling bleeds), and -m 6 spends more search effort for the
+  // same quality target.
+  //
+  // Quality is per width, because the two renditions are viewed at very
+  // different angular sizes. The 1600 goes full-bleed across a desktop, where
+  // the extra bytes are the difference between crisp and mushy. The 800 renders
+  // at ~410 CSS px on a phone, where they buy nothing anyone can see — and it
+  // is the only one a phone ever fetches, so it alone sets the LCP budget.
+  {
+    dir: 'public/brand',
+    widths: [800, 1600],
+    only: /^hero-/,
+    quality: { 800: 88, 1600: 90 },
+    sharp: true,
+  },
 ]
 
 function sourceWidth(file) {
@@ -43,8 +59,12 @@ function sourceWidth(file) {
 let made = 0
 let skipped = 0
 
-for (const { dir, widths, only, quality } of TARGETS) {
-  const q = quality ?? QUALITY
+// `quality` is either one number for every width, or a map keyed by width.
+const qualityFor = (quality, w) =>
+  typeof quality === 'object' ? (quality[w] ?? QUALITY) : (quality ?? QUALITY)
+
+for (const { dir, widths, only, quality, sharp } of TARGETS) {
+  const extra = sharp ? ['-sharp_yuv', '-m', '6'] : []
   const abs = join(ROOT, dir)
   if (!existsSync(abs)) continue
 
@@ -68,9 +88,21 @@ for (const { dir, widths, only, quality } of TARGETS) {
         continue
       }
 
-      execFileSync('cwebp', ['-q', String(q), '-resize', String(target), '0', src, '-o', out], {
-        stdio: 'ignore',
-      })
+      execFileSync(
+        'cwebp',
+        [
+          '-q',
+          String(qualityFor(quality, w)),
+          ...extra,
+          '-resize',
+          String(target),
+          '0',
+          src,
+          '-o',
+          out,
+        ],
+        { stdio: 'ignore' },
+      )
       made++
     }
   }

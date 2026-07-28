@@ -1,0 +1,278 @@
+/* The hero fold: the hero photo and the trust strip share one full-screen band
+   on desktop. The hero flexes to fill whatever height the trust strip leaves, so
+   the fold lands exactly at the bottom of the viewport with nothing chopped. */
+.hero-fold {
+  /* Slide the whole fold up under the transparent navbar so the photo fills
+     behind it. The header is --navbar-h tall plus its 1px bottom border, so
+     cover that extra pixel too — otherwise the white body shows as a faint seam
+     at the top. */
+  margin-top: calc(-1 * var(--navbar-h) - 1px);
+}
+
+/* ------------------------------------------------------------------- hero */
+
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  min-height: clamp(560px, 86vh, 900px);
+  background: var(--color-dark);
+}
+
+@media (min-width: 761px) {
+  .hero-fold {
+    display: flex;
+    flex-direction: column;
+    /* Exactly the viewport. The fold is already pulled up under the sticky
+       navbar by the negative margin above, so its top sits at the top of the
+       screen — a plain 100svh then lands its base at the bottom of the screen,
+       adapting to any window height. */
+    min-height: 100svh;
+  }
+  /* Give up the fixed height and instead fill whatever the trust strip leaves. */
+  .hero {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+}
+
+.hero__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The vehicles sit low in frame; hold them while the lockup stays clear. */
+  object-position: 50% 58%;
+}
+
+/* Readability scrim: a single left-to-right wash under the lockup, and nothing
+   else. No top or bottom fade — those dimmed the whole frame to solve problems
+   the photo doesn't actually have here (the navbar carries its own frosted
+   band, and the trust strip below is already dark enough to butt straight up
+   against the photo). The wash is fully out by the time it reaches the
+   vehicles, so the sunset, the canopy and the van all render at full strength. */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    to right,
+    rgba(13, 13, 13, 0.82) 0%,
+    rgba(13, 13, 13, 0.66) 22%,
+    rgba(13, 13, 13, 0.44) 36%,
+    rgba(13, 13, 13, 0.18) 48%,
+    rgba(13, 13, 13, 0) 60%
+  );
+  pointer-events: none;
+}
+
+/* Tablet-width desktops need their own curve, not the same percentages. Two
+   things move at once here: the lockup takes up a much bigger share of the
+   width (the heading holds its 38px floor while the viewport shrinks), and
+   `cover` crops the photo to its middle — which is where the sunset is
+   brightest. Same wash shape, held further right to match. */
+@media (min-width: 761px) and (max-width: 1024px) {
+  .hero::after {
+    background-image: linear-gradient(
+      to right,
+      rgba(13, 13, 13, 0.86) 0%,
+      rgba(13, 13, 13, 0.66) 24%,
+      rgba(13, 13, 13, 0.44) 40%,
+      rgba(13, 13, 13, 0.24) 54%,
+      rgba(13, 13, 13, 0) 70%
+    );
+  }
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  /* Clear of the navbar overhead, and off the base so the lockup reads as
+     centred in the visible photo rather than in the raw box. */
+  padding-top: calc(var(--navbar-h) + 24px);
+  padding-bottom: clamp(32px, 5vh, 64px);
+  /* Two shadows, because this is what lets the scrim stay as thin as it does: a
+     tight one that hugs each glyph and does the real legibility work where the
+     heading's tail runs out past the wash, and a wide soft one that seats the
+     block. Both act on the text only, so the photo keeps its brightness. */
+  text-shadow:
+    0 1px 3px rgba(13, 13, 13, 0.5),
+    0 2px 20px rgba(13, 13, 13, 0.55);
+}
+
+.hero__eyebrow {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  /* The brand green at full strength is a mid-tone built for white surfaces —
+     over a dark photo it drops under the contrast floor for 13px text, so the
+     label runs a lifted mix of the same token. The halo does the rest without
+     resorting to a chip or a rule. */
+  color: color-mix(in srgb, var(--color-accent) 62%, #fff);
+  text-shadow: 0 0 22px rgba(var(--color-accent-rgb), 0.5);
+  margin: 0 0 24px;
+}
+
+.hero__heading {
+  font-family: var(--font-display);
+  /* Sized to sit inside the left third of the photo at desktop — big enough to
+     carry the fold, short enough that it never runs across the vehicles. */
+  font-size: clamp(38px, 4.4vw, 68px);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.hero__desc {
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.65;
+  color: var(--color-off-white);
+  margin: 28px 0 40px;
+  max-width: 42ch;
+  text-wrap: pretty;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+/* Square, industrial buttons — the solid white one carries the primary path and
+   the outlined one its equal-weight alternative. */
+.hero__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 17px 32px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  text-shadow: none;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-base);
+}
+
+.hero__cta--solid {
+  color: var(--color-ink-strong);
+  background: #fff;
+  box-shadow: 0 12px 34px -14px rgba(13, 13, 13, 0.6);
+}
+
+.hero__cta--solid:hover {
+  background: var(--color-off-white);
+  box-shadow: 0 16px 38px -14px rgba(13, 13, 13, 0.65);
+}
+
+.hero__cta--ghost {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.hero__cta--ghost:hover {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.hero__cta:active {
+  transform: translateY(1px);
+}
+
+.hero__arrow {
+  transition: transform var(--transition-base);
+}
+
+@media (hover: hover) {
+  .hero__cta:hover .hero__arrow {
+    transform: translateX(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__cta,
+  .hero__arrow {
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------- responsive */
+
+/* Phone: the photo has far less width to play with, so the scrim goes
+   bottom-weighted instead of left-weighted — still only under the text, which
+   at this width stacks against the base rather than the left edge. */
+@media (max-width: 760px) {
+  .hero {
+    align-items: flex-end;
+    min-height: clamp(520px, 78vh, 680px);
+  }
+  .hero::after {
+    /* Reaches further up than the desktop wash: stacked, the lockup occupies
+       the lower two thirds of the frame, and its top lands on whatever the
+       photo's brightest band happens to be. Clear of the sky either way, so the
+       top of the crop stays as bright as it is on desktop. */
+    background-image: linear-gradient(
+      to top,
+      rgba(13, 13, 13, 0.92) 0%,
+      rgba(13, 13, 13, 0.84) 22%,
+      rgba(13, 13, 13, 0.62) 42%,
+      rgba(13, 13, 13, 0.34) 62%,
+      rgba(13, 13, 13, 0) 84%
+    );
+  }
+  /* A portrait crop of a 16:9 photo only keeps about a third of its width, and
+     centred that lands on empty scrub plus the ute's nose — the caravan falls
+     off entirely. Bias the crop right so the slice carries the canopy and the
+     van behind it, which is the half of the photo that shows the product. */
+  .hero__img {
+    object-position: 60% 50%;
+  }
+  .hero__inner {
+    padding-bottom: clamp(40px, 6vh, 64px);
+  }
+  .hero__desc {
+    margin: 20px 0 32px;
+  }
+  .hero__actions {
+    gap: 12px;
+  }
+  .hero__cta {
+    flex: 1 1 200px;
+    justify-content: center;
+  }
+}
+
+/* Below this the two labels can't sit side by side without either wrapping to
+   two lines each or pushing the row past the viewport, so they stack full-width
+   — a phone-sized tap target either way. */
+@media (max-width: 560px) {
+  .hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hero__cta {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero__heading {
+    overflow-wrap: break-word;
+  }
+}

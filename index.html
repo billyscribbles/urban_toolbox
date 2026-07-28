@@ -8,18 +8,17 @@
     <meta name="theme-color" content="#0d0d0d" />
 
     <!-- Preload the LCP hero image so it paints fast. Must mirror the widths and
-         sizes the left HeroPanel renders (see SplitHero.jsx / HeroPanel.jsx), or
-         the browser preloads a file the page never uses. Non-WebP browsers
-         ignore this and fetch the JPEG fallback. Listed before the fonts on
-         purpose: same-priority preloads are fetched in document order, and the
-         hero is what LCP is waiting on. -->
+         sizes Hero.jsx renders, or the browser preloads a file the page never
+         uses. Non-WebP browsers ignore this and fetch the JPEG fallback. Listed
+         before the fonts on purpose: same-priority preloads are fetched in
+         document order, and the hero is what LCP is waiting on. -->
     <link
       rel="preload"
       as="image"
       type="image/webp"
-      href="/brand/hero-caravan-1600.webp"
-      imagesrcset="/brand/hero-caravan-800.webp 800w, /brand/hero-caravan-1600.webp 1600w"
-      imagesizes="(max-width: 760px) 100vw, 50vw"
+      href="/brand/hero-home-1600.webp"
+      imagesrcset="/brand/hero-home-800.webp 800w, /brand/hero-home-1600.webp 1600w"
+      imagesizes="100vw"
       fetchpriority="high"
     />
 

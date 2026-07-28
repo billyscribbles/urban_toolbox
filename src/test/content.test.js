@@ -21,16 +21,25 @@ import { getCategoryBySlug } from '../lib/catalog.js'
 const catalog = { categories }
 
 describe('content — section copy contract', () => {
-  it('hero has two panels, each with copy, a CTA and a photo on disk', () => {
-    expect(hero.panels).toHaveLength(2)
-    for (const panel of hero.panels) {
-      expect(panel.eyebrow).toBeTruthy()
-      expect(panel.heading).toBeTruthy()
-      expect(panel.description).toBeTruthy()
-      expect(panel.cta.label).toBeTruthy()
-      expect(panel.cta.to).toMatch(/^\//)
-      expect(panel.img).toMatch(/^\/brand\/hero-/)
-      expect(existsSync(join(process.cwd(), 'public', panel.img))).toBe(true)
+  it('hero has a lockup, two CTAs and a photo on disk', () => {
+    expect(hero.eyebrow).toBeTruthy()
+    expect(hero.headingLines.length).toBeGreaterThan(0)
+    for (const line of hero.headingLines) expect(line).toBeTruthy()
+    expect(hero.description).toBeTruthy()
+    expect(hero.alt).toBeTruthy()
+
+    expect(hero.ctas).toHaveLength(2)
+    for (const cta of hero.ctas) {
+      expect(cta.label).toBeTruthy()
+      expect(cta.to).toMatch(/^\//)
+    }
+
+    // <Img> builds the srcset from this path, so the derivatives must exist too.
+    expect(hero.img).toMatch(/^\/brand\/hero-/)
+    expect(existsSync(join(process.cwd(), 'public', hero.img))).toBe(true)
+    for (const w of [800, 1600]) {
+      const webp = hero.img.replace(/\.jpe?g$/, `-${w}.webp`)
+      expect(existsSync(join(process.cwd(), 'public', webp))).toBe(true)
     }
   })
 
