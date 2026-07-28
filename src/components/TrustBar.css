@@ -1,10 +1,24 @@
 .trust {
   /* Sits at the bottom of the hero fold, flush to the base of the screen. The
      card floats within this dark band with breathing room on every side so it
-     reads as one integrated panel rather than a full-bleed strip. */
+     reads as one integrated panel rather than a full-bleed strip.
+
+     It also overlaps the hero: the box is pulled up by --trust-overlap (defined
+     on .hero-fold in Hero.css) so the photo runs down to the card's midline and
+     the card straddles the seam. Positioned, because the photo is absolute and
+     would otherwise paint over the part of the card that sits on it. */
+  position: relative;
+  z-index: 1;
   flex-shrink: 0;
-  background: var(--color-dark);
-  padding: clamp(16px, 2vh, 26px) 0;
+  margin-top: calc(-1 * var(--trust-overlap, 0px));
+  padding: var(--trust-pad, clamp(16px, 2vh, 26px)) 0;
+  /* The dark band starts exactly where the photo ends — above that line this
+     section stays transparent so the hero shows through it. */
+  background: linear-gradient(
+    to bottom,
+    transparent var(--trust-overlap, 0px),
+    var(--color-dark) var(--trust-overlap, 0px)
+  );
 }
 
 /* One refined dark container: subtle premium border, soft rounded corners and a
@@ -12,11 +26,17 @@
 .trust__card {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0));
+  /* Opaque fill, not just the white wash: the card's top half sits on the photo
+     and its bottom half on the dark band, and a translucent panel would show
+     that join straight through itself. */
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0)), var(--color-dark);
   border: 1px solid var(--color-border-dark-3);
   border-radius: var(--radius-lg);
+  /* Deeper than a flat-on-flat card would need — it now casts onto the photo,
+     which is what sells it as lifted off the hero. */
   box-shadow:
-    0 20px 50px -30px rgba(0, 0, 0, 0.8),
+    0 24px 56px -28px rgba(0, 0, 0, 0.85),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
@@ -76,7 +96,7 @@
 
 @media (max-width: 760px) {
   .trust {
-    padding: 24px 0 28px;
+    padding: var(--trust-pad, 24px) 0 28px;
   }
   .trust__card {
     grid-template-columns: 1fr;

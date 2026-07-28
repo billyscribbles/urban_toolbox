@@ -7,6 +7,15 @@
      cover that extra pixel too — otherwise the white body shows as a faint seam
      at the top. */
   margin-top: calc(-1 * var(--navbar-h) - 1px);
+
+  /* Geometry of the photo/trust-strip seam, shared with TrustBar.css. The card
+     straddles the join: the photo runs on past the top of the strip and stops
+     on the card's midline, so the two read as one panel resting on the hero
+     instead of a bar floating below a sliver of dead space. The overlap is the
+     strip's own top padding plus half a card (the 44px icon plus the cell's
+     vertical padding, which is what sets the card's height). */
+  --trust-pad: clamp(16px, 2vh, 26px);
+  --trust-overlap: calc(var(--trust-pad) + 22px + clamp(18px, 2vw, 26px));
 }
 
 /* ------------------------------------------------------------------- hero */
@@ -47,12 +56,29 @@
   object-position: 50% 58%;
 }
 
+/* Base dissolve. The photo now ends on the trust card's midline, and the card
+   only spans the container — so left and right of it the frame would cut to the
+   dark band on a hard horizontal line. This fades the last stretch of the photo
+   into that exact colour instead. It sits entirely below the vehicles at every
+   height, so it costs the frame nothing. Above the scrim, under the lockup. */
+.hero::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  height: clamp(96px, 14%, 170px);
+  background-image: linear-gradient(to top, var(--color-dark), rgba(13, 13, 13, 0));
+  pointer-events: none;
+}
+
 /* Readability scrim: a single left-to-right wash under the lockup, and nothing
-   else. No top or bottom fade — those dimmed the whole frame to solve problems
-   the photo doesn't actually have here (the navbar carries its own frosted
-   band, and the trust strip below is already dark enough to butt straight up
-   against the photo). The wash is fully out by the time it reaches the
-   vehicles, so the sunset, the canopy and the van all render at full strength. */
+   else. No top fade and no full-height bottom one — those dimmed the whole
+   frame to solve problems the photo doesn't actually have here (the navbar
+   carries its own frosted band, and the base only needs the short dissolve
+   above). The wash is fully out by the time it reaches the vehicles, so the
+   sunset, the canopy and the van all render at full strength. */
 .hero::after {
   content: '';
   position: absolute;
@@ -91,9 +117,12 @@
   z-index: 1;
   width: 100%;
   /* Clear of the navbar overhead, and off the base so the lockup reads as
-     centred in the visible photo rather than in the raw box. */
+     centred in the visible photo rather than in the raw box. The overlap goes
+     on the bottom too: the photo now runs that much further down behind the
+     trust card, and reserving the same amount here keeps the lockup sitting
+     where it did against the photo the viewer can actually see. */
   padding-top: calc(var(--navbar-h) + 24px);
-  padding-bottom: clamp(32px, 5vh, 64px);
+  padding-bottom: calc(clamp(32px, 5vh, 64px) + var(--trust-overlap, 0px));
   /* Two shadows, because this is what lets the scrim stay as thin as it does: a
      tight one that hugs each glyph and does the real legibility work where the
      heading's tail runs out past the wash, and a wide soft one that seats the
@@ -218,6 +247,13 @@
    bottom-weighted instead of left-weighted — still only under the text, which
    at this width stacks against the base rather than the left edge. */
 @media (max-width: 760px) {
+  .hero-fold {
+    --trust-pad: 24px;
+    /* Stacked, the card is three rows tall, so straddling its midline would put
+       the seam halfway down the second row. Land it on the first row's midline
+       instead — same read, right amount of overlap. */
+    --trust-overlap: calc(var(--trust-pad) + 40px);
+  }
   .hero {
     align-items: flex-end;
     min-height: clamp(520px, 78vh, 680px);
@@ -244,7 +280,7 @@
     object-position: 60% 50%;
   }
   .hero__inner {
-    padding-bottom: clamp(40px, 6vh, 64px);
+    padding-bottom: calc(clamp(40px, 6vh, 64px) + var(--trust-overlap, 0px));
   }
   .hero__desc {
     margin: 20px 0 32px;
