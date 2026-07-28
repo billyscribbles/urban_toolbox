@@ -73,7 +73,6 @@ export const categories = [
       { id: 'ladder-rack', label: 'Ladder Racks', slug: 'ladder-rack' },
       { id: 'canopy-ladder', label: 'Canopy Ladders', slug: 'canopy-ladder' },
       { id: 'cargo-cage', label: 'Cargo Cages', slug: 'cargo-cage' },
-      { id: 'rear-gate', label: 'Rear Gates', slug: 'rear-gate' },
       {
         id: 'fuel-gas-tool-holder',
         label: 'Fuel, Gas & Tool Holders',

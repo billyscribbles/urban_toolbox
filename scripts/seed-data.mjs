@@ -1791,23 +1791,6 @@ export const products = [
     featured: false,
   },
   {
-    id: 'rear-gate-1',
-    categoryId: 'rear-gate',
-    title: '570 × 810mm Lockable Rear Toolbox Gate',
-    slug: '570-x-810mm-lockable-rear-toolbox-gate',
-    img: '/images/catalog/rear-gate-1.jpg',
-    imgAlt: '570 × 810mm Lockable Rear Toolbox Gate',
-    summary: 'Aluminium',
-    specs: [
-      { label: 'Material', value: 'Aluminium' },
-      { label: 'Thickness', value: '3mm Flat Plate' },
-      { label: 'Opening', value: 'L 570mm Depth: 30mm H 810mm' },
-    ],
-    features: ['Locking System: 2x Press Locks Locks', 'Hinge: Solid Double Hinge'],
-    quote: { id: 'rear-gate-1', priceFrom: null, standardDims: '' },
-    featured: false,
-  },
-  {
     id: 'fuel-gas-tool-holder-1',
     categoryId: 'fuel-gas-tool-holder',
     title: '600 × 230 × 290mm Aluminium Tool Storage Handle Holder',
