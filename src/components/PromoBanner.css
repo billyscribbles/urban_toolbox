@@ -1,0 +1,96 @@
+/* Promo strip above the navbar. Deliberately in normal flow (not sticky) so it
+   scrolls away and leaves the navbar to pin on its own. */
+.promo {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.promo__inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+}
+
+.promo__icon {
+  flex: none;
+  opacity: 0.85;
+}
+
+/* All messages share one grid cell, so the bar is as tall as the tallest one
+   and swapping the active message never changes the layout. */
+.promo__stack {
+  flex: 1;
+  display: grid;
+  margin: 0;
+  text-align: center;
+}
+
+.promo__msg {
+  grid-area: 1 / 1;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  /* Inactive messages stay in the accessibility tree — opacity, not display. */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition:
+    opacity var(--transition-base),
+    transform var(--transition-base);
+}
+
+.promo__msg--on {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.promo__close {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity var(--transition-fast);
+}
+
+.promo__close:hover {
+  opacity: 1;
+}
+
+.promo__close:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .promo__inner {
+    min-height: 32px;
+    gap: 8px;
+  }
+  .promo__msg {
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+  }
+}
+
+/* Rotation continues (a content change isn't motion) — only the movement goes. */
+@media (prefers-reduced-motion: reduce) {
+  .promo__msg {
+    transition: none;
+    transform: none;
+  }
+  .promo__msg--on {
+    transform: none;
+  }
+}

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useEffect, useLayoutEffect, useState, lazy, Suspense } from 'react'
 import Navbar from './components/Navbar.jsx'
+import PromoBanner from './components/PromoBanner.jsx'
 import Footer from './components/Footer.jsx'
 import Lightbox from './components/Lightbox.jsx'
 import Home from './pages/Home.jsx'
@@ -115,6 +116,7 @@ function AppBody() {
       <a href="#main" className="skip-link">
         Skip to content
       </a>
+      {!isAdmin && <PromoBanner />}
       {!isAdmin && <Navbar />}
       {/* Skip-link target. Each routed page renders its own <main> landmark;
           this wrapper just gives the skip link a stable, focusable anchor. */}
