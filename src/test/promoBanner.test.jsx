@@ -59,6 +59,25 @@ describe('PromoBanner — rotation', () => {
     expect(spy).not.toHaveBeenCalled()
     spy.mockRestore()
   })
+
+  it('resets the active index when a network reconcile shrinks the message set mid-rotation', () => {
+    vi.useFakeTimers()
+    __setStateForTests({ enabled: true, messages: ['first', 'second', 'third'] })
+    render(<PromoBanner />)
+
+    act(() => vi.advanceTimersByTime(5000))
+    act(() => vi.advanceTimersByTime(5000))
+    expect(screen.getByText('third').className).toContain('promo__msg--on')
+
+    // Simulates loadPromo() reconciling against the network after the banner
+    // already painted from the localStorage cache — the list shrinks while
+    // the rotation index is pointing at the end of the old, longer list.
+    act(() => {
+      __setStateForTests({ enabled: true, messages: ['fourth'] })
+    })
+
+    expect(screen.getByText('fourth').className).toContain('promo__msg--on')
+  })
 })
 
 describe('PromoBanner — dismissal', () => {
