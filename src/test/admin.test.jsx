@@ -306,9 +306,11 @@ describe('StatCards', () => {
     const dialog = await screen.findByRole('dialog', { name: /store-wide discount/i })
     expect(dialog).toBeInTheDocument()
     // Scoped to the dialog: the dialog's own aria-label also matches
-    // /store-wide discount/i, so an unscoped screen.getByLabelText would
-    // resolve to two elements (the dialog and the form's input).
-    const input = within(dialog).getByLabelText(/store-wide discount/i)
+    // /store-wide discount/i, and so does the close button's aria-label
+    // ("Close store-wide discount dialog", derived from AdminModal's title
+    // prop), so an unanchored match would resolve to multiple elements.
+    // Anchor to the exact form label text to isolate the input.
+    const input = within(dialog).getByLabelText(/^store-wide discount$/i)
     await user.clear(input)
     await user.type(input, '20')
     await user.click(screen.getByRole('button', { name: /^apply$/i }))
