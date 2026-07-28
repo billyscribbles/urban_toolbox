@@ -20,6 +20,7 @@ vi.mock('../lib/adminApi.js', () => ({
   setProductHidden: vi.fn(async () => {}),
   fetchStoreDiscount: vi.fn(async () => 0),
   saveStoreDiscount: vi.fn(async () => {}),
+  fetchPromoBanner: vi.fn(async () => ({ enabled: false, messages: [] })),
   uploadPhotos: vi.fn(),
   deletePhoto: vi.fn(),
   swapPhotoPositions: vi.fn(),
@@ -289,7 +290,7 @@ describe('ProductList', () => {
 })
 
 const { default: StatCards } = await import('../pages/admin/StatCards.jsx')
-const { saveStoreDiscount } = await import('../lib/adminApi.js')
+const { saveStoreDiscount, fetchPromoBanner } = await import('../lib/adminApi.js')
 
 describe('StatCards', () => {
   it('renders total / visible / hidden counts', () => {
@@ -320,6 +321,20 @@ describe('StatCards', () => {
     await waitFor(() =>
       expect(screen.queryByRole('dialog', { name: /store-wide discount/i })).toBeNull(),
     )
+  })
+
+  it('shows a promo banner card that opens the editor', async () => {
+    const user = userEvent.setup()
+    fetchPromoBanner.mockResolvedValueOnce({ enabled: true, messages: ['30% off', 'Aussie made'] })
+    render(
+      <StatCards total={3} visibleCount={2} hiddenCount={1} filter="all" onFilter={() => {}} />,
+    )
+
+    expect(await screen.findByTestId('stat-promo')).toHaveTextContent('On')
+    expect(screen.getByTestId('stat-promo')).toHaveTextContent('2 messages')
+
+    await user.click(screen.getByRole('button', { name: /manage banner/i }))
+    expect(await screen.findByRole('dialog', { name: /promo banner/i })).toBeInTheDocument()
   })
 })
 

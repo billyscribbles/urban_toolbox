@@ -250,9 +250,11 @@
 }
 
 /* Stat cards — four across, icon tile + text */
+/* auto-fit rather than a fixed count: 5 cards flow to 5 / 3 / 2 / 1 columns as
+   the viewport narrows, which replaces the two breakpoint overrides below. */
 .admin-statcards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: 16px;
 }
 .admin-statcard {
@@ -334,6 +336,10 @@
   font-size: 13px;
   line-height: 1.2;
   color: var(--color-ink);
+}
+.admin-statcard__sub {
+  font-size: 12px;
+  color: var(--color-ink-muted);
 }
 /* Discount card: keep the % and Manage button on one line so this card isn't
    taller than the others (the grid stretches all four to the tallest). */
@@ -962,19 +968,6 @@
   color: var(--color-ink-muted);
   font-size: 14px;
   margin-top: 20px;
-}
-
-/* Collapse the four stat cards before they'd overflow the (overflow:hidden)
-   viewport: two-up on tablets, single column on phones. */
-@media (max-width: 900px) {
-  .admin-statcards {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-@media (max-width: 560px) {
-  .admin-statcards {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* On tablet/phone the fixed-height (100vh) shell hid the pager behind the mobile

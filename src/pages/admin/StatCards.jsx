@@ -1,19 +1,32 @@
 import { useEffect, useState } from 'react'
-import { Package, Eye, EyeOff, Tag } from 'lucide-react'
-import { fetchStoreDiscount } from '../../lib/adminApi.js'
+import { Package, Eye, EyeOff, Tag, Megaphone } from 'lucide-react'
+import { fetchStoreDiscount, fetchPromoBanner } from '../../lib/adminApi.js'
 import DiscountModal from './DiscountModal.jsx'
+import PromoModal from './PromoModal.jsx'
 
-// The four dashboard summary cards. Counts are derived by the parent from the
+// The five dashboard summary cards. Counts are derived by the parent from the
 // product rows; the three count cards double as filters (click to show all /
-// visible / hidden), and the discount card owns its value + manage modal.
+// visible / hidden), and the discount + promo cards own their value + manage modal.
 export default function StatCards({ total, visibleCount, hiddenCount, filter, onFilter }) {
   const [pct, setPct] = useState(0)
   const [open, setOpen] = useState(false)
+  const [promo, setPromo] = useState({ enabled: false, messages: [] })
+  const [promoOpen, setPromoOpen] = useState(false)
 
   useEffect(() => {
     let alive = true
     fetchStoreDiscount()
       .then((v) => alive && setPct(v || 0))
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [])
+
+  useEffect(() => {
+    let alive = true
+    fetchPromoBanner()
+      .then((v) => alive && setPromo(v))
       .catch(() => {})
     return () => {
       alive = false
@@ -72,7 +85,27 @@ export default function StatCards({ total, visibleCount, hiddenCount, filter, on
         </span>
       </StatCard>
 
+      <StatCard variant="accent" icon={<Megaphone size={22} strokeWidth={2} aria-hidden="true" />}>
+        <span className="admin-statcard__label">Promo banner</span>
+        <span className="admin-statcard__row" data-testid="stat-promo">
+          <span className="admin-statcard__num admin-statcard__num--pct">
+            {promo.enabled ? 'On' : 'Off'}
+          </span>
+          <span className="admin-statcard__sub">
+            {promo.messages.length} message{promo.messages.length === 1 ? '' : 's'}
+          </span>
+          <button
+            type="button"
+            className="admin__ghost admin-statcard__btn"
+            onClick={() => setPromoOpen(true)}
+          >
+            Manage banner
+          </button>
+        </span>
+      </StatCard>
+
       <DiscountModal open={open} onSaved={(v) => setPct(v)} onClose={() => setOpen(false)} />
+      <PromoModal open={promoOpen} onSaved={setPromo} onClose={() => setPromoOpen(false)} />
     </div>
   )
 }
