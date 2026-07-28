@@ -249,12 +249,16 @@
   justify-content: center;
 }
 
-/* Stat cards — four across, icon tile + text */
-/* auto-fit rather than a fixed count: 5 cards flow to 5 / 3 / 2 / 1 columns as
-   the viewport narrows, which replaces the two breakpoint overrides below. */
+/* Stat cards — icon tile + text */
+/* Wrapping flex, not grid: a grid track count is fixed for the whole row, so
+   an odd-one-out card (5 cards at a width that only fits 4) gets stranded
+   alone beside empty tracks. Flex-wrap has no such fixed track count — each
+   wrapped row only ever contains the items that land in it, and flex-grow
+   lets those items stretch to fill the row completely, so a lone card on the
+   last line goes full-width instead of sitting in a partial row. */
 .admin-statcards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 16px;
 }
 .admin-statcard {
@@ -262,14 +266,16 @@
   align-items: center;
   gap: 12px;
   padding: 8px 14px;
+  flex: 1 1 240px;
   background: var(--color-white);
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
 }
-/* Count cards double as filters — clickable, and ringed while active. */
+/* Count cards double as filters — clickable, and ringed while active. Sizing
+   comes from the shared `.admin-statcard` flex-basis above — no width here,
+   so the button doesn't fight the flex layout with a hardcoded 100%. */
 .admin-statcard--btn {
-  width: 100%;
   font: inherit;
   text-align: left;
   cursor: pointer;
@@ -341,11 +347,16 @@
   font-size: 12px;
   color: var(--color-ink-muted);
 }
-/* Discount card: keep the % and Manage button on one line so this card isn't
-   taller than the others (the grid stretches all four to the tallest). */
+/* Discount/promo card content row: keep it on one line where there's room so
+   the card isn't taller than its row-mates (flex stretches all cards on a
+   wrapped row to the tallest). The promo row packs three items (On/Off,
+   message count, Manage banner) into a card only ~240px wide, tighter than
+   the two-item discount row was tuned for, so let it wrap onto a second line
+   rather than overflow at the narrowest card widths. */
 .admin-statcard__row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
 }
 .admin-statcard__btn {
