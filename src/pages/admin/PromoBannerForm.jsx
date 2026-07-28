@@ -9,6 +9,17 @@ import { fetchPromoBanner, savePromoBanner } from '../../lib/adminApi.js'
 const MAX_MESSAGES = 6
 const MAX_LENGTH = 120
 
+// Messages are held as { id, text } rather than plain strings so each row's
+// <input> can be keyed by a stable id instead of its array position. Keying
+// by index would let React rebind a mid-typing input's DOM node to a
+// different row's text whenever an earlier row is removed (focus and cursor
+// position stay on the DOM node while its value prop swaps out from under
+// the user). An id survives reordering/removal, so React unmounts exactly
+// the removed row and leaves every other row's DOM node — and focus — alone.
+function newRow(text = '') {
+  return { id: crypto.randomUUID(), text }
+}
+
 export default function PromoBannerForm({ onSaved }) {
   const [enabled, setEnabled] = useState(false)
   const [messages, setMessages] = useState([])
@@ -23,26 +34,34 @@ export default function PromoBannerForm({ onSaved }) {
       .then((promo) => {
         if (!alive) return
         setEnabled(promo.enabled)
-        setMessages(promo.messages.length ? promo.messages : [''])
+        setMessages(promo.messages.length ? promo.messages.map((text) => newRow(text)) : [newRow()])
         setLoaded(true)
       })
-      .catch((err) => alive && setError(err.message))
+      .catch((err) => {
+        if (!alive) return
+        setError(err.message)
+        // A failed load must still leave the form usable — otherwise every
+        // control stays disabled forever with no way to retry.
+        setLoaded(true)
+      })
     return () => {
       alive = false
     }
   }, [])
 
   function setMessage(i, value) {
-    setMessages(messages.map((m, idx) => (idx === i ? value.slice(0, MAX_LENGTH) : m)))
+    setMessages(
+      messages.map((m, idx) => (idx === i ? { ...m, text: value.slice(0, MAX_LENGTH) } : m)),
+    )
   }
   function addMessage() {
-    setMessages([...messages, ''])
+    setMessages([...messages, newRow()])
   }
   function removeMessage(i) {
     setMessages(messages.filter((_, idx) => idx !== i))
   }
 
-  const cleaned = messages.map((m) => m.trim()).filter(Boolean)
+  const cleaned = messages.map((m) => m.text.trim()).filter(Boolean)
 
   async function onSubmit(e) {
     e.preventDefault()
@@ -55,7 +74,7 @@ export default function PromoBannerForm({ onSaved }) {
     setError('')
     try {
       await savePromoBanner({ enabled, messages: cleaned })
-      setMessages(cleaned.length ? cleaned : [''])
+      setMessages(cleaned.length ? cleaned.map((text) => newRow(text)) : [newRow()])
       setStatus(enabled ? 'Promo banner is live.' : 'Promo banner is off.')
       onSaved?.({ enabled, messages: cleaned })
     } catch (err) {
@@ -80,13 +99,13 @@ export default function PromoBannerForm({ onSaved }) {
       <fieldset className="admin-promo__list">
         <legend className="admin__label">Messages (they rotate in this order)</legend>
         {messages.map((message, i) => (
-          <div className="admin-promo__row" key={i}>
+          <div className="admin-promo__row" key={message.id}>
             <input
               className="admin__input"
               aria-label={`Message ${i + 1}`}
               placeholder="30% off all Ute and Caravan Toolboxes"
               maxLength={MAX_LENGTH}
-              value={message}
+              value={message.text}
               disabled={!loaded || busy}
               onChange={(e) => setMessage(i, e.target.value)}
             />
