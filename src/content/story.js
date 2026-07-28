@@ -12,8 +12,7 @@ export const story = {
   },
   stats: [
     { icon: 'MapPin', value: 'Australian Made & Owned', label: 'Dandenong South, VIC' },
-    { icon: 'Award', value: '10+ Years', label: 'Fabrication experience' },
-    { icon: 'Users', value: '1000+', label: 'Happy customers' },
+    { icon: 'Award', value: '4+ Years', label: 'Fabrication experience' },
   ],
   cta: { label: 'Our story', to: '/about' },
 }
