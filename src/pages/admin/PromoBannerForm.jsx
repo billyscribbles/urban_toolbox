@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
 import { fetchPromoBanner, savePromoBanner } from '../../lib/adminApi.js'
+import { MAX_MESSAGES, MAX_LENGTH } from '../../lib/promoStore.js'
 
 // Promo banner editor: the on/off switch, the rotating message list, and a live
 // preview of the real green bar. Messages rotate on the storefront in list
 // order. Reordering is deliberately not offered — with a handful of short
 // strings, retyping beats building drag handles.
-const MAX_MESSAGES = 6
-const MAX_LENGTH = 120
 
 // Messages are held as { id, text } rather than plain strings so each row's
 // <input> can be keyed by a stable id instead of its array position. Keying

@@ -10,8 +10,8 @@ import { getSupabase } from './supabaseClient.js'
 
 const CACHE_KEY = 'urbantoolboxes:promo-cache'
 const DISMISS_KEY = 'urbantoolboxes:promo-dismissed'
-const MAX_MESSAGES = 6
-const MAX_LENGTH = 120
+export const MAX_MESSAGES = 6
+export const MAX_LENGTH = 120
 
 // localStorage throws in private browsing and when storage is disabled.
 function readStorage(key) {

@@ -1,7 +1,11 @@
 /* Promo strip above the navbar. Deliberately in normal flow (not sticky) so it
    scrolls away and leaves the navbar to pin on its own. */
 .promo {
-  background: var(--color-accent);
+  /* Small (12px/10.5px) uppercase text doesn't qualify for the AA large-text
+     exemption, and white-on-accent is only 4.09:1. The hover shade gives
+     5.40:1 — keep this token, don't "helpfully" swap it back to
+     --color-accent for consistency. */
+  background: var(--color-accent-hover);
   color: var(--color-white);
 }
 

@@ -1032,13 +1032,16 @@
   display: grid;
   gap: 6px;
 }
-/* Mirrors the storefront .promo bar so the admin sees the real thing. */
+/* Mirrors the storefront .promo bar so the admin sees the real thing. Uses
+   --color-accent-hover, not --color-accent, to match .promo's AA-contrast
+   fix for small uppercase text (5.40:1 vs 4.09:1) — keep this in lockstep
+   with src/components/PromoBanner.css. */
 .admin-promo__bar {
   display: grid;
   place-items: center;
   min-height: 36px;
   padding: 0 12px;
-  background: var(--color-accent);
+  background: var(--color-accent-hover);
   color: var(--color-white);
   font-size: 12px;
   font-weight: 700;
