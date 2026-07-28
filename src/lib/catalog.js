@@ -190,16 +190,19 @@ export function getVehicleSections(vehicle) {
 
 // A top category whose children are ALL leaves renders as one page with the
 // leaves as in-page sections (that's Accessories). Otherwise each subcategory is
-// its own page (that's Toolboxes).
+// its own page. `pages: true` forces the per-page form even for an all-leaf top
+// (that's Toolboxes — eight flat families that each deserve their own page).
 export function isFlattenedTop(topSlug) {
   const top = getCategoryBySlug(topSlug)
-  return !!top?.children?.length && top.children.every(isLeaf)
+  if (!top?.children?.length || top.pages) return false
+  return top.children.every(isLeaf)
 }
 
 // Nav view model for the dropdown. Each top category becomes a panel:
 //   { label, to, columns: [{ label, to, items: [{ label, to }] }] }
-// Toolboxes: a subcategory column lists its leaves as `items` (anchored into the
-// subcategory page); a bare leaf (Toolbox Canopies) is its own linkable column.
+// Toolboxes (`pages`): each of the eight families is a bare leaf, so every
+// column links straight to its own /toolboxes/<slug> page with no sub-items. A
+// column that DOES nest lists its leaves as `items`, anchored into that page.
 // Accessories (flattened): every leaf is a column linking to an in-page anchor.
 export function getMegaMenu(topSlug) {
   const top = getCategoryBySlug(topSlug)

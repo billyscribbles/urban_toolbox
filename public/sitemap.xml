@@ -2,13 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://example.com/</loc><priority>1.0</priority></url>
   <url><loc>https://example.com/toolboxes</loc><priority>0.9</priority></url>
-  <url><loc>https://example.com/toolboxes/under-tray-toolboxes</loc><priority>0.8</priority></url>
-  <url><loc>https://example.com/toolboxes/top-opening-toolboxes</loc><priority>0.8</priority></url>
-  <url><loc>https://example.com/toolboxes/side-opening-toolboxes</loc><priority>0.8</priority></url>
-  <url><loc>https://example.com/toolboxes/truck-toolboxes</loc><priority>0.8</priority></url>
-  <url><loc>https://example.com/toolboxes/dog-boxes</loc><priority>0.8</priority></url>
   <url><loc>https://example.com/toolboxes/camper-trailer-boxes</loc><priority>0.8</priority></url>
-  <url><loc>https://example.com/toolboxes/toolbox-canopies</loc><priority>0.8</priority></url>
+  <url><loc>https://example.com/toolboxes/canopies</loc><priority>0.8</priority></url>
+  <url><loc>https://example.com/toolboxes/dog-boxes</loc><priority>0.8</priority></url>
+  <url><loc>https://example.com/toolboxes/toolbox-drawer-units</loc><priority>0.8</priority></url>
+  <url><loc>https://example.com/toolboxes/side-opening-toolboxes</loc><priority>0.8</priority></url>
+  <url><loc>https://example.com/toolboxes/top-opening-toolboxes</loc><priority>0.8</priority></url>
+  <url><loc>https://example.com/toolboxes/truck-boxes</loc><priority>0.8</priority></url>
+  <url><loc>https://example.com/toolboxes/under-tray-toolboxes</loc><priority>0.8</priority></url>
   <url><loc>https://example.com/accessories</loc><priority>0.9</priority></url>
   <url><loc>https://example.com/utes</loc><priority>0.8</priority></url>
   <url><loc>https://example.com/caravans</loc><priority>0.8</priority></url>

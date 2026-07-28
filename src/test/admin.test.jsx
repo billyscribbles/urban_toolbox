@@ -105,7 +105,7 @@ const listRows = [
   },
   {
     id: 'b',
-    category_id: 'job-site-toolbox',
+    category_id: 'top-opening-toolboxes',
     title: 'Job Site Box',
     price: 450,
     discount_pct: 15,

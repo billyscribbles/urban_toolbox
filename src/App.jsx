@@ -132,7 +132,7 @@ function AppBody() {
                 element={
                   <CategoryPage
                     slug="toolboxes"
-                    intro="Custom aluminium toolboxes for utes, trucks and trailers — under-tray, top-opening, side-opening, truck boxes, dog boxes and canopies. Every model, built to order in Dandenong South."
+                    intro="Custom aluminium toolboxes for utes, trucks, campers and trailers — under-tray, top-opening, side-opening, truck boxes, dog boxes, drawer units and canopies. Every model, built to order in Dandenong South."
                   />
                 }
               />
@@ -173,10 +173,7 @@ function AppBody() {
                   redirected to their nearest new home so inbound links and search
                   rankings survive. */}
               <Route path="/caravan-toolboxes" element={<Navigate to="/caravans" replace />} />
-              <Route
-                path="/trucks"
-                element={<Navigate to="/toolboxes/truck-toolboxes" replace />}
-              />
+              <Route path="/trucks" element={<Navigate to="/toolboxes/truck-boxes" replace />} />
 
               {/* Legacy URLs from the previous GoDaddy site — kept alive so
                   existing search rankings and inbound links don't 404 after

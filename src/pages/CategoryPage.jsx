@@ -7,9 +7,9 @@ import { buildSections, getCategoryBySlug, getCategoryPath } from '../lib/catalo
 import { useProductCatalog, loadProducts, retryLoad } from '../lib/productStore.js'
 
 // One page renders any catalog category — the Toolboxes root (slug prop, every
-// product shown grouped by its top-level type), a Toolboxes subcategory
-// (/toolboxes/:subSlug), a bare leaf (Toolbox Canopies), or the flattened
-// Accessories root. Sections become a ProductRange; the sticky pill sub-nav and
+// product shown grouped by family), one of the eight Toolboxes families
+// (/toolboxes/:subSlug), a bare vehicle-exclusive leaf (Trays), or the
+// flattened Accessories root. Sections become a ProductRange; the sticky pill sub-nav and
 // Card grid come for free. When a node has nested children, each direct child is
 // one section aggregating every product beneath it — so nothing has to be
 // clicked through. Otherwise each leaf is its own section.

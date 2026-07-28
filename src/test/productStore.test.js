@@ -33,7 +33,7 @@ const { normalizeRow, loadProducts, getProducts, getStatus } =
 describe('normalizeRow — DB row to storefront product', () => {
   it('maps columns, sorts photos by position and builds the quote descriptor', () => {
     const p = normalizeRow(productRows[1])
-    expect(p.categoryId).toBe('job-site-toolbox')
+    expect(p.categoryId).toBe('top-opening-toolboxes')
     expect(p.img).toBe('https://cdn.test/products/job-site-toolbox-1/hero.jpg')
     expect(p.images.map((i) => i.src)).toEqual([
       'https://cdn.test/products/job-site-toolbox-1/hero.jpg',

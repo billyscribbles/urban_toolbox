@@ -40,7 +40,7 @@ function renderPage(slug) {
 describe('live catalog wiring', () => {
   it('getProductsForLeaf reads the store', () => {
     __setStateForTests({ status: 'ready', products: productRows.map(normalizeRow) })
-    expect(getProductsForLeaf('job-site-toolbox')).toHaveLength(1)
+    expect(getProductsForLeaf('top-opening-toolboxes')).toHaveLength(1)
     expect(getProductsForLeaf('nonexistent-leaf')).toHaveLength(0)
   })
 
@@ -68,7 +68,7 @@ describe('getRelatedProducts — same-category rail', () => {
   it('excludes the current product and respects the limit', () => {
     const rows = ['a', 'b', 'c', 'd'].map((id) => ({
       id,
-      category_id: 'full-lid-opening',
+      category_id: 'side-opening-toolboxes',
       title: id.toUpperCase(),
       slug: id,
       product_images: [],
@@ -83,11 +83,11 @@ describe('getRelatedProducts — same-category rail', () => {
 
   it('floats featured products to the front', () => {
     const rows = [
-      { id: 'a', category_id: 'full-lid-opening', title: 'A', slug: 'a', product_images: [] },
-      { id: 'b', category_id: 'full-lid-opening', title: 'B', slug: 'b', product_images: [] },
+      { id: 'a', category_id: 'side-opening-toolboxes', title: 'A', slug: 'a', product_images: [] },
+      { id: 'b', category_id: 'side-opening-toolboxes', title: 'B', slug: 'b', product_images: [] },
       {
         id: 'c',
-        category_id: 'full-lid-opening',
+        category_id: 'side-opening-toolboxes',
         title: 'C',
         slug: 'c',
         featured: true,

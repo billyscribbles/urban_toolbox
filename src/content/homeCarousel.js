@@ -17,28 +17,16 @@ export const rangeSection = {
 
 export const homeCarousel = [
   {
-    label: 'Under Tray Toolboxes',
-    img: '/images/catalog/ute-under-tray-boxes-1.jpg',
-    imgAlt: 'Aluminium checkerplate under tray ute toolbox',
-    to: '/toolboxes/under-tray-toolboxes',
+    label: 'Camper & Trailer Boxes',
+    img: '/images/catalog/caravan-boxes-1.jpg',
+    imgAlt: 'Aluminium checkerplate camper and trailer box',
+    to: '/toolboxes/camper-trailer-boxes',
   },
   {
-    label: 'Top Opening Toolboxes',
-    img: '/images/catalog/rectangle-ute-toolbox-1.jpg',
-    imgAlt: 'Rectangle top opening aluminium ute toolbox',
-    to: '/toolboxes/top-opening-toolboxes',
-  },
-  {
-    label: 'Side Opening Toolboxes',
-    img: '/images/catalog/half-lid-opening-1.jpg',
-    imgAlt: 'Half lid side opening aluminium toolbox',
-    to: '/toolboxes/side-opening-toolboxes',
-  },
-  {
-    label: 'Truck Toolboxes',
-    img: '/images/catalog/under-truck-tool-boxes-1.jpg',
-    imgAlt: 'Aluminium under truck toolbox',
-    to: '/toolboxes/truck-toolboxes',
+    label: 'Canopies',
+    img: '/images/catalog/toolbox-canopies-1.jpg',
+    imgAlt: 'Aluminium ute canopy',
+    to: '/toolboxes/canopies',
   },
   {
     label: 'Dog Boxes',
@@ -47,15 +35,39 @@ export const homeCarousel = [
     to: '/toolboxes/dog-boxes',
   },
   {
-    label: 'Toolbox Canopies',
-    img: '/images/catalog/toolbox-canopies-1.jpg',
-    imgAlt: 'Aluminium toolbox canopy',
-    to: '/toolboxes/toolbox-canopies',
+    label: 'Drawer Units',
+    img: '/images/catalog/drawer-units-1.jpg',
+    imgAlt: 'Black aluminium toolbox drawer unit',
+    to: '/toolboxes/toolbox-drawer-units',
+  },
+  {
+    label: 'Side Opening Toolboxes',
+    img: '/images/catalog/half-lid-opening-1.jpg',
+    imgAlt: 'Half lid side opening aluminium toolbox',
+    to: '/toolboxes/side-opening-toolboxes',
+  },
+  {
+    label: 'Top Opening Toolboxes',
+    img: '/images/catalog/rectangle-ute-toolbox-1.jpg',
+    imgAlt: 'Rectangle top opening aluminium ute toolbox',
+    to: '/toolboxes/top-opening-toolboxes',
+  },
+  {
+    label: 'Truck Boxes',
+    img: '/images/catalog/full-lid-opening-truck-1.jpg',
+    imgAlt: 'Aluminium full side opening truck tool box',
+    to: '/toolboxes/truck-boxes',
+  },
+  {
+    label: 'Under Tray Toolboxes',
+    img: '/images/catalog/ute-under-tray-boxes-1.jpg',
+    imgAlt: 'Aluminium checkerplate under tray ute toolbox',
+    to: '/toolboxes/under-tray-toolboxes',
   },
   {
     label: 'Accessories',
-    img: '/images/catalog/drawer-units-1.jpg',
-    imgAlt: 'Toolbox drawer unit accessory',
+    img: '/images/catalog/ladder-rack-1.jpg',
+    imgAlt: 'Boltable aluminium ladder rack',
     to: '/accessories',
   },
 ]

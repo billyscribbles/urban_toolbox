@@ -5,7 +5,7 @@
 export const productRows = [
   {
     id: 'ute-under-tray-boxes-1',
-    category_id: 'ute-under-tray-boxes',
+    category_id: 'under-tray-toolboxes',
     title: '580 × 230 × 400mm Aluminium Checker Ute Toolbox',
     slug: '580-x-230-x-400mm-aluminium-checker-ute-toolbox',
     summary: 'Aluminium Checker Plate · 580 × 230 × 400mm',
@@ -28,7 +28,7 @@ export const productRows = [
   },
   {
     id: 'job-site-toolbox-1',
-    category_id: 'job-site-toolbox',
+    category_id: 'top-opening-toolboxes',
     title: 'Job Site Box',
     slug: 'job-site-box',
     summary: 'Heavy duty site box',

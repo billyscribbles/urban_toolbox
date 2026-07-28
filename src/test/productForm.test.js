@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { slugify, uniqueValue, friendlySaveError, validateProduct } from '../lib/productForm.js'
 
-const LEAVES = ['job-site-toolbox', 'locks']
+const LEAVES = ['top-opening-toolboxes', 'locks']
 
 describe('slugify', () => {
   it('lowercases, strips symbols and collapses to hyphens', () => {

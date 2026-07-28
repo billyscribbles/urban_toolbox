@@ -8,135 +8,40 @@ export const categories = [
     id: 'toolboxes',
     label: 'Toolboxes',
     slug: 'toolboxes',
+    // Every child is a leaf, which would normally flatten the whole top into one
+    // anchored page (that's Accessories). `pages: true` opts out: each of the
+    // eight families keeps its own /toolboxes/<slug> page, so the mega-menu and
+    // sitemap still point at eight indexable category pages rather than eight
+    // anchors on a single ~70-product page.
+    pages: true,
     children: [
       {
-        id: 'under-tray-toolboxes',
-        label: 'Under Tray Toolboxes',
-        slug: 'under-tray-toolboxes',
-        children: [
-          {
-            id: 'ute-under-tray-boxes',
-            label: 'Ute Under Tray Boxes',
-            slug: 'ute-under-tray-boxes',
-          },
-          {
-            id: 'truck-under-tray-boxes',
-            label: 'Truck Under Tray Boxes',
-            slug: 'truck-under-tray-boxes',
-          },
-          { id: 'trundle-trays', label: 'Trundle-Trays', slug: 'trundle-trays' },
-          {
-            id: 'under-tray-water-tanks',
-            label: 'Under Tray Water Tanks',
-            slug: 'under-tray-water-tanks',
-          },
-        ],
+        id: 'camper-trailer-boxes',
+        label: 'Camper & Trailer Boxes',
+        slug: 'camper-trailer-boxes',
+      },
+      { id: 'canopies', label: 'Canopies', slug: 'canopies' },
+      { id: 'dog-boxes', label: 'Dog Boxes', slug: 'dog-boxes' },
+      // Slugs are unique tree-wide (getCategoryBySlug walks every node), and
+      // Accessories already owns the bare `drawer-units` slug — hence the
+      // `toolbox-` prefix here, matching the `drawer-` prefix convention below.
+      { id: 'toolbox-drawer-units', label: 'Drawer Units', slug: 'toolbox-drawer-units' },
+      {
+        id: 'side-opening-toolboxes',
+        label: 'Side Opening Toolboxes',
+        slug: 'side-opening-toolboxes',
       },
       {
         id: 'top-opening-toolboxes',
         label: 'Top Opening Toolboxes',
         slug: 'top-opening-toolboxes',
-        children: [
-          {
-            id: 'rectangle-ute-toolbox',
-            label: 'Rectangle Ute Toolbox',
-            slug: 'rectangle-ute-toolbox',
-          },
-          {
-            id: 'chest-style-ute-toolbox',
-            label: 'Chest Style Ute Toolbox',
-            slug: 'chest-style-ute-toolbox',
-          },
-          {
-            id: 'tub-liner-ute-toolbox',
-            label: 'Tub Liner Ute Toolbox',
-            slug: 'tub-liner-ute-toolbox',
-          },
-          { id: 'job-site-toolbox', label: 'Job Site Toolbox', slug: 'job-site-toolbox' },
-          {
-            id: 'cross-deck-gullwing',
-            label: 'Cross Deck Gullwing',
-            slug: 'cross-deck-gullwing',
-          },
-        ],
       },
+      { id: 'truck-boxes', label: 'Truck Boxes', slug: 'truck-boxes' },
       {
-        id: 'side-opening-toolboxes',
-        label: 'Side Opening Toolboxes',
-        slug: 'side-opening-toolboxes',
-        children: [
-          { id: 'half-lid-opening', label: 'Half Lid Opening', slug: 'half-lid-opening' },
-          {
-            id: 'half-lid-with-drawers',
-            label: 'Half Lid With Drawers',
-            slug: 'half-lid-with-drawers',
-          },
-          { id: 'full-lid-opening', label: 'Full Lid Opening', slug: 'full-lid-opening' },
-          {
-            id: 'full-lid-with-internal-drawers',
-            label: 'Full Lid With Internal Drawers',
-            slug: 'full-lid-with-internal-drawers',
-          },
-          { id: 'multi-lid-boxes', label: 'Multi-Lid Boxes', slug: 'multi-lid-boxes' },
-        ],
+        id: 'under-tray-toolboxes',
+        label: 'Under Tray Toolboxes',
+        slug: 'under-tray-toolboxes',
       },
-      { id: 'camper-ute-toolbox', label: 'Camper Ute Toolbox', slug: 'camper-ute-toolbox' },
-      { id: 'tradie-ute-box', label: 'Tradie Ute Box', slug: 'tradie-ute-box' },
-      {
-        id: 'truck-toolboxes',
-        label: 'Truck Toolboxes',
-        slug: 'truck-toolboxes',
-        children: [
-          {
-            id: 'under-truck-tool-boxes',
-            label: 'Under Truck Tool Boxes',
-            slug: 'under-truck-tool-boxes',
-          },
-          {
-            id: 'half-lid-truck-with-drawers',
-            label: 'Half Lid Truck With Drawers',
-            slug: 'half-lid-truck-with-drawers',
-          },
-          {
-            id: 'full-lid-opening-truck',
-            label: 'Full Lid Opening Truck',
-            slug: 'full-lid-opening-truck',
-          },
-          {
-            id: 'full-lid-truck-with-drawers',
-            label: 'Full Lid Truck With Drawers',
-            slug: 'full-lid-truck-with-drawers',
-          },
-        ],
-      },
-      {
-        id: 'dog-boxes',
-        label: 'Dog Boxes',
-        slug: 'dog-boxes',
-        children: [
-          { id: 'full-dog-boxes', label: 'Full Dog Boxes', slug: 'full-dog-boxes' },
-          {
-            id: 'half-canopy-half-dog-boxes',
-            label: 'Half Canopy / Half Dog Boxes',
-            slug: 'half-canopy-half-dog-boxes',
-          },
-        ],
-      },
-      {
-        id: 'camper-trailer-boxes',
-        label: 'Camper & Trailer Boxes',
-        slug: 'camper-trailer-boxes',
-        children: [
-          {
-            id: 'trailer-boxes-draw-bar-boxes',
-            label: 'Trailer Boxes / Draw Bar Boxes',
-            slug: 'trailer-boxes-draw-bar-boxes',
-          },
-          { id: 'caravan-boxes', label: 'Caravan Boxes', slug: 'caravan-boxes' },
-          { id: 'generator-boxes', label: 'Generator Boxes', slug: 'generator-boxes' },
-        ],
-      },
-      { id: 'toolbox-canopies', label: 'Toolbox Canopies', slug: 'toolbox-canopies' },
     ],
   },
   {
