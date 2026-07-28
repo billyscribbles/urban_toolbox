@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
-import { getTree, getLeaves } from '../../lib/catalog.js'
+import { getAdminCategoryGroups } from '../../lib/catalog.js'
 import { PRODUCT_COLORS, normalizeColors } from '../../data/colors.js'
 import { slugify, uniqueValue, friendlySaveError, validateProduct } from '../../lib/productForm.js'
 import { saveProduct } from '../../lib/adminApi.js'
@@ -60,7 +60,8 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
   // are reordered/deleted in the PhotoManager below.
   const primaryImage = [...images].sort((a, b) => a.position - b.position)[0]
 
-  const leaves = useMemo(() => getTree().flatMap((t) => getLeaves(t)), [])
+  const groups = useMemo(() => getAdminCategoryGroups(), [])
+  const leafIds = useMemo(() => groups.flatMap((g) => g.options.map((o) => o.id)), [groups])
 
   const set = (key) => (e) =>
     setForm({ ...form, [key]: e.target.type === 'checkbox' ? e.target.checked : e.target.value })
@@ -90,10 +91,7 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
       .split('\n')
       .map((f) => f.trim())
       .filter(Boolean)
-    const check = validateProduct(
-      form,
-      leaves.map((l) => l.id),
-    )
+    const check = validateProduct(form, leafIds)
     setErrors(check.errors)
     if (!check.valid) return
 
@@ -204,10 +202,14 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
         onChange={set('categoryId')}
       >
         <option value="">Choose a category…</option>
-        {leaves.map((l) => (
-          <option key={l.id} value={l.id}>
-            {l.label}
-          </option>
+        {groups.map((g) => (
+          <optgroup key={g.label} label={g.label}>
+            {g.options.map((o) => (
+              <option key={o.id} value={o.id}>
+                {o.label}
+              </option>
+            ))}
+          </optgroup>
         ))}
       </select>
       {errors.categoryId && (

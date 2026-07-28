@@ -10,7 +10,7 @@ import {
   Star,
   Trash2,
 } from 'lucide-react'
-import { getTree, getLeaves } from '../../lib/catalog.js'
+import { getAdminCategoryGroups } from '../../lib/catalog.js'
 import { publicPhotoUrl } from '../../lib/supabaseClient.js'
 import { formatPrice } from '../../lib/pricing.js'
 import { deleteProduct, setProductHidden } from '../../lib/adminApi.js'
@@ -54,8 +54,16 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
 
-  const leaves = useMemo(() => getTree().flatMap((t) => getLeaves(t)), [])
-  const leafLabel = useMemo(() => new Map(leaves.map((l) => [l.id, l.label])), [leaves])
+  const groups = useMemo(() => getAdminCategoryGroups(), [])
+  // Leaf labels repeat across groups ("Drawer Units" lives under both Toolboxes
+  // and Accessories), so the cell carries its group as an eyebrow to stay unambiguous.
+  const leafLabel = useMemo(
+    () =>
+      new Map(
+        groups.flatMap((g) => g.options.map((o) => [o.id, { top: g.label, label: o.label }])),
+      ),
+    [groups],
+  )
 
   const visible = rows.filter(
     (r) =>
@@ -147,10 +155,14 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
             onChange={(e) => setCat(e.target.value)}
           >
             <option value="">All categories</option>
-            {leaves.map((l) => (
-              <option key={l.id} value={l.id}>
-                {l.label}
-              </option>
+            {groups.map((g) => (
+              <optgroup key={g.label} label={g.label}>
+                {g.options.map((o) => (
+                  <option key={o.id} value={o.id}>
+                    {o.label}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
           <span className="admin-toolbar__spacer" />
@@ -232,7 +244,16 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
                       <span className="admin-table__sku">SKU: {row.id}</span>
                     </td>
                     <td className="admin-table__hide-sm">
-                      {leafLabel.get(row.category_id) ?? row.category_id}
+                      {leafLabel.has(row.category_id) ? (
+                        <span className="admin-table__cat">
+                          <span className="admin-table__cat-top">
+                            {leafLabel.get(row.category_id).top}
+                          </span>
+                          {leafLabel.get(row.category_id).label}
+                        </span>
+                      ) : (
+                        row.category_id
+                      )}
                     </td>
                     <td className="admin-table__hide-sm admin-table__date">
                       {formatDate(row.created_at)}

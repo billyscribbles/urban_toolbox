@@ -22,6 +22,7 @@ const {
   getCategoryBySlug,
   getTree,
   getLeaves,
+  getAdminCategoryGroups,
 } = await import('../lib/catalog.js')
 const { default: CategoryPage } = await import('../pages/CategoryPage.jsx')
 
@@ -177,6 +178,39 @@ describe('getVehicleSections — vehicle-filtered range', () => {
     }
     const vehicleGroupLabels = getVehicleMenu().columns.flatMap((c) => c.items.map((i) => i.label))
     expect(vehicleGroupLabels).not.toContain('Australian Made')
+  })
+
+  it('admin category groups mirror the nav — the eight Toolboxes and every Accessories entry', () => {
+    const groups = getAdminCategoryGroups()
+    const group = (label) => groups.find((g) => g.label === label)
+
+    // The Toolboxes optgroup is exactly the eight families the mega-menu lists.
+    expect(group('Toolboxes').options.map((o) => o.label)).toEqual(
+      getMegaMenu('toolboxes').columns.map((c) => c.label),
+    )
+    expect(group('Toolboxes').options).toHaveLength(8)
+
+    // Accessories: one option per menu column, with a nesting column's leaves
+    // qualified by their parent so no two options read the same.
+    const accessories = group('Accessories').options.map((o) => o.label)
+    for (const column of getMegaMenu('accessories').columns) {
+      expect(accessories).toContain(
+        column.items.length ? `${column.label} → ${column.items[0].label}` : column.label,
+      )
+    }
+    expect(accessories).toContain('Drawers → Locks')
+    expect(accessories).toContain('Drawers → Accessories')
+
+    // Scope-exclusive tops keep their own headings rather than sitting loose.
+    expect(group('Utes').options.map((o) => o.id)).toEqual(['trays', 'canopy', 'service-canopy'])
+    expect(group('Custom').options.map((o) => o.id)).toEqual(['australian-made'])
+
+    // Still every leaf, so no product can be left unfileable.
+    expect(groups.flatMap((g) => g.options.map((o) => o.id)).sort()).toEqual(
+      getTree()
+        .flatMap((t) => getLeaves(t).map((l) => l.id))
+        .sort(),
+    )
   })
 
   it('hides vehicle-exclusive categories from the generic menu and category page', () => {

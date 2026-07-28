@@ -261,6 +261,48 @@ export function getCustomMenu() {
   }
 }
 
+// Headings for scope-exclusive top-level leaves — the nav menu each one is
+// reachable from, so the admin files it the same way a person would look for it.
+const SCOPE_HEADINGS = { ute: 'Utes', caravan: 'Caravans', 'australian-made': 'Custom' }
+
+// Admin category picker view model: the same leaves the nav exposes, grouped
+// the way the nav groups them. Products attach to leaves, but a FLAT leaf list
+// reads nothing like the nav — "Drawer Units" and "Locks" each exist twice
+// tree-wide (Toolboxes vs Accessories, Accessories vs its Drawers subcategory)
+// and Drawers' own "Accessories" leaf means nothing standing alone. So: one
+// group per top category, a nested leaf qualified with its subcategory, and the
+// scope-exclusive tops (ute-only Trays/Canopy/Service Canopy, the Australian
+// Made line) bucketed under the menu that surfaces them. Shape:
+//   [{ label, options: [{ id, label }] }]
+export function getAdminCategoryGroups() {
+  const groups = []
+  const scoped = new Map()
+
+  for (const top of categories) {
+    if (isLeaf(top)) {
+      const heading = SCOPE_HEADINGS[scopeOf(top)] ?? top.label
+      const bucket = scoped.get(heading) ?? []
+      bucket.push({ id: top.id, label: top.label })
+      scoped.set(heading, bucket)
+      continue
+    }
+    groups.push({
+      label: top.label,
+      options: (top.children ?? []).flatMap((child) =>
+        isLeaf(child)
+          ? [{ id: child.id, label: child.label }]
+          : getLeaves(child).map((leaf) => ({
+              id: leaf.id,
+              label: `${child.label} → ${leaf.label}`,
+            })),
+      ),
+    })
+  }
+
+  for (const [label, options] of scoped) groups.push({ label, options })
+  return groups
+}
+
 // The "About" dropdown. Hand-built: the About page plus the Fabrication service
 // page as plain topic links. No sub-items, so no `showAll` row.
 export function getAboutMenu() {
