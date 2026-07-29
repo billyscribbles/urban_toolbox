@@ -1,6 +1,11 @@
 /* Promo strip above the navbar. Deliberately in normal flow (not sticky) so it
    scrolls away and leaves the navbar to pin on its own. */
 .promo {
+  /* Space between messages, and — since the last message of a group carries it
+     as trailing padding — across the seam between one group and the next too.
+     The rhythm stays even all the way round the loop. */
+  --promo-gap: clamp(2.5rem, 7vw, 5.5rem);
+
   /* Small (12px/10.5px) uppercase text doesn't qualify for the AA large-text
      exemption, and white-on-accent is only 4.09:1. The hover shade gives
      5.40:1 — keep this token, don't "helpfully" swap it back to
@@ -9,78 +14,86 @@
   color: var(--color-white);
 }
 
-.promo__inner {
+/* The window the belt runs behind. No .container padding: the strip is meant to
+   run edge to edge, so messages enter and leave at the viewport bounds. */
+.promo__viewport {
   display: flex;
   align-items: center;
-  gap: 10px;
   min-height: 36px;
+  overflow: hidden;
 }
 
-.promo__icon {
+.promo__track {
+  display: flex;
   flex: none;
-  opacity: 0.85;
+  width: max-content;
 }
 
-/* All messages share one grid cell, so the bar is as tall as the tallest one
-   and swapping the active message never changes the layout. */
-.promo__stack {
-  flex: 1;
-  display: grid;
-  margin: 0;
-  text-align: center;
+/* --promo-shift is exactly one group wide, so the frame after the loop resets
+   is identical to the frame before it. */
+.promo__track--rolling {
+  animation: promo-scroll var(--promo-duration, 30s) linear infinite;
+  will-change: transform;
+}
+
+/* WCAG 2.2.2 wants a way to stop moving content. Hovering parks the belt so a
+   message can be read at leisure; the reduced-motion block below stops it
+   outright. :focus-within is inert today (nothing in the strip takes focus) and
+   is here so the pause still works the day a message becomes a link. */
+.promo:hover .promo__track,
+.promo:focus-within .promo__track {
+  animation-play-state: paused;
+}
+
+.promo__group {
+  display: flex;
+  flex: none;
+  align-items: center;
 }
 
 .promo__msg {
-  grid-area: 1 / 1;
+  flex: none;
+  position: relative;
+  padding-inline-end: var(--promo-gap);
   font-family: var(--font-body);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  /* Inactive messages stay in the accessibility tree — opacity, not display. */
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(6px);
-  transition:
-    opacity var(--transition-base),
-    transform var(--transition-base);
+  white-space: nowrap;
 }
 
-.promo__msg--on {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
+/* A dot centred in every trailing gap. Because it hangs off each message
+   rather than sitting between siblings, the seam between two groups gets one
+   too — the loop reads as an unbroken string of promotions. */
+.promo__msg::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: calc(var(--promo-gap) / 2);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+  transform: translate(50%, -50%);
 }
 
-.promo__close {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  padding: 0;
-  border: 0;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  opacity: 0.8;
-  transition: opacity var(--transition-fast);
-}
-
-.promo__close:hover {
-  opacity: 1;
-}
-
-.promo__close:focus-visible {
-  outline: 2px solid var(--color-white);
-  outline-offset: 2px;
+@keyframes promo-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(var(--promo-shift, 0), 0, 0);
+  }
 }
 
 @media (max-width: 640px) {
-  .promo__inner {
+  .promo {
+    --promo-gap: 2.25rem;
+  }
+  .promo__viewport {
     min-height: 32px;
-    gap: 8px;
   }
   .promo__msg {
     font-size: 10.5px;
@@ -88,13 +101,31 @@
   }
 }
 
-/* Rotation continues (a content change isn't motion) — only the movement goes. */
+/* Asked for stillness, get stillness: no belt at all. The clones drop out and
+   the real set lays itself out statically, wrapping if it must, so nobody
+   trades the message away for the accommodation. */
 @media (prefers-reduced-motion: reduce) {
-  .promo__msg {
-    transition: none;
-    transform: none;
+  .promo__viewport {
+    overflow: visible;
   }
-  .promo__msg--on {
-    transform: none;
+  .promo__track {
+    width: 100%;
+    animation: none;
+  }
+  .promo__group[aria-hidden] {
+    display: none;
+  }
+  .promo__group {
+    flex: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-block: 6px;
+    row-gap: 4px;
+  }
+  .promo__msg:last-child {
+    padding-inline-end: 0;
+  }
+  .promo__msg:last-child::after {
+    content: none;
   }
 }

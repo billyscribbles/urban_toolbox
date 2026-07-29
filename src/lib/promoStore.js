@@ -9,7 +9,6 @@ import { getSupabase } from './supabaseClient.js'
 // never worth blocking or erroring a page render over.
 
 const CACHE_KEY = 'urbantoolboxes:promo-cache'
-const DISMISS_KEY = 'urbantoolboxes:promo-dismissed'
 export const MAX_MESSAGES = 6
 export const MAX_LENGTH = 120
 
@@ -26,7 +25,7 @@ function writeStorage(key, value) {
   try {
     window.localStorage.setItem(key, value)
   } catch {
-    // Nothing to do — the banner just loses its cache/dismissal memory.
+    // Nothing to do — the banner just loses its first-paint cache.
   }
 }
 
@@ -39,8 +38,8 @@ export function normalizeMessages(raw) {
     .slice(0, MAX_MESSAGES)
 }
 
-// Identifies the current promotion. A dismissal only sticks while this matches,
-// so editing any message re-shows the banner to everyone who closed the old one.
+// Identifies the current promotion. PromoBanner keys its marquee measurement
+// off this, so editing any message re-measures the belt.
 export function signatureOf(messages) {
   return messages.join('|')
 }
@@ -62,7 +61,7 @@ function initialState() {
       // Corrupt cache — fall through to the empty default.
     }
   }
-  return { enabled, messages, dismissed: readStorage(DISMISS_KEY) }
+  return { enabled, messages }
 }
 
 let state = initialState()
@@ -103,12 +102,6 @@ export async function loadPromo() {
   }
 }
 
-export function dismissPromo() {
-  const signature = signatureOf(state.messages)
-  writeStorage(DISMISS_KEY, signature)
-  setState({ ...state, dismissed: signature })
-}
-
 export function usePromo() {
   return useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
 }
@@ -118,5 +111,5 @@ usePromo.__getSnapshot = getSnapshot
 // Test-only: reset the module without a network.
 export function __setStateForTests(next) {
   loaded = false
-  setState({ enabled: false, messages: [], dismissed: null, ...next })
+  setState({ enabled: false, messages: [], ...next })
 }

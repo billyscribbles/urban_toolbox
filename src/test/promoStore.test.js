@@ -16,7 +16,7 @@ vi.mock('../lib/supabaseClient.js', () => ({
     ),
 }))
 
-const { normalizeMessages, signatureOf, loadPromo, dismissPromo, usePromo, __setStateForTests } =
+const { normalizeMessages, signatureOf, loadPromo, usePromo, __setStateForTests } =
   await import('../lib/promoStore.js')
 
 describe('normalizeMessages', () => {
@@ -41,7 +41,7 @@ describe('normalizeMessages', () => {
 })
 
 describe('signatureOf', () => {
-  it('changes when any message changes, so an old dismissal stops matching', () => {
+  it('changes when any message changes, so the banner re-measures its belt', () => {
     expect(signatureOf(['a', 'b'])).toBe(signatureOf(['a', 'b']))
     expect(signatureOf(['a', 'b'])).not.toBe(signatureOf(['a', 'c']))
   })
@@ -100,17 +100,5 @@ describe('initialState — corrupt cache', () => {
     vi.resetModules()
     const { usePromo: freshUsePromo } = await import('../lib/promoStore.js')
     expect(freshUsePromo.__getSnapshot()).toMatchObject({ enabled: false, messages: [] })
-  })
-})
-
-describe('dismissPromo', () => {
-  beforeEach(() => {
-    localStorage.clear()
-    __setStateForTests({ enabled: true, messages: ['30% off'] })
-  })
-
-  it('persists the signature of the current message set', () => {
-    dismissPromo()
-    expect(localStorage.getItem('urbantoolboxes:promo-dismissed')).toBe('30% off')
   })
 })
