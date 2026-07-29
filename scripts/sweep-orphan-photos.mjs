@@ -5,21 +5,39 @@
 // every storage delete a silent no-op (see 0007_restore_storage_read_policy.sql).
 // With that policy restored, deletes work again — this clears the backlog.
 //
-//   node scripts/sweep-orphan-photos.mjs           # dry run, lists what it would delete
-//   node scripts/sweep-orphan-photos.mjs --apply   # actually deletes
+//   yarn node scripts/sweep-orphan-photos.mjs           # dry run, lists what it would delete
+//   yarn node scripts/sweep-orphan-photos.mjs --apply   # actually deletes
 //
-// Needs SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY in the environment, same as the
-// seed scripts.
+// `yarn node`, not bare `node` — this repo uses Yarn PnP, so there is no
+// node_modules for Node's own resolver to find @supabase/supabase-js in.
+//
+// Credentials come from .env (VITE_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY);
+// the service role key is needed because this reads and deletes across every
+// product's photos regardless of RLS.
 
 import { createClient } from '@supabase/supabase-js'
+import { readFileSync, existsSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 
 const BUCKET = 'product-photos'
 const apply = process.argv.includes('--apply')
 
+// Vite loads .env for the app, but a plain Node script gets nothing — read it
+// here so this runs as one command instead of an env-var prefix soup.
+const envPath = fileURLToPath(new URL('../.env', import.meta.url))
+if (existsSync(envPath)) {
+  for (const line of readFileSync(envPath, 'utf8').split('\n')) {
+    const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)$/)
+    if (m) process.env[m[1]] ??= m[2].trim().replace(/^["']|["']$/g, '')
+  }
+}
+
 const url = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 if (!url || !serviceKey) {
-  console.error('Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY first.')
+  console.error(
+    'Need VITE_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (in .env or the environment).',
+  )
   process.exit(1)
 }
 const supabase = createClient(url, serviceKey)
