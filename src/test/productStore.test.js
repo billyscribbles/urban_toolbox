@@ -7,28 +7,44 @@ import { categories } from '../data/categories.js'
 // right column/value, not just that .eq() was called with something.
 const { eqMock } = vi.hoisted(() => ({ eqMock: vi.fn() }))
 
+const categoryImageRows = [
+  { category_id: 'under-tray-toolboxes', storage_path: 'categories/under-tray-toolboxes/tile.jpg' },
+]
+
 vi.mock('../lib/supabaseClient.js', () => ({
   isConfigured: () => true,
   publicPhotoUrl: (p) => `https://cdn.test/${p}`,
   getSupabase: () =>
     Promise.resolve({
-      from: () => ({
-        select: () => ({
-          eq: (...args) => {
-            eqMock(...args)
-            return {
-              order: () => ({
-                order: () => Promise.resolve({ data: productRows, error: null }),
+      // Only `category_images` needs a branch. `store_settings` falls through to
+      // the default shape, throws on the missing `.maybeSingle`, and is caught
+      // by fetchStoreDiscount's own try/catch — existing behaviour, left alone.
+      from: (table) =>
+        table === 'category_images'
+          ? { select: () => Promise.resolve({ data: categoryImageRows, error: null }) }
+          : {
+              select: () => ({
+                eq: (...args) => {
+                  eqMock(...args)
+                  return {
+                    order: () => ({
+                      order: () => Promise.resolve({ data: productRows, error: null }),
+                    }),
+                  }
+                },
               }),
-            }
-          },
-        }),
-      }),
+            },
     }),
 }))
 
-const { normalizeRow, loadProducts, getProducts, getStatus } =
-  await import('../lib/productStore.js')
+const {
+  normalizeRow,
+  loadProducts,
+  getProducts,
+  getStatus,
+  getCategoryImages,
+  __setStateForTests,
+} = await import('../lib/productStore.js')
 
 describe('normalizeRow — DB row to storefront product', () => {
   it('maps columns, sorts photos by position and builds the quote descriptor', () => {
@@ -94,5 +110,21 @@ describe('loadProducts', () => {
     // Hidden products must never reach the public storefront — assert the
     // exact filter, not just that .eq() was called with something.
     expect(eqMock).toHaveBeenCalledWith('hidden', false)
+  })
+})
+
+describe('category images', () => {
+  it('loadProducts lands them keyed by category id', async () => {
+    await loadProducts({ force: true })
+    expect(getCategoryImages()).toEqual({
+      'under-tray-toolboxes': 'categories/under-tray-toolboxes/tile.jpg',
+    })
+  })
+
+  it('reads as empty when the state predates the column', () => {
+    // __setStateForTests callers elsewhere omit categoryImages entirely; the
+    // accessor must not hand back undefined and break the carousel.
+    __setStateForTests({ status: 'ready', products: [] })
+    expect(getCategoryImages()).toEqual({})
   })
 })

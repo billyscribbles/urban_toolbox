@@ -9,9 +9,17 @@ const calls = { upserts: [], updates: [], deletes: [], removed: [] }
 let maybeSingleResult = { data: null, error: null }
 let updateError = null
 
+// Swapped per-test so "replace an existing photo" can assert the old files are
+// swept; null means "no photo yet".
+let existingCategoryImage = null
+
 function tableApi(table) {
   return {
     insert: vi.fn((row) => {
+      calls.upserts.push({ table, row })
+      return Promise.resolve({ error: null })
+    }),
+    upsert: vi.fn((row) => {
       calls.upserts.push({ table, row })
       return Promise.resolve({ error: null })
     }),
@@ -33,6 +41,10 @@ function tableApi(table) {
       })),
       eq: vi.fn(() => ({
         order: vi.fn(() => Promise.resolve({ data: [], error: null })),
+        // Filtered single-row read — uploadCategoryImage looking up the photo
+        // it is about to replace. Distinct from the unfiltered maybeSingle
+        // below, which is the store_settings singleton.
+        maybeSingle: vi.fn(() => Promise.resolve({ data: existingCategoryImage, error: null })),
       })),
       maybeSingle: vi.fn(() => Promise.resolve(maybeSingleResult)),
     })),
@@ -60,6 +72,19 @@ vi.mock('../lib/supabaseClient.js', () => ({
 }))
 vi.mock('../lib/productStore.js', () => ({ retryLoad: vi.fn() }))
 
+vi.mock('../lib/imageResize.js', async (importOriginal) => ({
+  ...(await importOriginal()),
+  // jsdom has no createImageBitmap/canvas encoder; the resize pipeline itself
+  // is covered by imageResize.test.js, so stub just the browser-only part.
+  processPhoto: vi.fn(async () => ({
+    jpeg: new Blob(['jpeg']),
+    variants: [
+      { width: 400, blob: new Blob(['400']) },
+      { width: 800, blob: new Blob(['800']) },
+    ],
+  })),
+}))
+
 const {
   saveProduct,
   deletePhoto,
@@ -67,6 +92,8 @@ const {
   setProductHidden,
   fetchPromoBanner,
   savePromoBanner,
+  uploadCategoryImage,
+  deleteCategoryImage,
 } = await import('../lib/adminApi.js')
 const { retryLoad } = await import('../lib/productStore.js')
 
@@ -77,6 +104,7 @@ beforeEach(() => {
   calls.removed.length = 0
   maybeSingleResult = { data: null, error: null }
   updateError = null
+  existingCategoryImage = null
   retryLoad.mockClear()
 })
 
@@ -197,5 +225,51 @@ describe('savePromoBanner', () => {
     await expect(savePromoBanner({ enabled: true, messages: ['x'] })).rejects.toThrow(
       'permission denied',
     )
+  })
+})
+
+describe('uploadCategoryImage', () => {
+  it('upserts the row keyed by category, under the categories/ prefix', async () => {
+    await uploadCategoryImage('under-tray-toolboxes', new File(['x'], 'x.jpg'))
+    const up = calls.upserts.find((u) => u.table === 'category_images')
+    expect(up.row.category_id).toBe('under-tray-toolboxes')
+    expect(up.row.storage_path).toMatch(/^categories\/under-tray-toolboxes\/[a-f0-9]{8}\.jpg$/)
+  })
+
+  it('sweeps the previous photo files when replacing', async () => {
+    existingCategoryImage = {
+      category_id: 'under-tray-toolboxes',
+      storage_path: 'categories/under-tray-toolboxes/old.jpg',
+    }
+    await uploadCategoryImage('under-tray-toolboxes', new File(['x'], 'x.jpg'))
+    expect(calls.removed).toEqual([
+      'categories/under-tray-toolboxes/old.jpg',
+      'categories/under-tray-toolboxes/old-400.webp',
+      'categories/under-tray-toolboxes/old-800.webp',
+    ])
+  })
+
+  it('removes nothing when there was no previous photo', async () => {
+    await uploadCategoryImage('locks', new File(['x'], 'x.jpg'))
+    expect(calls.removed).toHaveLength(0)
+  })
+})
+
+describe('deleteCategoryImage', () => {
+  it('removes the JPEG and both WebP derivatives, then the row', async () => {
+    await deleteCategoryImage({
+      category_id: 'locks',
+      storage_path: 'categories/locks/a.jpg',
+    })
+    expect(calls.removed).toEqual([
+      'categories/locks/a.jpg',
+      'categories/locks/a-400.webp',
+      'categories/locks/a-800.webp',
+    ])
+    expect(calls.deletes[0]).toMatchObject({
+      table: 'category_images',
+      col: 'category_id',
+      val: 'locks',
+    })
   })
 })

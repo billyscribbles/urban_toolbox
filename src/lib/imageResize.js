@@ -8,12 +8,24 @@ const MASTER_MAX_WIDTH = 1600
 const JPEG_QUALITY = 0.85
 const WEBP_QUALITY = 0.68
 
-export function photoPaths(productId, name) {
-  const base = `products/${productId}/${name}`
+// Both photo kinds share one derivative contract (`<name>.jpg` plus
+// `<name>-400.webp` / `<name>-800.webp` beside it) so <Img> can build a srcset
+// from the JPEG path alone, with no manifest to keep in sync.
+function pathsFor(base) {
   return {
     jpeg: `${base}.jpg`,
     webp: DERIVATIVE_WIDTHS.map((width) => ({ width, path: `${base}-${width}.webp` })),
   }
+}
+
+export function photoPaths(productId, name) {
+  return pathsFor(`products/${productId}/${name}`)
+}
+
+// Home-carousel tile photos. Keyed by category, not product — a tile photo is
+// deliberately standalone, so it needs no product to hang off.
+export function categoryPhotoPaths(categoryId, name) {
+  return pathsFor(`categories/${categoryId}/${name}`)
 }
 
 function scaled(bitmap, targetWidth) {

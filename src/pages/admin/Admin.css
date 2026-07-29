@@ -1055,3 +1055,119 @@
   gap: 12px;
   flex-wrap: wrap;
 }
+
+/* Home-carousel tile photos — one cell per tile in src/content/homeCarousel.js. */
+.admin-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 20px;
+  list-style: none;
+}
+
+.admin-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 12px;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+}
+
+.admin-tile__media {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--color-off-white);
+  border-radius: var(--radius-sm);
+}
+
+.admin-tile__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.admin-tile__label {
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-ink);
+}
+
+.admin-tile__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+/* The upload control is a <label> driving a visually-hidden file input, so it
+   needs the button chrome .admin__ghost gives plus explicit centring. */
+.admin-tile__upload {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.admin-tile__status {
+  font-size: 0.8rem;
+  color: var(--color-ink-muted);
+}
+
+/* Dashboard section tabs — Products / Home carousel. One Tab stop with arrow
+   keys moving inside it (see onTabKey in AdminPage.jsx). */
+.admin-tabs {
+  display: flex;
+  flex: none;
+  gap: 4px;
+  margin-bottom: clamp(12px, 2vw, 20px);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.admin-tab {
+  padding: 10px 16px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.admin-tab:hover {
+  color: var(--color-ink);
+}
+
+.admin-tab--on {
+  color: var(--color-ink);
+  border-bottom-color: var(--color-accent);
+}
+
+.admin-tab:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+/* The panel is focusable (it is the tablist's target), so it needs to fill the
+   body the way the bare card used to — otherwise the table stops scrolling. */
+.admin-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.admin-panel:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}

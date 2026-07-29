@@ -23,6 +23,8 @@ const {
   getTree,
   getLeaves,
   getAdminCategoryGroups,
+  firstProductImageIn,
+  getCategoryTileImage,
 } = await import('../lib/catalog.js')
 const { default: CategoryPage } = await import('../pages/CategoryPage.jsx')
 
@@ -225,5 +227,62 @@ describe('getVehicleSections — vehicle-filtered range', () => {
     expect(pageIds).not.toContain('trays')
     expect(pageIds).not.toContain('canopy')
     expect(pageIds).not.toContain('service-canopy')
+  })
+})
+
+describe('carousel tile images', () => {
+  const rows = [
+    // No photo — must be skipped, not treated as "the first product has none".
+    { id: 'no-pic', category_id: 'locks', title: 'No Pic', slug: 'no-pic', product_images: [] },
+    {
+      id: 'has-pic',
+      category_id: 'locks',
+      title: 'Has Pic',
+      slug: 'has-pic',
+      product_images: [{ storage_path: 'products/has-pic/a.jpg', alt: '', position: 0 }],
+    },
+  ]
+
+  it('prefers an admin upload over any product photo', () => {
+    __setStateForTests({
+      status: 'ready',
+      products: rows.map((r) => normalizeRow(r)),
+      categoryImages: { locks: 'categories/locks/tile.jpg' },
+    })
+    expect(getCategoryTileImage('locks')).toBe('https://cdn.test/categories/locks/tile.jpg')
+  })
+
+  it('falls back to the first product with a photo, skipping photo-less ones', () => {
+    __setStateForTests({
+      status: 'ready',
+      products: rows.map((r) => normalizeRow(r)),
+      categoryImages: {},
+    })
+    expect(getCategoryTileImage('locks')).toBe('https://cdn.test/products/has-pic/a.jpg')
+  })
+
+  it('resolves a parent node through its leaves — the Accessories tile', () => {
+    // `accessories` is a parent, not a leaf; its products are filed under
+    // `locks`. getProductsForLeaf('accessories') would find nothing.
+    __setStateForTests({
+      status: 'ready',
+      products: rows.map((r) => normalizeRow(r)),
+      categoryImages: {},
+    })
+    expect(getCategoryTileImage('accessories')).toBe('https://cdn.test/products/has-pic/a.jpg')
+  })
+
+  it('returns null for an empty category and for an unknown one', () => {
+    __setStateForTests({ status: 'ready', products: [], categoryImages: {} })
+    expect(getCategoryTileImage('locks')).toBeNull()
+    expect(getCategoryTileImage('not-a-category')).toBeNull()
+  })
+
+  it('honours the caller’s array order so the admin preview matches the storefront', () => {
+    const supplied = [
+      { categoryId: 'locks', img: 'https://cdn.test/second.jpg' },
+      { categoryId: 'locks', img: 'https://cdn.test/first.jpg' },
+    ]
+    expect(firstProductImageIn('locks', supplied)).toBe('https://cdn.test/second.jpg')
   })
 })

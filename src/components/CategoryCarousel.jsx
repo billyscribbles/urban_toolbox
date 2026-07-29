@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import { homeCarousel, rangeSection } from '../content/homeCarousel.js'
+import { getCategoryTileImage } from '../lib/catalog.js'
+import { useProductCatalog } from '../lib/productStore.js'
 import Eyebrow from './Eyebrow.jsx'
 import Img from './Img.jsx'
 import './CategoryCarousel.css'
@@ -21,25 +23,39 @@ const TRACK_COUNT = 4
 // Duplicate tracks are purely visual — aria-hidden with untabbable links — so
 // the keyboard and screen readers meet each category exactly once.
 export default function CategoryCarousel() {
+  // Subscribe so the strip repaints when the catalogue — and with it the
+  // admin's tile photos — lands. main.jsx kicks the load off at boot, so
+  // there's no load call to make here.
+  useProductCatalog()
+
   const track = (hidden, key) => (
     <ul className="range__track" aria-hidden={hidden || undefined} key={key}>
-      {homeCarousel.map((tile) => (
-        <li className="range__tile" key={tile.to}>
-          <Link to={tile.to} className="range__card" tabIndex={hidden ? -1 : undefined}>
-            <span className="range__media">
-              <Img
-                className="range__img"
-                src={tile.img}
-                alt=""
-                sizes={TILE_SIZES}
-                width={400}
-                height={300}
-              />
-            </span>
-            <span className="range__label">{tile.label}</span>
-          </Link>
-        </li>
-      ))}
+      {homeCarousel.map((tile) => {
+        const img = getCategoryTileImage(tile.categoryId)
+        return (
+          <li className="range__tile" key={tile.to}>
+            <Link to={tile.to} className="range__card" tabIndex={hidden ? -1 : undefined}>
+              {/* Kept even when there's no photo: .range__media is a flex item
+                  with aspect-ratio 1/1, so the empty box holds the card's
+                  shape and the belt stays exactly one-quarter of its width —
+                  which is what the CSS keyframe's -100%/TRACK_COUNT assumes. */}
+              <span className="range__media">
+                {img && (
+                  <Img
+                    className="range__img"
+                    src={img}
+                    alt=""
+                    sizes={TILE_SIZES}
+                    width={400}
+                    height={300}
+                  />
+                )}
+              </span>
+              <span className="range__label">{tile.label}</span>
+            </Link>
+          </li>
+        )
+      })}
     </ul>
   )
 

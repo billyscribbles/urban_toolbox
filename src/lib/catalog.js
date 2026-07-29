@@ -6,7 +6,8 @@
 // static file was invisible to every page/component.
 
 import { categories } from '../data/categories.js'
-import { getProducts } from './productStore.js'
+import { getProducts, getCategoryImages } from './productStore.js'
+import { publicPhotoUrl } from './supabaseClient.js'
 
 export function getTree() {
   return categories
@@ -314,4 +315,31 @@ export function getAboutMenu() {
       { label: 'Fabrication', to: '/fabrication', items: [] },
     ],
   }
+}
+
+// --- Home-carousel tile photos -------------------------------------------
+
+// The first product photo under a category, in the caller's array order. A
+// parent node resolves through its leaves, so the Accessories tile finds a
+// photo instead of coming up empty.
+//
+// `products` defaults to the live catalogue (already ordered sort_order then
+// id, the same order the category page shows — so the tile matches what a
+// visitor sees when they click it). The admin passes its own mapped rows,
+// which is why this filters by leaf id rather than delegating to
+// getProductsUnder: that helper reads getProducts() directly and would ignore
+// the array handed in.
+export function firstProductImageIn(categoryId, products = getProducts()) {
+  const node = getCategoryById(categoryId)
+  if (!node) return null
+  const ids = new Set(getLeaves(node).map((l) => l.id))
+  return products.find((p) => ids.has(p.categoryId) && p.img)?.img ?? null
+}
+
+// The photo for a home-carousel tile: an admin upload wins, otherwise the tile
+// borrows its category's first product photo. null when neither exists — the
+// carousel renders an empty media box rather than dropping the tile.
+export function getCategoryTileImage(categoryId) {
+  const uploaded = getCategoryImages()[categoryId]
+  return uploaded ? publicPhotoUrl(uploaded) : firstProductImageIn(categoryId)
 }

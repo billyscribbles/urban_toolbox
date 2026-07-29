@@ -7,6 +7,14 @@ import { axe, toHaveNoViolations } from 'jest-axe'
 
 expect.extend(toHaveNoViolations)
 
+// Pins photo URLs to a stable host so thumbnail assertions don't depend on
+// whichever VITE_SUPABASE_URL happens to be in .env.
+vi.mock('../lib/supabaseClient.js', () => ({
+  isConfigured: () => true,
+  publicPhotoUrl: (p) => `https://cdn.test/${p}`,
+  getSupabase: () => Promise.resolve(null),
+}))
+
 vi.mock('../lib/adminApi.js', () => ({
   watchSession: vi.fn(async (onChange) => {
     onChange(null)
@@ -25,6 +33,9 @@ vi.mock('../lib/adminApi.js', () => ({
   deletePhoto: vi.fn(),
   swapPhotoPositions: vi.fn(),
   fetchProductImages: vi.fn(async () => []),
+  fetchCategoryImages: vi.fn(async () => []),
+  uploadCategoryImage: vi.fn(async () => {}),
+  deleteCategoryImage: vi.fn(async () => {}),
 }))
 
 const { default: AdminPage } = await import('../pages/admin/AdminPage.jsx')
@@ -78,6 +89,36 @@ describe('AdminPage — signed in', () => {
     const { container } = renderSignedIn()
     await screen.findByRole('heading', { name: /^admin$/i })
     expect(await axe(container)).toHaveNoViolations()
+  })
+
+  it('splits the dashboard into Products and Home carousel tabs, Products first', async () => {
+    renderSignedIn()
+    const tablist = await screen.findByRole('tablist', { name: /admin sections/i })
+    const tabs = within(tablist).getAllByRole('tab')
+    expect(tabs.map((t) => t.textContent)).toEqual(['Products', 'Home carousel'])
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true')
+    // Only the selected panel is mounted — the carousel card is not just hidden.
+    expect(screen.getByRole('button', { name: /new product/i })).toBeInTheDocument()
+    expect(screen.queryByText(/home carousel photos/i)).toBeNull()
+  })
+
+  it('swaps the panel when the Home carousel tab is chosen', async () => {
+    const user = userEvent.setup()
+    renderSignedIn()
+    await user.click(await screen.findByRole('tab', { name: /home carousel/i }))
+    expect(await screen.findByText(/home carousel photos/i)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /new product/i })).toBeNull()
+  })
+
+  it('moves between tabs with the arrow keys, carrying focus', async () => {
+    const user = userEvent.setup()
+    renderSignedIn()
+    const products = await screen.findByRole('tab', { name: /products/i })
+    products.focus()
+    await user.keyboard('{ArrowRight}')
+    const carousel = screen.getByRole('tab', { name: /home carousel/i })
+    expect(carousel).toHaveAttribute('aria-selected', 'true')
+    expect(carousel).toHaveFocus()
   })
 
   it('opens the editor tray on New product and closes it on Escape', async () => {
@@ -442,5 +483,72 @@ describe('EditorTray', () => {
   it('renders nothing when editing is null', () => {
     render(<EditorTray editing={null} rows={[]} onDone={() => {}} onCancel={() => {}} />)
     expect(screen.queryByRole('dialog')).toBeNull()
+  })
+})
+
+const { default: CarouselImages } = await import('../pages/admin/CarouselImages.jsx')
+const { homeCarousel } = await import('../content/homeCarousel.js')
+const { fetchCategoryImages, uploadCategoryImage } = await import('../lib/adminApi.js')
+
+const tileRows = [
+  // Hidden — the storefront carousel never borrows a hidden product's photo,
+  // so this must not become the Under Tray tile's preview.
+  {
+    id: 'hidden-one',
+    category_id: 'under-tray-toolboxes',
+    title: 'Hidden',
+    sort_order: 0,
+    hidden: true,
+    product_images: [{ storage_path: 'products/hidden-one/a.jpg', position: 0 }],
+  },
+  {
+    id: 'visible-one',
+    category_id: 'under-tray-toolboxes',
+    title: 'Visible',
+    sort_order: 1,
+    hidden: false,
+    product_images: [{ storage_path: 'products/visible-one/a.jpg', position: 0 }],
+  },
+]
+
+describe('CarouselImages', () => {
+  it('renders one entry per carousel tile', async () => {
+    render(<CarouselImages rows={[]} />)
+    await waitFor(() => expect(fetchCategoryImages).toHaveBeenCalled())
+    for (const tile of homeCarousel) {
+      expect(screen.getByText(tile.label)).toBeInTheDocument()
+    }
+  })
+
+  it('previews the first VISIBLE product photo as the fallback', async () => {
+    render(<CarouselImages rows={tileRows} />)
+    const tile = await screen.findByTestId('tile-under-tray-toolboxes')
+    // Query the node directly, not getByRole('img') — the thumbnail is alt=""
+    // (decorative, the label beside it names the tile), so it has no img role.
+    expect(tile.querySelector('.admin-tile__img')).toHaveAttribute(
+      'src',
+      'https://cdn.test/products/visible-one/a.jpg',
+    )
+    expect(within(tile).getByText(/from first product/i)).toBeInTheDocument()
+  })
+
+  it('says No image when the category has no products and no upload', async () => {
+    render(<CarouselImages rows={[]} />)
+    const tile = await screen.findByTestId('tile-dog-boxes')
+    expect(within(tile).getByText(/no image/i)).toBeInTheDocument()
+    expect(tile.querySelector('.admin-tile__img')).toBeNull()
+  })
+
+  it('uploads the chosen file against the right category', async () => {
+    const user = userEvent.setup()
+    render(<CarouselImages rows={[]} />)
+    const tile = await screen.findByTestId('tile-canopies')
+    const input = within(tile).getByLabelText(/upload photo for canopies/i)
+    // The input stays disabled until the mount fetch resolves; uploading to a
+    // disabled input silently does nothing, so wait for it to enable first.
+    await waitFor(() => expect(input).toBeEnabled())
+    const file = new File(['x'], 'tile.jpg', { type: 'image/jpeg' })
+    await user.upload(input, file)
+    await waitFor(() => expect(uploadCategoryImage).toHaveBeenCalledWith('canopies', file))
   })
 })

@@ -1,5 +1,5 @@
 import { getSupabase } from './supabaseClient.js'
-import { processPhoto, photoPaths } from './imageResize.js'
+import { processPhoto, photoPaths, categoryPhotoPaths } from './imageResize.js'
 import { normalizeColors } from '../data/colors.js'
 import { retryLoad } from './productStore.js'
 import { normalizeMessages } from './promoStore.js'
@@ -221,5 +221,62 @@ export async function swapPhotoPositions(a, b) {
   if (first.error) throw new Error(first.error.message)
   const second = await c.from('product_images').update({ position: a.position }).eq('id', b.id)
   if (second.error) throw new Error(second.error.message)
+  retryLoad()
+}
+
+// --- Home-carousel tile photos -------------------------------------------
+// One optional photo per category, independent of any product. When a category
+// has no row the storefront falls back to its first product's photo, so these
+// writes are never destructive to the carousel — a missing tile photo still
+// renders something.
+
+export async function fetchCategoryImages() {
+  const c = await client()
+  const { data, error } = await c.from('category_images').select('category_id, storage_path')
+  if (error) throw new Error(error.message)
+  return data
+}
+
+export async function uploadCategoryImage(categoryId, file) {
+  const c = await client()
+  // The row is keyed by category, so a replace would orphan the old files —
+  // sweep them first. Best-effort, same as deleteProduct: the DB row is the
+  // source of truth and orphaned objects are harmless.
+  const { data: existing } = await c
+    .from('category_images')
+    .select('storage_path')
+    .eq('category_id', categoryId)
+    .maybeSingle()
+  if (existing?.storage_path) {
+    await c.storage.from(BUCKET).remove(storageFilesFor(existing))
+  }
+
+  const { jpeg, variants } = await processPhoto(file)
+  const name = crypto.randomUUID().slice(0, 8)
+  const paths = categoryPhotoPaths(categoryId, name)
+  const master = await c.storage
+    .from(BUCKET)
+    .upload(paths.jpeg, jpeg, { contentType: 'image/jpeg' })
+  if (master.error) throw new Error(master.error.message)
+  for (const v of variants) {
+    const { path } = paths.webp.find((w) => w.width === v.width)
+    const { error } = await c.storage
+      .from(BUCKET)
+      .upload(path, v.blob, { contentType: 'image/webp' })
+    if (error) throw new Error(error.message)
+  }
+
+  const { error } = await c
+    .from('category_images')
+    .upsert({ category_id: categoryId, storage_path: paths.jpeg })
+  if (error) throw new Error(error.message)
+  retryLoad()
+}
+
+export async function deleteCategoryImage(row) {
+  const c = await client()
+  await c.storage.from(BUCKET).remove(storageFilesFor(row))
+  const { error } = await c.from('category_images').delete().eq('category_id', row.category_id)
+  if (error) throw new Error(error.message)
   retryLoad()
 }

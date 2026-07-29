@@ -8,7 +8,7 @@ import { discountedPrice } from './pricing.js'
 // Supabase; pages subscribe via useProductCatalog() and read slices through
 // lib/catalog.js, which keeps its static-era API.
 
-let state = { status: 'idle', products: [] }
+let state = { status: 'idle', products: [], categoryImages: {} }
 const listeners = new Set()
 
 function setState(next) {
@@ -82,18 +82,34 @@ async function fetchStoreDiscount(supabase) {
   }
 }
 
+// Admin-uploaded photos for the home carousel's category tiles, keyed by
+// category id. Best-effort like the store discount: a failure (table missing on
+// an environment that hasn't run 0006, offline) means "no custom tile photos"
+// rather than failing the whole catalogue load.
+async function fetchCategoryImages(supabase) {
+  try {
+    const { data, error } = await supabase
+      .from('category_images')
+      .select('category_id, storage_path')
+    if (error) return {}
+    return Object.fromEntries((data ?? []).map((r) => [r.category_id, r.storage_path]))
+  } catch {
+    return {}
+  }
+}
+
 // Only 'idle' auto-loads: a failed fetch stays failed until the user hits
 // Retry (force) — otherwise every route change would hammer a dead backend.
 export async function loadProducts({ force = false } = {}) {
   if (!force && state.status !== 'idle') return
   if (!isConfigured()) {
-    setState({ status: 'error', products: [] })
+    setState({ status: 'error', products: [], categoryImages: {} })
     return
   }
   setState({ status: 'loading', products: state.products })
   const supabase = await getSupabase()
   if (!supabase) {
-    setState({ status: 'error', products: [] })
+    setState({ status: 'error', products: [], categoryImages: {} })
     return
   }
   const { data, error } = await supabase
@@ -103,11 +119,20 @@ export async function loadProducts({ force = false } = {}) {
     .order('sort_order', { ascending: true })
     .order('id', { ascending: true })
   if (error) {
-    setState({ status: 'error', products: [] })
+    setState({ status: 'error', products: [], categoryImages: {} })
     return
   }
-  const storeDiscountPct = await fetchStoreDiscount(supabase)
-  setState({ status: 'ready', products: data.map((row) => normalizeRow(row, storeDiscountPct)) })
+  // Both are independent of the product fetch, so run them together rather than
+  // paying two serial round trips on every cold load.
+  const [storeDiscountPct, categoryImages] = await Promise.all([
+    fetchStoreDiscount(supabase),
+    fetchCategoryImages(supabase),
+  ])
+  setState({
+    status: 'ready',
+    products: data.map((row) => normalizeRow(row, storeDiscountPct)),
+    categoryImages,
+  })
 }
 
 export function retryLoad() {
@@ -116,6 +141,12 @@ export function retryLoad() {
 
 export function getProducts() {
   return state.products
+}
+
+// `?? {}` because tests (and any older caller) seed state via
+// __setStateForTests without this key.
+export function getCategoryImages() {
+  return state.categoryImages ?? {}
 }
 
 export function getStatus() {

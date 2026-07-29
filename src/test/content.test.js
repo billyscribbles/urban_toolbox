@@ -14,7 +14,7 @@ import { legal } from '../content/legal.js'
 import { homeCarousel } from '../content/homeCarousel.js'
 import { shopByVehicle } from '../content/shopByVehicle.js'
 import { categories } from '../data/categories.js'
-import { getCategoryBySlug } from '../lib/catalog.js'
+import { getCategoryBySlug, getCategoryById } from '../lib/catalog.js'
 
 // Products now live in Supabase (their contract is covered by productStore.test.js
 // against fixtures/productRows.js); only the static category tree remains here.
@@ -96,17 +96,17 @@ describe('content — section copy contract', () => {
     }
   })
 
-  it('homeCarousel tiles route to real categories and their images exist', () => {
+  it('homeCarousel tiles route to real categories and name a real category id', () => {
     expect(homeCarousel.length).toBeGreaterThanOrEqual(5)
     for (const tile of homeCarousel) {
       expect(tile.label).toBeTruthy()
-      expect(tile.imgAlt).toBeTruthy()
       // Route must be a real category page: /accessories or /toolboxes/<slug>.
       const slug = tile.to.replace(/^\//, '').split('/').pop()
       expect(getCategoryBySlug(slug), `no category for route ${tile.to}`).toBeTruthy()
-      expect(existsSync(join(process.cwd(), 'public', tile.img)), `missing image ${tile.img}`).toBe(
-        true,
-      )
+      // Photos come from the admin panel (category_images) with a first-product
+      // fallback, so there is no image path to check on disk — but the id the
+      // resolver keys on must exist in the tree.
+      expect(getCategoryById(tile.categoryId), `no category for id ${tile.categoryId}`).toBeTruthy()
     }
   })
 
