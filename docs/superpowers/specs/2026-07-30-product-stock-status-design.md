@@ -69,7 +69,8 @@ Availability
  ( ) Back order
 ```
 
-Two radios sharing `name="pe-stock"`, ids `pe-stock-in` / `pe-stock-back`. Reuses the
+Two radios sharing `name="pe-stock"`, each wrapped by its own label — the same
+label-wrapping the colour checkboxes use, so no `id`/`htmlFor` pair is needed. Reuses the
 existing `.admin-editor__vehicles` fieldset and `.admin-editor__check` label classes, so
 this adds **no new admin CSS**.
 
