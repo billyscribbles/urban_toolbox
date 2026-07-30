@@ -3,6 +3,7 @@ import { ChevronDown } from 'lucide-react'
 import PageHero from './PageHero.jsx'
 import Card from './Card.jsx'
 import CtaBand from './CtaBand.jsx'
+import FitmentBadge from './FitmentBadge.jsx'
 import './ProductRange.css'
 
 // Section-driven product page. Renders a page hero, a sticky sub-nav built from
@@ -125,7 +126,12 @@ export default function ProductRange({ data, status = 'ready', onRetry }) {
         title={header.title}
         intro={header.intro}
         bgImage={header.bgImage}
-      />
+      >
+        {/* `header.fitment` is the category's vehicle scope — set only on the
+            ute-exclusive tops (Trays, Canopy, Service Canopy), where "does it
+            fit my ute?" is the first thing a visitor wants answered. */}
+        {header.fitment && <FitmentBadge vehicle={header.fitment} />}
+      </PageHero>
 
       <RangeNav title={header.title} sections={sections} />
 
@@ -169,6 +175,10 @@ export default function ProductRange({ data, status = 'ready', onRetry }) {
               <div className="container">
                 <div className="section-head">
                   <h2 className="h2 h2--md">{s.heading}</h2>
+                  {/* Vehicle pages carry these categories as sections rather
+                      than their own hero, so the fitment answer rides on the
+                      heading instead of the plate. */}
+                  {s.fitment && <FitmentBadge vehicle={s.fitment} variant="inline" />}
                   {s.sub && <p className="section-head__sub">{s.sub}</p>}
                 </div>
                 <div className="grid grid--3 range-grid">

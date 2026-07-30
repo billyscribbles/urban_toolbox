@@ -13,6 +13,7 @@ import { faq } from '../content/faq.js'
 import { legal } from '../content/legal.js'
 import { homeCarousel } from '../content/homeCarousel.js'
 import { shopByVehicle } from '../content/shopByVehicle.js'
+import { fitment } from '../content/fitment.js'
 import { categories } from '../data/categories.js'
 import { getCategoryBySlug, getCategoryById } from '../lib/catalog.js'
 
@@ -137,6 +138,28 @@ describe('catalog — category tree contract', () => {
     // Made) are bare leaves by design — only the generic catalog tops must nest.
     for (const top of catalog.categories) {
       if (!top.vehicle && !top.exclusive) expect(top.children.length).toBeGreaterThan(0)
+    }
+  })
+
+  // "Will it fit my ute?" is the question customers ask first, so every
+  // vehicle-scoped category must have fitment copy to answer it. A new scope
+  // added to the tree without an entry here would render no badge at all.
+  it('every vehicle-scoped category has fitment copy', () => {
+    const scopes = new Set()
+    const walk = (nodes) => {
+      for (const n of nodes) {
+        if (n.vehicle) scopes.add(n.vehicle)
+        if (n.children) walk(n.children)
+      }
+    }
+    walk(catalog.categories)
+
+    expect(scopes.size).toBeGreaterThan(0)
+    for (const scope of scopes) {
+      expect(fitment[scope], `no fitment copy for vehicle scope "${scope}"`).toBeTruthy()
+      expect(fitment[scope].label).toBeTruthy()
+      expect(fitment[scope].spec).toBeTruthy()
+      expect(fitment[scope].note).toBeTruthy()
     }
   })
 

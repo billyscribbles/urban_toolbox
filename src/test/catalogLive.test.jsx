@@ -135,9 +135,19 @@ describe('getVehicleSections — vehicle-filtered range', () => {
 
     // Each is its own top-level group (not folded under Accessories), so the
     // vehicle page nav renders it beside the Browse buttons, not inside one.
+    // They also carry the fitment scope that drives the "Fits all utes" chip —
+    // these three have no hero of their own on the vehicle page, so the answer
+    // has to ride on the section heading.
     for (const id of ['trays', 'canopy', 'service-canopy']) {
       const s = uteSections.find((x) => x.id === id)
       expect(s.group).toBe(s.label)
+      expect(s.fitment).toBe('ute')
+    }
+
+    // Generic tops carry no fitment scope — the chip must not leak onto
+    // Toolboxes / Accessories sections, which fit more than utes.
+    for (const s of uteSections) {
+      if (['Toolboxes', 'Accessories'].includes(s.group)) expect(s.fitment).toBeUndefined()
     }
 
     const caravanIds = getVehicleSections('caravan').map((s) => s.id)

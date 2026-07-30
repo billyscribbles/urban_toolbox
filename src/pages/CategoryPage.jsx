@@ -37,6 +37,9 @@ export default function CategoryPage({ slug: slugProp, intro }) {
       intro:
         intro ||
         `Browse our ${node.label.toLowerCase()} range. Every unit is built to order in aluminium — add what fits to your quote and we'll confirm size and price.`,
+      // Vehicle-exclusive categories (Trays, Canopy, Service Canopy) answer
+      // "will it fit my ute?" in the hero — see FitmentBadge.
+      fitment: node.vehicle,
     },
     sections,
   }

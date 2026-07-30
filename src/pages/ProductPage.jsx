@@ -8,6 +8,7 @@ import PriceTag from '../components/PriceTag.jsx'
 import QuoteButton from '../components/QuoteButton.jsx'
 import ColorSelector from '../components/ColorSelector.jsx'
 import CtaBand from '../components/CtaBand.jsx'
+import FitmentBadge from '../components/FitmentBadge.jsx'
 import NotFoundPage from './NotFoundPage.jsx'
 import {
   getProductByToken,
@@ -115,7 +116,9 @@ function ProductDetail({ product }) {
   // Ute-exclusive tops (Trays, Canopy, Service Canopy) live only under /utes, so
   // their trail reads Home › Ute › <Top> › <Product> — insert the vehicle crumb
   // ahead of the category path. Generic catalog tops go straight under Home.
-  const vehicleCrumb = path[0]?.vehicle === 'ute' ? { label: 'Ute', to: '/utes' } : null
+  // The same scope drives the fitment chip in the buy box.
+  const vehicleScope = path[0]?.vehicle ?? null
+  const vehicleCrumb = vehicleScope === 'ute' ? { label: 'Ute', to: '/utes' } : null
   const priceFrom = product.quote?.priceFrom ?? null
 
   // Same descriptor Card builds — the shape the quote store consumes. `color`
@@ -185,6 +188,10 @@ function ProductDetail({ product }) {
               {topLabel && <p className="product-page__eyebrow">{topLabel}</p>}
               <h1 className="product-page__title">{product.title}</h1>
               <span className="product-page__accent" aria-hidden="true" />
+
+              {/* Fitment sits above the price: it's the qualifying question, so
+                  it should be answered before the number. */}
+              {vehicleScope && <FitmentBadge vehicle={vehicleScope} variant="inline" />}
 
               <div className="product-page__price">
                 <PriceTag price={product.price ?? priceFrom} discountPct={product.discountPct} />

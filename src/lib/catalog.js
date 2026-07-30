@@ -185,6 +185,11 @@ export function getVehicleSections(vehicle) {
         // Anchor id for the whole group on the vehicle page (the nav's
         // "Toolboxes" / "Accessories" deep links land on it).
         groupSlug: top.slug,
+        // Only the vehicle-exclusive tops (Trays, Canopy, Service Canopy) carry
+        // `vehicle`, so this tags exactly those sections for the fitment chip —
+        // they have no hero of their own here to state it. Generic tops
+        // (Toolboxes, Accessories) get undefined and render no chip.
+        fitment: top.vehicle,
       })),
     )
 }

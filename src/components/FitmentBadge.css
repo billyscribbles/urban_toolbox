@@ -1,0 +1,85 @@
+/* Fitment plate — the dark-hero form. A thick accent edge on the left (the
+   eyebrow tick turned vertical) with a hairline box and an accent wash that
+   fades out to the right, so it lifts off the flat dark surface without
+   reading as a browser alert. */
+.fitment--plate {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  max-width: 640px;
+  margin-top: 28px;
+  padding: 16px 22px 17px 19px;
+  border: 1px solid var(--color-border-dark-3);
+  border-left: 3px solid var(--color-accent);
+  background: linear-gradient(
+    90deg,
+    rgba(var(--color-accent-rgb), 0.16),
+    rgba(var(--color-accent-rgb), 0.05) 58%,
+    rgba(var(--color-accent-rgb), 0)
+  );
+}
+
+.fitment__icon {
+  display: flex;
+  color: var(--color-accent);
+  /* Optically align the glyph with the cap height of the label beside it. */
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.fitment--plate .fitment__label {
+  font-family: var(--font-display);
+  font-size: clamp(19px, 2.4vw, 22px);
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--color-white);
+}
+
+/* Pale green rather than the solid accent: at 12px, accent-on-dark-wash lands
+   near 3.9:1, under AA. accent-soft keeps the line in the accent family and
+   clears 13:1. */
+.fitment__spec {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent-soft);
+  margin-top: 8px;
+}
+
+.fitment__note {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-dark-text);
+  margin-top: 8px;
+}
+
+@media (max-width: 560px) {
+  .fitment--plate {
+    gap: 13px;
+    padding: 14px 16px 15px;
+  }
+}
+
+/* Inline chip — light surfaces. Accent-soft fill, accent tick, and the label in
+   the darker accent so it clears AA against that fill. */
+.fitment--inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 14px 8px 12px;
+  background: var(--color-accent-soft);
+  border-radius: var(--radius-sm);
+  color: var(--color-accent);
+}
+
+.fitment--inline .fitment__label {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent-hover);
+}

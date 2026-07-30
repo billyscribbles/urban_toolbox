@@ -173,6 +173,11 @@
   margin-bottom: 28px;
 }
 
+/* Fitment chip under a section heading — same rhythm as .section-head__sub. */
+.range-section .section-head .fitment--inline {
+  margin-top: 14px;
+}
+
 /* Trim the top padding so the first section sits snug under the sub-nav. */
 .range-section:first-of-type {
   padding-top: 40px;
