@@ -61,6 +61,9 @@ export function normalizeRow(row, storeDiscountPct = 0) {
     fitsCaravan: row.fits_caravan !== false,
     // Enabled powder-coat colours (empty when none marked → no selector shown).
     colors: normalizeColors(row.colors),
+    // Availability. Missing (a row read before 0008) counts as in stock, so an
+    // un-migrated environment doesn't flip the whole catalogue to Back order.
+    inStock: row.in_stock !== false,
     quote: {
       id: row.id,
       priceFrom: discountedPrice(price, discountPct) ?? price,

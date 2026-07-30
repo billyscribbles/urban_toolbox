@@ -89,6 +89,7 @@ function toRow(p) {
     fits_ute: p.fitsUte !== false,
     fits_caravan: p.fitsCaravan !== false,
     colors: normalizeColors(p.colors),
+    in_stock: p.inStock !== false,
     sort_order: p.sortOrder ?? 0,
   }
 }

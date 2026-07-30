@@ -44,6 +44,9 @@ export const productRows = [
     fits_caravan: true,
     // Colours out of canonical order + a junk value — normalizeRow must clean it.
     colors: ['black', 'nope', 'silver'],
+    // Back-order — the other row omits the column entirely, so it defaults to
+    // in stock (an environment that hasn't run 0008 reads that way too).
+    in_stock: false,
     sort_order: 0,
     product_images: [
       {
