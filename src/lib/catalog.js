@@ -192,7 +192,7 @@ export function getVehicleSections(vehicle) {
 // A top category whose children are ALL leaves renders as one page with the
 // leaves as in-page sections (that's Accessories). Otherwise each subcategory is
 // its own page. `pages: true` forces the per-page form even for an all-leaf top
-// (that's Toolboxes — eight flat families that each deserve their own page).
+// (that's Toolboxes — seven flat families that each deserve their own page).
 export function isFlattenedTop(topSlug) {
   const top = getCategoryBySlug(topSlug)
   if (!top?.children?.length || top.pages) return false
@@ -201,7 +201,7 @@ export function isFlattenedTop(topSlug) {
 
 // Nav view model for the dropdown. Each top category becomes a panel:
 //   { label, to, columns: [{ label, to, items: [{ label, to }] }] }
-// Toolboxes (`pages`): each of the eight families is a bare leaf, so every
+// Toolboxes (`pages`): each of the seven families is a bare leaf, so every
 // column links straight to its own /toolboxes/<slug> page with no sub-items. A
 // column that DOES nest lists its leaves as `items`, anchored into that page.
 // Accessories (flattened): every leaf is a column linking to an in-page anchor.
@@ -268,12 +268,12 @@ const SCOPE_HEADINGS = { ute: 'Utes', caravan: 'Caravans', 'australian-made': 'C
 
 // Admin category picker view model: the same leaves the nav exposes, grouped
 // the way the nav groups them. Products attach to leaves, but a FLAT leaf list
-// reads nothing like the nav — "Drawer Units" and "Locks" each exist twice
-// tree-wide (Toolboxes vs Accessories, Accessories vs its Drawers subcategory)
-// and Drawers' own "Accessories" leaf means nothing standing alone. So: one
-// group per top category, a nested leaf qualified with its subcategory, and the
-// scope-exclusive tops (ute-only Trays/Canopy/Service Canopy, the Australian
-// Made line) bucketed under the menu that surfaces them. Shape:
+// reads nothing like the nav — "Locks" exists twice tree-wide (Accessories vs
+// its Drawers subcategory) and Drawers' own "Accessories" leaf means nothing
+// standing alone. So: one group per top category, a nested leaf qualified with
+// its subcategory, and the scope-exclusive tops (ute-only Trays/Canopy/Service
+// Canopy, the Australian Made line) bucketed under the menu that surfaces them.
+// Shape:
 //   [{ label, options: [{ id, label }] }]
 export function getAdminCategoryGroups() {
   const groups = []

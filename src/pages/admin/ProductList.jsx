@@ -55,8 +55,9 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
   const [pageSize, setPageSize] = useState(10)
 
   const groups = useMemo(() => getAdminCategoryGroups(), [])
-  // Leaf labels repeat across groups ("Drawer Units" lives under both Toolboxes
-  // and Accessories), so the cell carries its group as an eyebrow to stay unambiguous.
+  // Leaf labels repeat across groups ("Locks" lives under both Accessories and
+  // its Drawers subcategory), so the cell carries its group as an eyebrow to
+  // stay unambiguous.
   const leafLabel = useMemo(
     () =>
       new Map(

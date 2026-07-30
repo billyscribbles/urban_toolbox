@@ -182,15 +182,15 @@ describe('getVehicleSections — vehicle-filtered range', () => {
     expect(vehicleGroupLabels).not.toContain('Australian Made')
   })
 
-  it('admin category groups mirror the nav — the eight Toolboxes and every Accessories entry', () => {
+  it('admin category groups mirror the nav — the seven Toolboxes and every Accessories entry', () => {
     const groups = getAdminCategoryGroups()
     const group = (label) => groups.find((g) => g.label === label)
 
-    // The Toolboxes optgroup is exactly the eight families the mega-menu lists.
+    // The Toolboxes optgroup is exactly the seven families the mega-menu lists.
     expect(group('Toolboxes').options.map((o) => o.label)).toEqual(
       getMegaMenu('toolboxes').columns.map((c) => c.label),
     )
-    expect(group('Toolboxes').options).toHaveLength(8)
+    expect(group('Toolboxes').options).toHaveLength(7)
 
     // Accessories: one option per menu column, with a nesting column's leaves
     // qualified by their parent so no two options read the same.

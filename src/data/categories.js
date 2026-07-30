@@ -10,8 +10,8 @@ export const categories = [
     slug: 'toolboxes',
     // Every child is a leaf, which would normally flatten the whole top into one
     // anchored page (that's Accessories). `pages: true` opts out: each of the
-    // eight families keeps its own /toolboxes/<slug> page, so the mega-menu and
-    // sitemap still point at eight indexable category pages rather than eight
+    // seven families keeps its own /toolboxes/<slug> page, so the mega-menu and
+    // sitemap still point at seven indexable category pages rather than seven
     // anchors on a single ~70-product page.
     pages: true,
     children: [
@@ -22,10 +22,6 @@ export const categories = [
       },
       { id: 'canopies', label: 'Canopies', slug: 'canopies' },
       { id: 'dog-boxes', label: 'Dog Boxes', slug: 'dog-boxes' },
-      // Slugs are unique tree-wide (getCategoryBySlug walks every node), and
-      // Accessories already owns the bare `drawer-units` slug — hence the
-      // `toolbox-` prefix here, matching the `drawer-` prefix convention below.
-      { id: 'toolbox-drawer-units', label: 'Drawer Units', slug: 'toolbox-drawer-units' },
       {
         id: 'side-opening-toolboxes',
         label: 'Side Opening Toolboxes',

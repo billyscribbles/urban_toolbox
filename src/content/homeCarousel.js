@@ -29,11 +29,6 @@ export const homeCarousel = [
   { label: 'Canopies', categoryId: 'canopies', to: '/toolboxes/canopies' },
   { label: 'Dog Boxes', categoryId: 'dog-boxes', to: '/toolboxes/dog-boxes' },
   {
-    label: 'Drawer Units',
-    categoryId: 'toolbox-drawer-units',
-    to: '/toolboxes/toolbox-drawer-units',
-  },
-  {
     label: 'Side Opening Toolboxes',
     categoryId: 'side-opening-toolboxes',
     to: '/toolboxes/side-opening-toolboxes',
