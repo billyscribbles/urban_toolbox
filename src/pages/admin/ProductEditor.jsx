@@ -24,6 +24,7 @@ function toForm(row) {
       fitsUte: true,
       fitsCaravan: true,
       colors: [],
+      inStock: true,
     }
   }
   return {
@@ -41,6 +42,7 @@ function toForm(row) {
     fitsUte: row.fits_ute !== false,
     fitsCaravan: row.fits_caravan !== false,
     colors: normalizeColors(row.colors),
+    inStock: row.in_stock !== false,
   }
 }
 
@@ -130,6 +132,7 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
         fitsUte: form.fitsUte,
         fitsCaravan: form.fitsCaravan,
         colors: form.colors,
+        inStock: form.inStock,
         sortOrder: isNew
           ? rows.filter((r) => r.category_id === form.categoryId).length
           : row.sort_order,
@@ -292,6 +295,33 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
           )}
         </div>
       </div>
+
+      {/* Radios, not a checkbox: the two states are equals, and an unticked
+          "In stock" box reads as absence rather than "Back order". A radio's
+          onChange only fires for the option being selected, so these set the
+          boolean directly instead of going through set(), which reads
+          e.target.checked. */}
+      <fieldset className="admin-editor__vehicles">
+        <legend className="admin__label">Availability</legend>
+        <label className="admin-editor__check">
+          <input
+            type="radio"
+            name="pe-stock"
+            checked={form.inStock}
+            onChange={() => setForm({ ...form, inStock: true })}
+          />
+          In stock
+        </label>
+        <label className="admin-editor__check">
+          <input
+            type="radio"
+            name="pe-stock"
+            checked={!form.inStock}
+            onChange={() => setForm({ ...form, inStock: false })}
+          />
+          Back order
+        </label>
+      </fieldset>
 
       <label className="admin__label" htmlFor="pe-dims">
         Standard dimensions (shown in the quote tray)
