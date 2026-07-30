@@ -123,10 +123,19 @@ exactly this AA reason.
 | `src/test/admin.test.jsx`       | editor defaults a new product to In stock, reflects a back-order row, flips on click |
 | `src/test/stockBadge.test.jsx`  | both badge states render their label (new file, mirrors `priceTag.test.jsx`)         |
 
+The existing axe pass renders the dashboard **list**, not the editor tray, so the tray's
+form controls were never checked. Availability adds two more, so `admin.test.jsx` gains an
+axe assertion over a rendered `ProductEditor`. It passes as written — it is a regression
+guard for controls that are already correct, not a red-to-green step.
+
 ## Verification
 
-`yarn lint`, `yarn format:check`, `yarn test`, `yarn build` all green. The axe pass in the
-existing suite covers the new radios and badge for accessibility violations.
+`yarn lint`, `yarn format:check`, `yarn test` (227 tests), `yarn build` all green.
+
+Verified in a browser against live Supabase data, not just in tests: the In-stock chip and
+the Back-order chip both render under the price in the buy card, and the ochre reads as a
+status rather than an alert beside the green Save badge. One product was flipped to
+back-order to capture the second state and restored to in stock immediately after.
 
 ## Conflict note
 

@@ -457,6 +457,15 @@ describe('ProductEditor', () => {
     })
   })
 
+  // The dashboard axe pass renders the list, not the tray, so the editor's own
+  // form controls were never checked. Availability added two more, so close it.
+  it('has no axe violations, availability radios included', async () => {
+    const { container } = render(
+      <ProductEditor row={null} rows={[]} onDone={() => {}} onCancel={() => {}} />,
+    )
+    expect(await axe(container)).toHaveNoViolations()
+  })
+
   it('reflects a stored back-order row when editing', () => {
     const row = {
       id: 'x',
