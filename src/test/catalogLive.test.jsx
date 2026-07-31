@@ -203,15 +203,15 @@ describe('getVehicleSections — vehicle-filtered range', () => {
     expect(group('Toolboxes').options).toHaveLength(7)
 
     // Accessories: one option per menu column, with a nesting column's leaves
-    // qualified by their parent so no two options read the same.
+    // qualified by their parent so no two options read the same. Nothing nests
+    // today, so the option list is the column list verbatim.
     const accessories = group('Accessories').options.map((o) => o.label)
     for (const column of getMegaMenu('accessories').columns) {
       expect(accessories).toContain(
         column.items.length ? `${column.label} → ${column.items[0].label}` : column.label,
       )
     }
-    expect(accessories).toContain('Drawers → Locks')
-    expect(accessories).toContain('Drawers → Accessories')
+    expect(accessories).toEqual(getMegaMenu('accessories').columns.map((c) => c.label))
 
     // Scope-exclusive tops keep their own headings rather than sitting loose.
     expect(group('Utes').options.map((o) => o.id)).toEqual(['trays', 'canopy', 'service-canopy'])

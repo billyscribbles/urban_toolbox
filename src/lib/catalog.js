@@ -273,11 +273,10 @@ const SCOPE_HEADINGS = { ute: 'Utes', caravan: 'Caravans', 'australian-made': 'C
 
 // Admin category picker view model: the same leaves the nav exposes, grouped
 // the way the nav groups them. Products attach to leaves, but a FLAT leaf list
-// reads nothing like the nav — "Locks" exists twice tree-wide (Accessories vs
-// its Drawers subcategory) and Drawers' own "Accessories" leaf means nothing
-// standing alone. So: one group per top category, a nested leaf qualified with
-// its subcategory, and the scope-exclusive tops (ute-only Trays/Canopy/Service
-// Canopy, the Australian Made line) bucketed under the menu that surfaces them.
+// reads nothing like the nav. So: one group per top category, a nested leaf
+// qualified with its subcategory (nothing nests today, but the tree allows it),
+// and the scope-exclusive tops (ute-only Trays/Canopy/Service Canopy, the
+// Australian Made line) bucketed under the menu that surfaces them.
 // Shape:
 //   [{ label, options: [{ id, label }] }]
 export function getAdminCategoryGroups() {
