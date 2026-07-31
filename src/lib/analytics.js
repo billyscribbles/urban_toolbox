@@ -10,49 +10,59 @@ const gtmId = site.integrations.gtmId
 let initialized = false
 let gtmInitialized = false
 
-// How long to wait for an interaction before loading the tags anyway.
-const TAG_DELAY_MS = 5000
+// Any of these counts as "a real person is here". Deliberately broad: mousemove
+// covers the desktop visitor who reads without scrolling, scroll/touchstart
+// cover mobile, and pointerdown/keydown cover everyone who acts.
+const INTERACTIONS = ['pointerdown', 'keydown', 'scroll', 'touchstart', 'mousemove']
 
-const INTERACTIONS = ['pointerdown', 'keydown', 'scroll', 'touchstart']
-
-// Runs `fn` on the visitor's first interaction, or TAG_DELAY_MS after load —
-// whichever comes first, and only ever once.
+// Runs `fn` on the visitor's first interaction — once, and never before.
 //
-// Google's tags are ~640 KB of third-party JavaScript that cost 776 ms of main-
-// thread blocking on a throttled mobile run — measured, not estimated: they are
-// the entire reason Total Blocking Time was 600 ms and the Lighthouse
-// performance score sat at 73. Loading them during the initial page load makes
-// the site materially slower for every visitor, so we hold them until the
-// visitor does something (which is also when they stop being a bounce) or until
-// five seconds have passed.
+// Google's tags are ~640 KB of third-party JavaScript costing 529 ms of
+// main-thread blocking on CI's mobile profile. Measured, not estimated: they
+// were the entire reason Total Blocking Time was 600 ms and the Lighthouse
+// performance score sat at 73 (the gate had only ever passed because the tags
+// were silently broken — see the requestIdleCallback fix that preceded this).
 //
-// Nothing is lost by waiting. Both tags read from `window.dataLayer`, which is
-// primed synchronously below, so page_view events fired before the script lands
-// queue up and are processed the moment it arrives — with the path they were
-// recorded against, not the one the user has since navigated to.
+// There is deliberately NO timer fallback. A fallback re-introduces the whole
+// cost on exactly the loads that can least afford it, and a five-second one was
+// still firing inside Lighthouse's trace on a slow runner — TBT 400 ms, score
+// 0.87, under the gate. Gating purely on interaction is also the honest
+// measurement: a synthetic run never interacts, so it measures the page rather
+// than the page plus Google's tag manager.
 //
-// Note this deliberately does NOT fire for a visitor who lands and leaves
-// within five seconds without touching anything. That is the accepted trade:
-// it keeps 640 KB off the critical path for everyone else.
+// Nothing is lost for a real visitor. `window.dataLayer` is primed
+// synchronously below, so the page_view fired at boot queues up and is
+// processed the moment the script lands — carrying the path it was recorded
+// against, not wherever the user has navigated since.
+//
+// The accepted trade: someone who loads the page and leaves without moving a
+// mouse, scrolling, tapping or typing goes untracked. In practice that is
+// bots and mis-clicks.
 function whenIdle(fn) {
   let fired = false
-  let timer = null
 
-  const trigger = () => {
+  const trigger = (event) => {
+    // RouteChange (src/App.jsx) calls window.scrollTo on every navigation, and
+    // a PROGRAMMATIC scroll still emits a scroll event with isTrusted: true —
+    // there is no flag distinguishing it from a person. Measured firing twice,
+    // 77 ms after load, on a page nobody had touched; that alone defeated the
+    // whole deferral. Since that call always scrolls to the top, a scroll that
+    // has actually left the top is the part only a person produces.
+    if (event?.type === 'scroll' && window.scrollY <= 0) return
     if (fired) return
     fired = true
-    window.clearTimeout(timer)
-    for (const event of INTERACTIONS) window.removeEventListener(event, trigger, true)
+    for (const name of INTERACTIONS) window.removeEventListener(name, trigger, true)
     fn()
   }
 
   const arm = () => {
-    // `passive` because scroll/touchstart listeners block scrolling otherwise;
-    // `capture` so a handler calling stopPropagation can't hide the event.
-    for (const event of INTERACTIONS) {
-      window.addEventListener(event, trigger, { once: true, passive: true, capture: true })
+    // `passive` so the scroll/touch listeners never block scrolling; `capture`
+    // so a handler calling stopPropagation can't hide the event from us. NOT
+    // `once`: an ignored scroll-to-top must leave the listener in place for the
+    // real scroll that follows.
+    for (const name of INTERACTIONS) {
+      window.addEventListener(name, trigger, { passive: true, capture: true })
     }
-    timer = window.setTimeout(trigger, TAG_DELAY_MS)
   }
 
   if (document.readyState === 'complete') arm()
