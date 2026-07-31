@@ -22,6 +22,7 @@
 // catalogue change. See docs/seo-migration.md.
 
 import { createServer } from 'node:http'
+import { execFileSync } from 'node:child_process'
 import { readFile, writeFile, mkdir, stat } from 'node:fs/promises'
 import { join, extname, normalize, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -59,21 +60,57 @@ const MIME = {
   '.txt': 'text/plain; charset=utf-8',
 }
 
+// A candidate is only real if it actually starts. Debian and Ubuntu images ship
+// /usr/bin/chromium-browser as a snap wrapper stub: the file exists, so an
+// existsSync() check picks it, and then launching it fails and takes the whole
+// build with it. `--version` costs ~50 ms and is the only reliable test.
+function launches(path) {
+  try {
+    execFileSync(path, ['--version'], { stdio: 'ignore', timeout: 10_000 })
+    return true
+  } catch {
+    return false
+  }
+}
+
 // Where Chrome lives. puppeteer-core ships no browser of its own on purpose —
 // downloading a second Chromium into every CI run and every Railway build is
 // ~180 MB for something all three environments already have.
+//
+// Absolute paths are a last resort, not the strategy: a hardcoded nix profile
+// path is a guess about someone else's build image. Ask PATH first, which is
+// correct wherever the package manager put the binary.
 function findChrome() {
-  if (process.env.PUPPETEER_EXECUTABLE_PATH) return process.env.PUPPETEER_EXECUTABLE_PATH
-  const candidates = [
+  const explicit = process.env.PUPPETEER_EXECUTABLE_PATH
+  if (explicit) {
+    if (launches(explicit)) return explicit
+    console.error(`[prerender] PUPPETEER_EXECUTABLE_PATH=${explicit} does not launch.`)
+    return null
+  }
+
+  const onPath = ['google-chrome-stable', 'google-chrome', 'chromium', 'chromium-browser']
+  for (const name of onPath) {
+    try {
+      const resolved = execFileSync(process.platform === 'win32' ? 'where' : 'which', [name], {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      })
+        .split('\n')[0]
+        .trim()
+      if (resolved && launches(resolved)) return resolved
+    } catch {
+      // not on PATH — try the next name
+    }
+  }
+
+  const absolute = [
     '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
     '/Applications/Chromium.app/Contents/MacOS/Chromium',
     '/usr/bin/google-chrome',
     '/usr/bin/google-chrome-stable',
     '/usr/bin/chromium',
-    '/usr/bin/chromium-browser',
-    '/nix/var/nix/profiles/default/bin/chromium',
   ]
-  return candidates.find((path) => existsSync(path)) || null
+  return absolute.find((path) => existsSync(path) && launches(path)) || null
 }
 
 // Minimal static server over dist/. Deliberately not server.js: this runs while

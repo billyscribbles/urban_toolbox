@@ -1,12 +1,22 @@
 # Railway build configuration.
 #
-# The build runs scripts/prerender.mjs, which drives headless Chrome to snapshot
-# every route to static HTML (see that file for why). Nixpacks images ship no
-# browser, so install one and point puppeteer-core at it — puppeteer-core
-# deliberately downloads no Chromium of its own.
+# `yarn build` runs scripts/prerender.mjs, which drives headless Chrome to
+# snapshot every route to static HTML (see that file for why). Nixpacks images
+# ship no browser, so install one — puppeteer-core deliberately downloads none
+# of its own.
+#
+# aptPkgs, not nixPkgs: setting `nixPkgs` here REPLACES the setup phase's
+# package list rather than extending it, which drops the Node and Yarn that
+# Nixpacks selected. aptPkgs adds to the image instead, and puts the binary at
+# /usr/bin/chromium — on PATH, where scripts/prerender.mjs finds it without
+# anyone hardcoding a path.
+#
+# No PUPPETEER_EXECUTABLE_PATH here on purpose. A [variables] entry is not
+# reliably visible to the build step, so pointing it at a guessed path fails
+# twice over: the variable doesn't arrive, and the path was never verified. If
+# discovery ever needs overriding, set PUPPETEER_EXECUTABLE_PATH as a real
+# Railway *service variable* — findChrome() validates it launches before using
+# it, and fails the build loudly if it doesn't.
 
 [phases.setup]
-nixPkgs = ['nodejs', 'yarn', 'chromium']
-
-[variables]
-PUPPETEER_EXECUTABLE_PATH = '/nix/var/nix/profiles/default/bin/chromium'
+aptPkgs = ['chromium']
