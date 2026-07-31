@@ -83,6 +83,14 @@ describe('normalizeRow — DB row to storefront product', () => {
     expect(caravanOnly.fitsCaravan).toBe(true)
   })
 
+  it('maps the stock flag, defaulting to in stock when the column is absent', () => {
+    // Row 0 predates the column → in stock, so an un-migrated environment does
+    // not flip the whole catalogue to Back order.
+    expect(normalizeRow(productRows[0]).inStock).toBe(true)
+    // Row 1 is explicitly back-order.
+    expect(normalizeRow(productRows[1]).inStock).toBe(false)
+  })
+
   it('normalizes colours to known keys in canonical order, empty when absent', () => {
     // Row 1 stores ['black','nope','silver'] → cleaned + reordered.
     expect(normalizeRow(productRows[1]).colors).toEqual(['silver', 'black'])

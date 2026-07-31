@@ -7,6 +7,7 @@ import RelatedProducts from '../components/RelatedProducts.jsx'
 import PriceTag from '../components/PriceTag.jsx'
 import QuoteButton from '../components/QuoteButton.jsx'
 import ColorSelector from '../components/ColorSelector.jsx'
+import StockBadge from '../components/StockBadge.jsx'
 import CtaBand from '../components/CtaBand.jsx'
 import FitmentBadge from '../components/FitmentBadge.jsx'
 import NotFoundPage from './NotFoundPage.jsx'
@@ -200,6 +201,10 @@ function ProductDetail({ product }) {
               <div className="product-page__price">
                 <PriceTag price={product.price ?? priceFrom} discountPct={product.discountPct} />
               </div>
+
+              {/* Availability sits under the price: it qualifies the number
+                  above it rather than the decision to enquire below. */}
+              <StockBadge inStock={product.inStock} />
 
               {product.quote?.standardDims && (
                 <>

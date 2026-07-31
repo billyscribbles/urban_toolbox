@@ -442,6 +442,43 @@ describe('ProductEditor', () => {
     )
   })
 
+  it('defaults a new product to in stock and saves the back-order choice', async () => {
+    const user = userEvent.setup()
+    render(<ProductEditor row={null} rows={[]} onDone={() => {}} onCancel={() => {}} />)
+    expect(screen.getByLabelText('In stock')).toBeChecked()
+    expect(screen.getByLabelText('Back order')).not.toBeChecked()
+    await user.type(screen.getByLabelText(/^title/i), 'Back Order Box')
+    await user.selectOptions(screen.getByLabelText(/category/i), 'locks')
+    await user.click(screen.getByLabelText('Back order'))
+    expect(screen.getByLabelText('In stock')).not.toBeChecked()
+    await user.click(screen.getByRole('button', { name: /save product/i }))
+    expect(saveProduct).toHaveBeenCalledWith(expect.objectContaining({ inStock: false }), {
+      isNew: true,
+    })
+  })
+
+  // The dashboard axe pass renders the list, not the tray, so the editor's own
+  // form controls were never checked. Availability added two more, so close it.
+  it('has no axe violations, availability radios included', async () => {
+    const { container } = render(
+      <ProductEditor row={null} rows={[]} onDone={() => {}} onCancel={() => {}} />,
+    )
+    expect(await axe(container)).toHaveNoViolations()
+  })
+
+  it('reflects a stored back-order row when editing', () => {
+    const row = {
+      id: 'x',
+      title: 'Job Site Box',
+      category_id: 'locks',
+      in_stock: false,
+      product_images: [],
+    }
+    render(<ProductEditor row={row} rows={[row]} onDone={() => {}} onCancel={() => {}} />)
+    expect(screen.getByLabelText('Back order')).toBeChecked()
+    expect(screen.getByLabelText('In stock')).not.toBeChecked()
+  })
+
   it('saves a valid new product with generated id and slug', async () => {
     const onDone = vi.fn()
     render(<ProductEditor row={null} rows={[]} onDone={onDone} onCancel={() => {}} />)

@@ -140,8 +140,27 @@ describe('saveProduct', () => {
       featured: true,
       // Persisted cleaned + in canonical order.
       colors: ['silver', 'black'],
+      // Nothing passed inStock, so the row lands in stock — the same default
+      // the column itself carries.
+      in_stock: true,
       sort_order: 3,
     })
+  })
+
+  it('persists a back-order product as in_stock false', async () => {
+    await saveProduct(
+      {
+        id: 'bo',
+        slug: 'bo',
+        title: 'Back Order Box',
+        categoryId: 'locks',
+        price: null,
+        discountPct: null,
+        inStock: false,
+      },
+      { isNew: true },
+    )
+    expect(calls.upserts[0].row).toMatchObject({ in_stock: false })
   })
 
   it('updates by id when not new', async () => {

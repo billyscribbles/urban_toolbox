@@ -1,0 +1,34 @@
+/* Availability chip — same inline-chip language as FitmentBadge's light-surface
+   variant, one step smaller so it reads as a status note under the price rather
+   than competing with it. Both tones put the label in the darker token of their
+   pair so it clears AA on the soft fill. */
+.stock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 22px;
+  padding: 7px 13px;
+  background: var(--color-accent-soft);
+  border-radius: var(--radius-sm);
+  color: var(--color-accent-hover);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* currentColor keeps the dot locked to whichever tone the variant sets. */
+.stock-badge__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.stock-badge--back {
+  background: var(--color-attention-soft);
+  color: var(--color-attention);
+}

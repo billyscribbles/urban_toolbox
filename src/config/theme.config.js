@@ -39,6 +39,13 @@ export const theme = {
 
     // Destructive actions + error text (admin dashboard, form errors).
     danger: '#a03030',
+    // Non-blocking status — the back-order badge. A second status hue alongside
+    // `danger`; status colours sit outside the one-green-accent rule. Dark ochre
+    // rather than a bright amber on purpose: the badge label is 13px, and a
+    // brighter tone can't clear AA on the soft fill (#b7791f manages only 3.3:1,
+    // this pairing 5.2:1).
+    attention: '#8f5c0a',
+    'attention-soft': '#fdf3e3',
     // Warm sand — used only for the hero eyebrows (editorial reference look).
     sand: '#c4a477',
   },
