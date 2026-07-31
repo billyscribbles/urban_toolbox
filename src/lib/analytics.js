@@ -19,7 +19,19 @@ let gtmInitialized = false
 // events fired before the script lands (the first page_view, most importantly)
 // sit in the queue and are processed the moment it does.
 function whenIdle(fn) {
-  const run = () => (window.requestIdleCallback || window.setTimeout)(fn, 1)
+  // Called as a plain function, `requestIdleCallback` loses its `window`
+  // receiver AND is handed setTimeout's numeric delay, which it rejects as an
+  // invalid IdleRequestOptions — so this threw on every browser that HAS the
+  // API (Chrome, Edge, Firefox) and silently took gtag.js and the GTM container
+  // down with it. The timeout caps how long an idle callback may be deferred,
+  // so analytics still fires on a page that never goes idle.
+  const run = () => {
+    if (typeof window.requestIdleCallback === 'function') {
+      window.requestIdleCallback(fn, { timeout: 2000 })
+    } else {
+      window.setTimeout(fn, 1)
+    }
+  }
   if (document.readyState === 'complete') run()
   else window.addEventListener('load', run, { once: true })
 }
