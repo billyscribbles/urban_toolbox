@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { Crosshair, Spline, Wrench } from 'lucide-react'
 import SEO from '../lib/seo.jsx'
 import Img from '../components/Img.jsx'
@@ -38,13 +39,22 @@ export default function FabricationPage() {
                   </span>
                 </div>
                 <div className="fab-service__content">
-                  <h3 className="fab-service__title">{s.title}</h3>
+                  <h3 className="fab-service__title">
+                    {/* Laser cutting and folding have their own pages (legacy
+                        ranking URLs); custom fabrication lives only here. */}
+                    {s.to ? <Link to={s.to}>{s.title}</Link> : s.title}
+                  </h3>
                   <p className="fab-service__body">{s.body}</p>
                   <ul className="fab-service__points">
                     {s.points.map((point) => (
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
+                  {s.to && (
+                    <Link className="fab-service__more" to={s.to}>
+                      More on {s.title.toLowerCase()} →
+                    </Link>
+                  )}
                 </div>
               </div>
             )

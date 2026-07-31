@@ -93,6 +93,19 @@ export const site = {
       country: 'AU',
     },
     geo: { lat: -38.0075151, lng: 145.2463482 },
+    // Machine-readable form of `hours` above, for the LocalBusiness schema.
+    // Keep the two in sync — the human line is what customers read, this is
+    // what Google puts in the knowledge panel.
+    openingHours: [
+      {
+        days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        opens: '08:00',
+        closes: '16:30',
+      },
+    ],
+    // Feeds LocalBusiness.areaServed. The workshop is in Dandenong South and
+    // freights nationally, so the list runs local intent first, then national.
+    areaServed: ['Dandenong South', 'Melbourne', 'South East Melbourne', 'Victoria', 'Australia'],
   },
 
   seo: {

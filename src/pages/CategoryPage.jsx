@@ -5,6 +5,7 @@ import ProductRange from '../components/ProductRange.jsx'
 import NotFoundPage from './NotFoundPage.jsx'
 import { buildSections, getCategoryBySlug, getCategoryPath } from '../lib/catalog.js'
 import { useProductCatalog, loadProducts, retryLoad } from '../lib/productStore.js'
+import { breadcrumbSchema, itemListSchema } from '../lib/schema.js'
 
 // One page renders any catalog category — the Toolboxes root (slug prop, every
 // product shown grouped by family), one of the eight Toolboxes families
@@ -44,12 +45,25 @@ export default function CategoryPage({ slug: slugProp, intro }) {
     sections,
   }
 
+  const path_ = slugProp ? `/${node.slug}` : `/${top.slug}/${node.slug}`
+  // A subcategory sits under its top-level parent; a top-level page sits
+  // directly under Home. Mirrors the pill sub-nav the user actually sees.
+  const crumbs =
+    slugProp || top.slug === node.slug ? [] : [{ label: top.label, to: `/${top.slug}` }]
+  const listed = sections.flatMap((section) => section.products)
+
   return (
     <main>
       <SEO
         title={node.label}
         description={`${node.label} — Australian-made aluminium, built to order in Dandenong South. ${sections.length} categories, add to a no-obligation quote.`}
-        path={slugProp ? `/${node.slug}` : `/${top.slug}/${node.slug}`}
+        path={path_}
+        schema={[
+          breadcrumbSchema(crumbs, node.label),
+          // Only worth emitting once the catalogue has actually loaded —
+          // an empty ItemList is a worse signal than none at all.
+          ...(listed.length ? [itemListSchema(listed, { name: node.label, path: path_ })] : []),
+        ]}
       />
       <ProductRange data={data} status={status} onRetry={retryLoad} />
     </main>

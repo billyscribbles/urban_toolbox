@@ -5,7 +5,9 @@ import './NotFoundPage.css'
 export default function NotFoundPage() {
   return (
     <main className="notfound">
-      <SEO title="Page not found" />
+      {/* noindex, and no canonical — an error page must never point search
+          engines at another URL as its "real" version. */}
+      <SEO title="Page not found" noindex />
       <div className="container notfound__inner">
         <span className="section-eyebrow">404</span>
         <h1 className="notfound__title">Page not found.</h1>

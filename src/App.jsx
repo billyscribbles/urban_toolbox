@@ -10,6 +10,7 @@ import RouteFallback from './components/RouteFallback.jsx'
 import { trackPageview } from './lib/analytics.js'
 import { useQuote } from './lib/quoteStore.js'
 import { categories } from './data/categories.js'
+import { legacyRedirects } from './config/redirects.js'
 
 // Vehicle-exclusive tops (Trays, Canopy, Service Canopy) are single-segment
 // top-level categories — each gets its own /<slug> CategoryPage route. Derived
@@ -61,6 +62,7 @@ const CategoryPage = lazyWithRetry(() => import('./pages/CategoryPage.jsx'))
 const ProductPage = lazyWithRetry(() => import('./pages/ProductPage.jsx'))
 const VehiclePage = lazyWithRetry(() => import('./pages/VehiclePage.jsx'))
 const FabricationPage = lazyWithRetry(() => import('./pages/FabricationPage.jsx'))
+const ServicePage = lazyWithRetry(() => import('./pages/ServicePage.jsx'))
 const AustralianMadePage = lazyWithRetry(() => import('./pages/AustralianMadePage.jsx'))
 const AboutPage = lazyWithRetry(() => import('./pages/AboutPage.jsx'))
 const QuotePage = lazyWithRetry(() => import('./pages/QuotePage.jsx'))
@@ -163,32 +165,27 @@ function AppBody() {
               <Route path="/caravans" element={<VehiclePage vehicle="caravan" />} />
 
               <Route path="/fabrication" element={<FabricationPage />} />
+              {/* /laser-cutting and /folding are legacy GoDaddy URLs that rank
+                  on their own. They stay real pages (not redirects into
+                  #anchors on /fabrication — Google drops the fragment, which
+                  would merge two ranking URLs and two distinct search intents
+                  into one). Content lives in content/fabrication.js. */}
+              <Route path="/laser-cutting" element={<ServicePage slug="laser-cutting" />} />
+              <Route path="/folding" element={<ServicePage slug="folding" />} />
               <Route path="/australian-made" element={<AustralianMadePage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/quote" element={<QuotePage />} />
-              {/* /contact is an enquiry intent — send it to the quote form. */}
-              <Route path="/contact" element={<Navigate to="/quote" replace />} />
               <Route path="/privacy" element={<LegalPage type="privacy" />} />
               <Route path="/terms" element={<LegalPage type="terms" />} />
 
-              {/* Legacy product routes retired in the catalog restructure —
-                  redirected to their nearest new home so inbound links and search
-                  rankings survive. */}
-              <Route path="/caravan-toolboxes" element={<Navigate to="/caravans" replace />} />
-              <Route path="/trucks" element={<Navigate to="/toolboxes/truck-boxes" replace />} />
-
-              {/* Legacy URLs from the previous GoDaddy site — kept alive so
-                  existing search rankings and inbound links don't 404 after
-                  migration. laser-cutting & folding were separate pages that are
-                  now sections of /fabrication; photos had no equivalent. */}
-              <Route path="/ute-accessories" element={<Navigate to="/accessories" replace />} />
-              <Route path="/ute-accesories" element={<Navigate to="/accessories" replace />} />
-              <Route
-                path="/laser-cutting"
-                element={<Navigate to="/fabrication#laser-cutting" replace />}
-              />
-              <Route path="/folding" element={<Navigate to="/fabrication#folding" replace />} />
-              <Route path="/photos" element={<Navigate to="/" replace />} />
+              {/* Legacy URLs — from the old GoDaddy site and from the catalogue
+                  restructure — kept alive so inbound links and search rankings
+                  survive. server.js serves these as real 301s (the version
+                  search engines see); these client routes are the safety net for
+                  in-app navigation. Both read the same map, so they can't drift. */}
+              {Object.entries(legacyRedirects).map(([from, to]) => (
+                <Route key={from} path={from} element={<Navigate to={to} replace />} />
+              ))}
 
               {/* Catalogue admin — auth-gated, noindexed, deliberately not in the nav. */}
               <Route path="/admin" element={<AdminPage />} />

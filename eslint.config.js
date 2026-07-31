@@ -49,6 +49,10 @@ export default [
       sourceType: 'module',
       globals: {
         ...globals.node,
+        // scripts/prerender.mjs passes callbacks to page.evaluate(), whose
+        // bodies are serialised and run inside the browser, not in Node.
+        document: 'readonly',
+        window: 'readonly',
         describe: 'readonly',
         it: 'readonly',
         test: 'readonly',

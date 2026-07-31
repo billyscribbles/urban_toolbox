@@ -1,5 +1,11 @@
 User-agent: *
 Allow: /
+
+# Auth-gated catalogue admin — never a search result.
 Disallow: /admin
+
+# Internal fallback documents written by the prerender step, not pages.
+Disallow: /app-shell.html
+Disallow: /404.html
 
 Sitemap: https://example.com/sitemap.xml

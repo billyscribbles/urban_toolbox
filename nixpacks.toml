@@ -1,0 +1,12 @@
+# Railway build configuration.
+#
+# The build runs scripts/prerender.mjs, which drives headless Chrome to snapshot
+# every route to static HTML (see that file for why). Nixpacks images ship no
+# browser, so install one and point puppeteer-core at it — puppeteer-core
+# deliberately downloads no Chromium of its own.
+
+[phases.setup]
+nixPkgs = ['nodejs', 'yarn', 'chromium']
+
+[variables]
+PUPPETEER_EXECUTABLE_PATH = '/nix/var/nix/profiles/default/bin/chromium'

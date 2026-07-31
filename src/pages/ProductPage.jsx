@@ -18,6 +18,7 @@ import {
   getTopLabelForProduct,
 } from '../lib/catalog.js'
 import { useProductCatalog, loadProducts, retryLoad } from '../lib/productStore.js'
+import { productSchema, breadcrumbSchema } from '../lib/schema.js'
 import './ProductPage.css'
 
 // A breadcrumb crumb's link target, mirroring how the mega-menu links categories:
@@ -144,6 +145,13 @@ function ProductDetail({ product }) {
 
   const hasDetail = product.summary || product.features?.length > 0 || product.specs?.length > 0
 
+  const productPath = `/product/${product.slug || product.id}`
+  // Structured data mirrors the visible breadcrumb below, so the two can't drift.
+  const crumbs = [
+    ...(vehicleCrumb ? [vehicleCrumb] : []),
+    ...path.map((node, i) => ({ label: node.label, to: crumbHref(node, i, path) })),
+  ]
+
   return (
     <main className="product-page">
       <SEO
@@ -153,7 +161,11 @@ function ProductDetail({ product }) {
           `${product.title} — Australian-made aluminium, built to order in Dandenong South.`
         }
         image={product.img || undefined}
-        path={`/product/${product.slug || product.id}`}
+        path={productPath}
+        schema={[
+          productSchema(product, { path: productPath, categoryLabel: topLabel }),
+          breadcrumbSchema(crumbs, product.title),
+        ]}
       />
 
       <nav className="product-page__crumbs container" aria-label="Breadcrumb">

@@ -1,0 +1,88 @@
+/* Standalone fabrication service pages (/laser-cutting, /folding).
+   Same card language as .fab-service on /fabrication, minus the photo header —
+   these cards carry copy only, so the media block and its scrim aren't needed. */
+
+.svc-card {
+  display: flex;
+  flex-direction: column;
+  padding: 28px 26px 30px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    transform var(--transition-base);
+}
+
+.svc-card:hover {
+  border-color: rgba(var(--color-accent-rgb), 0.5);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+.svc-card__title {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  line-height: 1.25;
+  color: var(--color-ink-strong);
+}
+
+.svc-card__body {
+  margin: 0;
+  color: var(--color-ink-muted);
+  line-height: 1.65;
+}
+
+.svc-card__points {
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.svc-card__points li {
+  position: relative;
+  padding-left: 20px;
+  font-size: 0.9375rem;
+  color: var(--color-ink);
+}
+
+.svc-card__points li + li {
+  margin-top: 8px;
+}
+
+.svc-card__points li::before {
+  content: '';
+  position: absolute;
+  top: 0.6em;
+  left: 0;
+  width: 10px;
+  height: 2px;
+  background: var(--color-accent);
+}
+
+/* Related-services strip — internal linking between the three fabrication
+   pages and back into the catalogue. */
+.svc-related__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+.svc-related__label {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-gray-muted);
+}
+
+.svc-related__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}

@@ -2,7 +2,8 @@
   "ci": {
     "collect": {
       "startServerCommand": "yarn start",
-      "startServerReadyPattern": "localhost:4173",
+      "_comment": "Must match what server.js actually logs — it prints the bind address (0.0.0.0), never 'localhost', so the old pattern never fired and LHCI just waited out its timeout.",
+      "startServerReadyPattern": "Serving dist/ on",
       "url": ["http://localhost:4173/"],
       "numberOfRuns": 3
     },

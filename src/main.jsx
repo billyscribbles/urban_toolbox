@@ -11,7 +11,14 @@ import App from './App.jsx'
 applyTheme()
 initAnalytics()
 initGtm()
-loadProducts()
+
+// The build-time prerenderer (scripts/prerender.mjs) waits on this flag before
+// snapshotting a route, so the static HTML contains the real catalogue rather
+// than a loading skeleton. `finally` — a failed fetch still means "as loaded as
+// this page is going to get", and the store renders its own error state.
+loadProducts().finally(() => {
+  window.__APP_READY__ = true
+})
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

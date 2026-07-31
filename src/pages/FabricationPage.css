@@ -143,3 +143,28 @@
     transform: none;
   }
 }
+
+/* Card title links through to the standalone service page (/laser-cutting,
+   /folding). Inherits the title's type; only the accent on hover marks it. */
+.fab-service__title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.fab-service__title a:hover {
+  color: var(--color-accent);
+}
+
+.fab-service__more {
+  margin-top: 18px;
+  align-self: flex-start;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.fab-service__more:hover {
+  color: var(--color-accent-hover);
+  text-decoration: underline;
+}

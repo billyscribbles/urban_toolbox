@@ -53,11 +53,22 @@ usable but some carry blurred plates/logos and vary in framing.
 
 ## 6. SEO / meta
 
-- [ ] `public/sitemap.xml` updated with `/utes` + `/trucks` (done) — re-check after
-      any further route changes; the domain is templated from `VITE_SITE_URL` at build.
-- [ ] `/ute-accessories` (and misspelt `/ute-accesories`) 301 → `/utes` (done) —
-      verify on the live domain so old rankings/links carry over.
-- [ ] Confirm `public/brand/og-image.jpg` is a real 1200×630 card (not a placeholder).
+The migration off the old GoDaddy site is handled end to end — full detail,
+including the launch-day runbook, in **[docs/seo-migration.md](docs/seo-migration.md)**.
+Summary of what's already done:
+
+- [x] `sitemap.xml` is now **generated** at build from the category tree + the
+      live Supabase catalogue (122 URLs, was a hand-written 18 that omitted every
+      product page). Never needs manual editing again.
+- [x] All 7 old-site URLs accounted for — `/fabrication`, `/laser-cutting` and
+      `/folding` keep their exact URLs as real pages; the rest 301 with the query
+      string preserved. Asserted by `src/test/redirects.test.js`.
+- [x] Every route prerendered to real HTML (`scripts/prerender.mjs`) — the site
+      no longer serves an empty shell to crawlers.
+- [x] `og-image.jpg` confirmed a real 1200×630 JPEG.
+- [ ] Work through the cutover runbook in `docs/seo-migration.md` on launch day —
+      the `www` → apex 301 and the Search Console sitemap submission are the two
+      items that can only be done against the live domain.
 
 ## 7. Final verification (run before declaring done)
 
