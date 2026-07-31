@@ -10,30 +10,53 @@ const gtmId = site.integrations.gtmId
 let initialized = false
 let gtmInitialized = false
 
-// Runs `fn` once the page has finished loading and the browser is idle.
+// How long to wait for an interaction before loading the tags anyway.
+const TAG_DELAY_MS = 5000
+
+const INTERACTIONS = ['pointerdown', 'keydown', 'scroll', 'touchstart']
+
+// Runs `fn` on the visitor's first interaction, or TAG_DELAY_MS after load —
+// whichever comes first, and only ever once.
 //
-// Google's tags are ~600 KB of third-party JavaScript. Fetched during the
-// initial load they compete with the hero image for bandwidth and push LCP out
-// by roughly a second on a slow connection. Nothing is lost by waiting: both
-// tags read from `window.dataLayer`, which we prime synchronously below, so
-// events fired before the script lands (the first page_view, most importantly)
-// sit in the queue and are processed the moment it does.
+// Google's tags are ~640 KB of third-party JavaScript that cost 776 ms of main-
+// thread blocking on a throttled mobile run — measured, not estimated: they are
+// the entire reason Total Blocking Time was 600 ms and the Lighthouse
+// performance score sat at 73. Loading them during the initial page load makes
+// the site materially slower for every visitor, so we hold them until the
+// visitor does something (which is also when they stop being a bounce) or until
+// five seconds have passed.
+//
+// Nothing is lost by waiting. Both tags read from `window.dataLayer`, which is
+// primed synchronously below, so page_view events fired before the script lands
+// queue up and are processed the moment it arrives — with the path they were
+// recorded against, not the one the user has since navigated to.
+//
+// Note this deliberately does NOT fire for a visitor who lands and leaves
+// within five seconds without touching anything. That is the accepted trade:
+// it keeps 640 KB off the critical path for everyone else.
 function whenIdle(fn) {
-  // Called as a plain function, `requestIdleCallback` loses its `window`
-  // receiver AND is handed setTimeout's numeric delay, which it rejects as an
-  // invalid IdleRequestOptions — so this threw on every browser that HAS the
-  // API (Chrome, Edge, Firefox) and silently took gtag.js and the GTM container
-  // down with it. The timeout caps how long an idle callback may be deferred,
-  // so analytics still fires on a page that never goes idle.
-  const run = () => {
-    if (typeof window.requestIdleCallback === 'function') {
-      window.requestIdleCallback(fn, { timeout: 2000 })
-    } else {
-      window.setTimeout(fn, 1)
-    }
+  let fired = false
+  let timer = null
+
+  const trigger = () => {
+    if (fired) return
+    fired = true
+    window.clearTimeout(timer)
+    for (const event of INTERACTIONS) window.removeEventListener(event, trigger, true)
+    fn()
   }
-  if (document.readyState === 'complete') run()
-  else window.addEventListener('load', run, { once: true })
+
+  const arm = () => {
+    // `passive` because scroll/touchstart listeners block scrolling otherwise;
+    // `capture` so a handler calling stopPropagation can't hide the event.
+    for (const event of INTERACTIONS) {
+      window.addEventListener(event, trigger, { once: true, passive: true, capture: true })
+    }
+    timer = window.setTimeout(trigger, TAG_DELAY_MS)
+  }
+
+  if (document.readyState === 'complete') arm()
+  else window.addEventListener('load', arm, { once: true })
 }
 
 // Injects the GA4 gtag script. Safe (and free) to call when no gaId is set.
