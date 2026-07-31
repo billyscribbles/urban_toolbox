@@ -139,11 +139,8 @@ curl -s https://urbantoolboxes.com.au/sitemap.xml | grep -c "<loc>"   # expect 1
       address and hours match the `LocalBusiness` schema
       (23/10 Assembly Drive, Dandenong South VIC 3175; Mon–Fri 08:00–16:30).
 - [ ] **Google Ads:** the GTM container is unchanged, so conversion and
-      remarketing tags carry over. Confirm a conversion fires from the live site
-      — the `whale-tail` of this migration was that `whenIdle()` in
-      `lib/analytics.js` threw on every browser that supports
-      `requestIdleCallback`, so gtag.js and GTM **never loaded at all**. That's
-      fixed; verify it stays fixed after launch.
+      remarketing tags carry over. Confirm a conversion fires from the live
+      site. Two things to know about how the tags now load — see below.
 - [ ] **Rich Results Test** on a product URL — expect `Product` with price and
       availability, plus `BreadcrumbList`.
 
@@ -155,6 +152,46 @@ curl -s https://urbantoolboxes.com.au/sitemap.xml | grep -c "<loc>"   # expect 1
       pre-launch baseline. A dip in week one is normal; it should recover.
 - [ ] `site:urbantoolboxes.com.au` after ~a week — product pages should start
       appearing. There were 7 indexable URLs before; there are 122 now.
+
+---
+
+## Analytics: expect pageviews to differ from the old site
+
+Two changes landed here, and both move the numbers. Read this before concluding
+GA4 is broken.
+
+**1. The tags were never loading at all.** `whenIdle()` in `lib/analytics.js`
+called `requestIdleCallback` unbound and passed it `setTimeout`'s numeric delay,
+which it rejects as invalid `IdleRequestOptions`. It threw on every browser that
+_has_ the API — Chrome, Edge, Firefox — so gtag.js and the GTM container, and
+with them the Google Ads conversion and remarketing tags, never loaded. The IDs
+looked correctly wired in `site.config.js` the whole time. Fixed.
+
+**2. The tags now load on first interaction, not on page load.** They are 638 KB
+costing 529 ms of main-thread blocking on a throttled mobile profile — measured;
+they were single-handedly the reason Lighthouse performance sat at 73 against a
+90 gate. They now load on the first `mousemove`, `pointerdown`, `keydown`,
+`touchstart`, or a scroll that leaves the top of the page.
+
+What this means in the data:
+
+- A visitor who loads a page and leaves **without moving a mouse, scrolling,
+  tapping or typing** is not counted. In practice that's bots and mis-clicks,
+  but it will read as slightly lower raw pageviews than the old site.
+- Everyone else is counted normally. `window.dataLayer` is primed synchronously,
+  so the `page_view` fired at boot queues and is processed the moment the script
+  lands, carrying the path it was recorded against.
+- Conversions are unaffected — submitting a quote form is an interaction by
+  definition.
+- The scroll signal deliberately ignores scrolls at the top of the page:
+  `RouteChange` in `App.jsx` calls `window.scrollTo` on every navigation, and a
+  programmatic scroll emits a `scroll` event with `isTrusted: true`. Nothing
+  distinguishes it from a person, so it fired 77 ms after every load and made
+  the deferral a silent no-op until this was handled.
+
+If pageviews ever need to be strictly comparable to the old site, the lever is
+`INTERACTIONS` / the gating in `src/lib/analytics.js` — but loading the tags
+eagerly costs roughly 20 Lighthouse performance points on mobile.
 
 ---
 
