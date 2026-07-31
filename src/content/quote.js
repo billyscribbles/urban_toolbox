@@ -45,11 +45,11 @@ export const quote = {
 
   success: {
     heading: 'Thanks — we’ve got it.',
-    body: 'Your enquiry is on its way to the workshop. We’ll be in touch shortly. In a hurry? Call us on the number below.',
+    body: 'Your enquiry is on its way to the workshop. We’ll be in touch shortly. In a hurry? Give us a call on the number shown.',
   },
   error: {
     heading: 'That didn’t send.',
-    body: 'Something went wrong on our end. Please try again, or reach us directly by phone or email below.',
+    body: 'Something went wrong on our end. Please try again, or reach us directly using the phone or email shown.',
   },
 
   // Shown above the direct-contact fallback and when the form can't be shown.
