@@ -31,14 +31,18 @@ function crumbHref(node, i, path) {
   return `/toolboxes/${path[i - 1].slug}#${node.slug}`
 }
 
-// Simplified Australia silhouette — lucide has no country shapes, so this keeps
-// the "Australian made" trust cell literal. Drawn to match the site's green
-// outline icon style.
+// Australia silhouette — lucide has no country shapes, so this keeps the
+// "Australian made" trust cell literal. Traced from real coastal reference
+// points (Cape York, the Gulf of Carpentaria, Arnhem Land, the Kimberley,
+// Steep Point, the Great Australian Bight, Wilsons Promontory, Byron Bay)
+// projected into the 24x24 box, so the landmass reads correctly at the 22px
+// the trust row renders it at. Filled rather than stroked — a country outline
+// smears into mush at this size.
 function AustraliaIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
-      <path d="M6.8 5.4 8.9 7.2 10.2 4.6 12 6.4 14.6 5.8 18 7.6 19.4 11.4 18.6 15 16.2 17.2 13 18.2 11.2 16.9 8.6 18.2 5.6 16 3.7 11.8 4.4 8.1 Z" />
-      <circle cx="15.2" cy="20.2" r="1.1" />
+      <path d="M16.5 3 16.1 4.4 15.7 6.6 15 6.9 13.8 6 13.6 4.4 13.7 3.8 12.5 3.7 11.4 3.3 10.8 4 10.1 5.3 9.4 5.6 8.8 4.7 7.2 6.1 6.5 7.1 4.9 8.1 2.5 9.1 2 11.4 2.9 13.6 3.2 14.7 2.9 16 4.3 16.4 6.3 15.7 9.8 14.5 10.9 14.4 12.2 14.7 13.2 16.2 14.5 16.6 15.6 18 17 18.4 18.4 18.5 20.2 17.7 20.9 15.7 21.8 13.7 22 12.8 21.8 11 20.9 10.2 19.8 8.7 18.4 7.5 18.1 6.4 17.5 4.9 Z" />
+      <path d="M17.5 19.9 19.4 19.9 19.3 20.8 18.7 21.5 18.1 21.2 17.6 20.7 Z" />
     </svg>
   )
 }
