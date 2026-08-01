@@ -96,7 +96,11 @@ describe('AdminPage — signed in', () => {
     renderSignedIn()
     const tablist = await screen.findByRole('tablist', { name: /admin sections/i })
     const tabs = within(tablist).getAllByRole('tab')
-    expect(tabs.map((t) => t.textContent)).toEqual(['Products', 'Home carousel'])
+    expect(tabs.map((t) => t.textContent)).toEqual([
+      'Products',
+      'Home carousel',
+      'Featured Products',
+    ])
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true')
     // Only the selected panel is mounted — the carousel card is not just hidden.
     expect(screen.getByRole('button', { name: /new product/i })).toBeInTheDocument()
@@ -111,15 +115,40 @@ describe('AdminPage — signed in', () => {
     expect(screen.queryByRole('button', { name: /new product/i })).toBeNull()
   })
 
+  it('swaps the panel when the Featured Products tab is chosen', async () => {
+    const user = userEvent.setup()
+    renderSignedIn()
+    await user.click(await screen.findByRole('tab', { name: /featured products/i }))
+    expect(
+      await screen.findByText(/the “featured products” rail on the home page/i),
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /new product/i })).toBeNull()
+    expect(screen.queryByText(/home carousel photos/i)).toBeNull()
+  })
+
   it('moves between tabs with the arrow keys, carrying focus', async () => {
     const user = userEvent.setup()
     renderSignedIn()
-    const products = await screen.findByRole('tab', { name: /products/i })
+    // Anchored: an unanchored /products/i would also match "Featured Products".
+    const products = await screen.findByRole('tab', { name: /^products$/i })
     products.focus()
     await user.keyboard('{ArrowRight}')
     const carousel = screen.getByRole('tab', { name: /home carousel/i })
     expect(carousel).toHaveAttribute('aria-selected', 'true')
     expect(carousel).toHaveFocus()
+  })
+
+  it('wraps from the last tab back to the first with the arrow keys', async () => {
+    const user = userEvent.setup()
+    renderSignedIn()
+    // Click first: onTabKey steps from the SELECTED tab, not the focused one, so
+    // merely focusing the third tab would step from Products and land on the
+    // carousel instead of wrapping.
+    await user.click(await screen.findByRole('tab', { name: /featured products/i }))
+    await user.keyboard('{ArrowRight}')
+    const products = screen.getByRole('tab', { name: /^products$/i })
+    expect(products).toHaveAttribute('aria-selected', 'true')
+    expect(products).toHaveFocus()
   })
 
   it('opens the editor tray on New product and closes it on Escape', async () => {

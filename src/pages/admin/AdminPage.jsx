@@ -5,15 +5,17 @@ import { site } from '../../config/site.config.js'
 import AdminLogin from './AdminLogin.jsx'
 import ProductList from './ProductList.jsx'
 import CarouselImages from './CarouselImages.jsx'
+import FeaturedProducts from './FeaturedProducts.jsx'
 import EditorTray from './EditorTray.jsx'
 import { watchSession, signOut, fetchAdminProducts } from '../../lib/adminApi.js'
 import './Admin.css'
 
-// Dashboard sections. Both read the same `rows` fetch, so switching tabs costs
-// no network — only the selected panel is mounted.
+// Dashboard sections. All three read the same `rows` fetch, so switching tabs
+// costs no network — only the selected panel is mounted.
 const TABS = [
   { id: 'products', label: 'Products' },
   { id: 'carousel', label: 'Home carousel' },
+  { id: 'featured', label: 'Featured Products' },
 ]
 
 // The whole admin lives on this one lazy route: auth gate -> tabbed dashboard,
@@ -138,8 +140,10 @@ export default function AdminPage() {
                   onNew={() => setEditing('new')}
                   onChanged={refresh}
                 />
-              ) : (
+              ) : tab === 'carousel' ? (
                 <CarouselImages rows={rows} />
+              ) : (
+                <FeaturedProducts rows={rows} onChanged={refresh} />
               )}
             </div>
           </div>
