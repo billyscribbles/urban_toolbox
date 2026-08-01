@@ -159,6 +159,16 @@ export async function setProductHidden(id, hidden) {
   retryLoad()
 }
 
+// Toggle a product's place in the home page's featured rail without touching
+// any other field. Mirrors setProductHidden: one column, one row, then a
+// storefront refresh so an open tab picks the change up without a reload.
+export async function setProductFeatured(id, featured) {
+  const c = await client()
+  const { error } = await c.from('products').update({ featured }).eq('id', id)
+  if (error) throw new Error(error.message)
+  retryLoad()
+}
+
 // The DB stores only the JPEG path; the WebP derivatives sit beside it with
 // the -400/-800 suffix (same contract as <Img> and scripts/gen-images.mjs).
 function storageFilesFor(image) {

@@ -90,6 +90,7 @@ const {
   deletePhoto,
   deleteProduct,
   setProductHidden,
+  setProductFeatured,
   fetchPromoBanner,
   savePromoBanner,
   uploadCategoryImage,
@@ -204,6 +205,23 @@ describe('setProductHidden', () => {
       col: 'id',
       val: 'x',
     })
+  })
+})
+
+describe('setProductFeatured', () => {
+  it('updates only the featured flag for the given id', async () => {
+    await setProductFeatured('x', true)
+    expect(calls.updates[0]).toMatchObject({
+      table: 'products',
+      patch: { featured: true },
+      col: 'id',
+      val: 'x',
+    })
+  })
+
+  it('unfeatures without touching any other column', async () => {
+    await setProductFeatured('x', false)
+    expect(calls.updates[0].patch).toEqual({ featured: false })
   })
 })
 
