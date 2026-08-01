@@ -347,3 +347,14 @@ export function getCategoryTileImage(categoryId) {
   const uploaded = getCategoryImages()[categoryId]
   return uploaded ? publicPhotoUrl(uploaded) : firstProductImageIn(categoryId)
 }
+
+// The home page's "Featured Products" rail: every product with `featured`
+// ticked in /admin. getProducts() already excludes hidden rows and is ordered
+// sort_order then id, so the rail matches catalogue order for free — there is
+// deliberately no separate ordering column to keep in sync. `limit` caps a
+// runaway rail; 12 is four full pages at the desktop card count.
+export function getFeaturedProducts(limit = 12) {
+  return getProducts()
+    .filter((p) => p.featured)
+    .slice(0, limit)
+}
