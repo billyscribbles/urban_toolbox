@@ -12,8 +12,15 @@ the `big-switch` skill hands off here once the site verifies locally.
 ## Prerequisites — check before deploying
 
 1. `railway.json` exists at the repo root (it ships with the template):
-   NIXPACKS builder, `startCommand: yarn start`, restart-on-failure.
-2. `package.json` has a `start` script — `vite preview --host 0.0.0.0 --port 4173`.
+   DOCKERFILE builder, `startCommand: node server.js`, restart-on-failure.
+   Railway retired the Nixpacks builder — `NIXPACKS` is no longer a valid value
+   and silently falls back to Railpack, so never reintroduce it.
+2. `package.json` has a `start` script — `node server.js`.
+   Any site whose build drives headless Chrome (the prerender step) needs the
+   root `Dockerfile`: Railway's managed builders run Ubuntu, where the chromium
+   apt packages are snap stubs that cannot launch. Each `VITE_*` service
+   variable must ALSO be declared as an `ARG` in that Dockerfile, or it reaches
+   the build empty.
 3. `yarn build` passes locally and `yarn lint && yarn test` are green. Never
    deploy a build you have not verified.
 4. The Railway MCP tools are available (`mcp__railway__*`). If not, tell the user
