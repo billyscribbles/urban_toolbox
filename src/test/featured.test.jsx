@@ -229,7 +229,7 @@ const { default: Home } = await import('../pages/Home.jsx')
 const { HelmetProvider } = await import('react-helmet-async')
 
 describe('Home — featured rail placement', () => {
-  it('renders the rail directly after the category carousel', () => {
+  it('renders the rail directly above the category carousel, under the hero fold', () => {
     seed([row('a', { featured: true, title: 'Alloy Toolbox', slug: 'alloy-toolbox', price: 1299 })])
     const { container } = render(
       <HelmetProvider>
@@ -242,10 +242,12 @@ describe('Home — featured rail placement', () => {
     const featured = container.querySelector('.featured')
     expect(carousel).not.toBeNull()
     expect(featured).not.toBeNull()
-    // compareDocumentPosition: FOLLOWING (4) means `featured` comes after.
+    // compareDocumentPosition: FOLLOWING (4) means `carousel` comes after.
     expect(
-      carousel.compareDocumentPosition(featured) & Node.DOCUMENT_POSITION_FOLLOWING,
+      featured.compareDocumentPosition(carousel) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy()
-    expect(carousel.nextElementSibling).toBe(featured)
+    expect(featured.nextElementSibling).toBe(carousel)
+    // The hero fold stays first — the rail is the first section below it.
+    expect(featured.previousElementSibling).toHaveClass('hero-fold')
   })
 })

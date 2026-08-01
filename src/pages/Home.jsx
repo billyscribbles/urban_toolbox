@@ -17,8 +17,8 @@ export default function Home() {
         <Hero />
         <TrustBar />
       </div>
-      <CategoryCarousel />
       <FeaturedRail />
+      <CategoryCarousel />
       <WhyChoose />
       <DistanceCta />
       <StoryBlock />

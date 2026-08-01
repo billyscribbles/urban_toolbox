@@ -1,10 +1,11 @@
 /* Home "Featured Products" rail — a manually paged, scroll-snapped row of
-   product cards. Sits on the off-white surface between the white category
-   strip above and WhyChoose below, so the bands stay visually distinct. */
+   product cards. First section under the hero fold, on the dark surface: the
+   white cards read as lit objects against it, and the band alternates cleanly
+   into the white category strip below. */
 
 .featured {
   padding: 88px 0;
-  background: var(--color-off-white);
+  background: var(--color-dark);
 }
 
 .featured__head {
@@ -15,8 +16,12 @@
   margin-bottom: 40px;
 }
 
+/* The .h2 utility inks dark by default; on this surface it has to invert.
+   The eyebrow needs no override — it is already accent green, which the
+   Eyebrow component is built to carry on both light and dark sections. */
 .featured__heading {
   margin-top: 4px;
+  color: var(--color-white);
 }
 
 .featured__nav {
@@ -32,9 +37,11 @@
   width: 44px;
   height: 44px;
   padding: 0;
-  color: var(--color-ink);
-  background: var(--color-white);
-  border: 1px solid var(--color-border-light);
+  /* Ghosted rather than solid white: two filled circles would compete with the
+     card row for attention on a dark band. */
+  color: var(--color-white);
+  background: transparent;
+  border: 1px solid var(--color-border-dark-3);
   border-radius: var(--radius-full);
   cursor: pointer;
   transition:
