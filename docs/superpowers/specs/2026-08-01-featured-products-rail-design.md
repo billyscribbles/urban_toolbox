@@ -39,12 +39,18 @@ live preview of the rail in the admin. All three were considered and cut.
 
 ### Placement
 
-`src/pages/Home.jsx`, between `<CategoryCarousel />` and `<WhyChoose />` — directly
-under the "Built for every adventure" strip.
+`src/pages/Home.jsx`, directly under the hero fold and **above**
+`<CategoryCarousel />` — so the rail leads the page rather than following the
+"Built for every adventure" strip.
 
-`CategoryCarousel` sits on `--color-white`. The rail therefore sits on the page
-surface with white cards, the same treatment `WhyChoose` uses, so the two strips read
-as separate bands rather than one continuous white block.
+The rail sits on `--color-dark`. White cards read as lit objects against it, and
+the band alternates cleanly into the white `CategoryCarousel` below.
+
+> Revised after implementation, at Billy's request. The original design put the
+> rail _below_ the category strip on `--color-off-white`. That was dropped for two
+> reasons: featured stock deserves the first slot under the hero, and the
+> off-white/white pairing was a 1.02:1 difference — the two bands were effectively
+> one continuous block, which the final review flagged.
 
 ### Data
 
