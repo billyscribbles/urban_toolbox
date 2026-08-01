@@ -7,6 +7,8 @@ import { productRows } from './fixtures/productRows.js'
 vi.mock('../lib/supabaseClient.js', () => ({
   isConfigured: () => true,
   publicPhotoUrl: (p) => `https://cdn.test/${p}`,
+  publicFileUrl: (p, opts) =>
+    `https://cdn.test/${p}${opts?.download ? `?download=${opts.download}` : ''}`,
   getSupabase: () => Promise.resolve(null),
 }))
 

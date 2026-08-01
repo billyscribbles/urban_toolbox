@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import { getSupabase, isConfigured, publicPhotoUrl } from './supabaseClient.js'
+import { getSupabase, isConfigured, publicPhotoUrl, publicFileUrl } from './supabaseClient.js'
 import { normalizeColors } from '../data/colors.js'
 import { discountedPrice } from './pricing.js'
 
@@ -23,6 +23,13 @@ function subscribe(fn) {
 
 function getSnapshot() {
   return state
+}
+
+// Customers get a branded, predictable filename rather than whatever the admin
+// happened to upload. Slugs are already URL-safe, so no extra escaping beyond
+// the encodeURIComponent inside publicFileUrl.
+function brochureFilename(row) {
+  return `urban-toolbox-${row.slug || row.id}-brochure.pdf`
 }
 
 // DB row (+ joined product_images) -> the product shape the storefront
@@ -64,6 +71,12 @@ export function normalizeRow(row, storeDiscountPct = 0) {
     // Availability. Missing (a row read before 0008) counts as in stock, so an
     // un-migrated environment doesn't flip the whole catalogue to Back order.
     inStock: row.in_stock !== false,
+    // Fully-resolved download URL rather than a raw path, matching how `img`
+    // is handled — it keeps ProductPage dumb. Null when there is no brochure,
+    // which is also how a row reads before 0009 is applied.
+    brochureUrl: row.brochure_path
+      ? publicFileUrl(row.brochure_path, { download: brochureFilename(row) })
+      : null,
     quote: {
       id: row.id,
       priceFrom: discountedPrice(price, discountPct) ?? price,
