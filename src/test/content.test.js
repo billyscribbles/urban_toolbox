@@ -12,6 +12,7 @@ import { testimonials } from '../content/testimonials.js'
 import { faq } from '../content/faq.js'
 import { legal } from '../content/legal.js'
 import { homeCarousel } from '../content/homeCarousel.js'
+import { featuredSection } from '../content/featured.js'
 import { shopByVehicle } from '../content/shopByVehicle.js'
 import { fitment } from '../content/fitment.js'
 import { categories } from '../data/categories.js'
@@ -109,6 +110,12 @@ describe('content — section copy contract', () => {
       // resolver keys on must exist in the tree.
       expect(getCategoryById(tile.categoryId), `no category for id ${tile.categoryId}`).toBeTruthy()
     }
+  })
+
+  it('featured rail has an eyebrow, heading and CTA label', () => {
+    expect(featuredSection.eyebrow).toBeTruthy()
+    expect(featuredSection.heading).toBeTruthy()
+    expect(featuredSection.cta).toBeTruthy()
   })
 
   it('shopByVehicle has cards routing to /utes and /caravans with images on disk', () => {
