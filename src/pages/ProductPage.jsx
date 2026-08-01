@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ChevronRight, ShieldCheck, Package, PhoneCall } from 'lucide-react'
+import { ChevronRight, ShieldCheck, Package, PhoneCall, FileDown } from 'lucide-react'
 import SEO from '../lib/seo.jsx'
 import ProductGallery from '../components/ProductGallery.jsx'
 import RelatedProducts from '../components/RelatedProducts.jsx'
@@ -234,6 +234,16 @@ function ProductDetail({ product }) {
 
               <div className="product-page__actions">
                 <QuoteButton item={quoteItem} />
+                {/* A plain anchor, not a button with a handler: keyboard,
+                    right-click → Save link as, and middle-click all work for
+                    free. The Content-Disposition header from ?download= does
+                    the real work; the download attribute is belt-and-braces. */}
+                {product.brochureUrl && (
+                  <a className="product-page__brochure" href={product.brochureUrl} download>
+                    <FileDown size={18} strokeWidth={1.8} aria-hidden="true" />
+                    Download brochure (PDF)
+                  </a>
+                )}
               </div>
 
               <ul className="product-page__trust">
