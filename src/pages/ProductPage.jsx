@@ -211,7 +211,8 @@ function ProductDetail({ product }) {
               <span className="product-page__accent" aria-hidden="true" />
 
               {/* Fitment sits above the price: it's the qualifying question, so
-                  it should be answered before the number. */}
+                  it should be answered before the number. Reuses vehicleScope
+                  from the breadcrumb above — its second consumer. */}
               {vehicleScope && <FitmentBadge vehicle={vehicleScope} variant="inline" />}
 
               <div className="product-page__price">

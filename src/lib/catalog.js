@@ -21,7 +21,7 @@ export function isLeaf(node) {
   return !node?.children?.length
 }
 
-// Nodes tagged `vehicle` ('ute' | 'caravan') or `exclusive` (e.g.
+// Nodes tagged `vehicle` ('ute' | 'truck') or `exclusive` (e.g.
 // 'australian-made') are scope-exclusive: hidden from the generic mega-menu and
 // category pages, surfaced only on the page that passes their scope. Untagged
 // nodes are visible everywhere.
@@ -291,7 +291,8 @@ const SCOPE_HEADINGS = {
 // reads nothing like the nav. So: one group per top category, a nested leaf
 // qualified with its subcategory (nothing nests today, but the tree allows it),
 // and the scope-exclusive tops (ute-only Trays/Canopy/Service Canopy, the
-// Australian Made line) bucketed under the menu that surfaces them.
+// truck-only Toolboxes/Accessories pair, the Australian Made line) bucketed
+// under the menu that surfaces them.
 // Shape:
 //   [{ label, options: [{ id, label }] }]
 export function getAdminCategoryGroups() {

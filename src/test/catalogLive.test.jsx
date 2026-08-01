@@ -192,6 +192,39 @@ describe('getVehicleSections — vehicle-filtered range', () => {
     }
   })
 
+  it('lists a product filed under a truck category on /trucks, and nowhere else', () => {
+    // Deliberately flagged fits_ute/fits_caravan true — trucks is scope-owned,
+    // not flag-sliced, so those flags must be irrelevant to whether this
+    // product shows up here.
+    const truckRow = {
+      id: 'truck-drawer-1',
+      category_id: 'truck-toolboxes',
+      title: 'Truck Drawer System',
+      slug: 'truck-drawer-1',
+      product_images: [],
+      fits_ute: true,
+      fits_caravan: true,
+    }
+    __setStateForTests({
+      status: 'ready',
+      products: [...productRows, truckRow].map((r) => normalizeRow(r)),
+    })
+
+    const truckSection = getVehicleSections('truck').find((s) => s.id === 'truck-toolboxes')
+    expect(truckSection.products.map((p) => p.id)).toContain('truck-drawer-1')
+
+    // Filed for trucks, not fitted for utes/caravans — the fitment flags don't
+    // matter because those pages slice the generic catalogue, and
+    // truck-toolboxes was never part of it.
+    expect(idsIn(getVehicleSections('ute'))).not.toContain('truck-drawer-1')
+    expect(idsIn(getVehicleSections('caravan'))).not.toContain('truck-drawer-1')
+
+    for (const top of ['toolboxes', 'accessories']) {
+      const labels = getMegaMenu(top).columns.map((c) => c.label)
+      expect(labels).not.toContain('Truck Toolboxes')
+    }
+  })
+
   it('vehicle menu lists each page’s top-level groups under its heading', () => {
     const menu = getVehicleMenu()
     expect(menu.columns.map((c) => c.label)).toEqual(['Caravans', 'Utes', 'Trucks'])

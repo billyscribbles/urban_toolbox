@@ -5,8 +5,10 @@ import { getVehicleSections } from '../lib/catalog.js'
 import { useProductCatalog, loadProducts, retryLoad } from '../lib/productStore.js'
 
 // Copy per vehicle — the only client-facing strings live here so the page body
-// stays a thin filter over the shared catalog read layer.
-const VEHICLES = {
+// stays a thin filter over the shared catalog read layer. Exported for the
+// content contract test (src/test/content.test.js), which checks every
+// heroImage exists on disk.
+export const VEHICLES = {
   ute: {
     title: 'For Utes',
     eyebrow: 'Shop by vehicle',

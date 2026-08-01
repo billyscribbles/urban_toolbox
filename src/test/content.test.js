@@ -16,6 +16,7 @@ import { shopByVehicle } from '../content/shopByVehicle.js'
 import { fitment } from '../content/fitment.js'
 import { categories } from '../data/categories.js'
 import { getCategoryBySlug, getCategoryById } from '../lib/catalog.js'
+import { VEHICLES } from '../pages/VehiclePage.jsx'
 
 // Products now live in Supabase (their contract is covered by productStore.test.js
 // against fixtures/productRows.js); only the static category tree remains here.
@@ -126,6 +127,21 @@ describe('content — section copy contract', () => {
       expect(existsSync(join(process.cwd(), 'public', card.img)), `missing image ${card.img}`).toBe(
         true,
       )
+    }
+  })
+
+  it('VehiclePage VEHICLES has real copy and a hero image on disk for every vehicle', () => {
+    const vehicles = Object.values(VEHICLES)
+    expect(vehicles.length).toBeGreaterThan(0)
+    for (const v of vehicles) {
+      expect(v.title).toBeTruthy()
+      expect(v.intro).toBeTruthy()
+      expect(v.seo).toBeTruthy()
+      expect(v.path).toMatch(/^\//)
+      expect(
+        existsSync(join(process.cwd(), 'public', v.heroImage)),
+        `missing hero image ${v.heroImage}`,
+      ).toBe(true)
     }
   })
 })
