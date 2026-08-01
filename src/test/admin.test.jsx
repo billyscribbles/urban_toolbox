@@ -619,3 +619,86 @@ describe('CarouselImages', () => {
     await waitFor(() => expect(uploadCategoryImage).toHaveBeenCalledWith('canopies', file))
   })
 })
+
+const { default: FeaturedProducts } = await import('../pages/admin/FeaturedProducts.jsx')
+
+// sort_order deliberately out of order relative to the array, so the re-sort is
+// actually exercised. 'c' is featured but hidden — it never reaches the rail.
+const featuredRows = [
+  {
+    id: 'b',
+    category_id: 'top-opening-toolboxes',
+    title: 'Job Site Box',
+    price: 450,
+    featured: true,
+    hidden: false,
+    sort_order: 2,
+    product_images: [],
+  },
+  {
+    id: 'a',
+    category_id: 'locks',
+    title: 'Whale Tail Lock',
+    price: 45,
+    featured: false,
+    hidden: false,
+    sort_order: 0,
+    product_images: [],
+  },
+  {
+    id: 'c',
+    category_id: 'locks',
+    title: 'Hidden Gem',
+    price: 99,
+    featured: true,
+    hidden: true,
+    sort_order: 1,
+    product_images: [],
+  },
+]
+
+describe('FeaturedProducts panel', () => {
+  beforeEach(() => setProductFeatured.mockClear())
+
+  it('lists only featured products, in storefront order', () => {
+    render(<FeaturedProducts rows={featuredRows} onChanged={() => {}} />)
+    const items = screen.getAllByRole('listitem')
+    expect(items.map((li) => within(li).getByRole('button').getAttribute('aria-label'))).toEqual([
+      'Unfeature Hidden Gem',
+      'Unfeature Job Site Box',
+    ])
+    expect(screen.queryByText('Whale Tail Lock')).toBeNull()
+  })
+
+  it('warns when a featured product is hidden from the storefront', () => {
+    render(<FeaturedProducts rows={featuredRows} onChanged={() => {}} />)
+    expect(screen.getByText(/hidden — not on the home page/i)).toBeInTheDocument()
+  })
+
+  it('unfeatures a product and refreshes', async () => {
+    const onChanged = vi.fn()
+    render(<FeaturedProducts rows={featuredRows} onChanged={onChanged} />)
+    await userEvent.click(screen.getByRole('button', { name: /unfeature job site box/i }))
+    expect(setProductFeatured).toHaveBeenCalledWith('b', false)
+    await waitFor(() => expect(onChanged).toHaveBeenCalled())
+  })
+
+  it('shows an empty state pointing at the star when nothing is featured', () => {
+    render(<FeaturedProducts rows={[featuredRows[1]]} onChanged={() => {}} />)
+    expect(screen.getByText(/no featured products yet/i)).toBeInTheDocument()
+    expect(screen.queryByRole('listitem')).toBeNull()
+  })
+
+  it('surfaces a write failure without losing the list', async () => {
+    setProductFeatured.mockRejectedValueOnce(new Error('nope'))
+    render(<FeaturedProducts rows={featuredRows} onChanged={() => {}} />)
+    await userEvent.click(screen.getByRole('button', { name: /unfeature job site box/i }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('nope')
+    expect(screen.getByText('Job Site Box')).toBeInTheDocument()
+  })
+
+  it('has no axe violations', async () => {
+    const { container } = render(<FeaturedProducts rows={featuredRows} onChanged={() => {}} />)
+    expect(await axe(container)).toHaveNoViolations()
+  })
+})
