@@ -111,13 +111,14 @@ describe('content — section copy contract', () => {
     }
   })
 
-  it('shopByVehicle has cards routing to /utes and /caravans with images on disk', () => {
+  it('shopByVehicle has cards routing to /utes, /caravans and /trucks with images on disk', () => {
     expect(shopByVehicle.eyebrow).toBeTruthy()
     expect(shopByVehicle.heading).toBeTruthy()
-    expect(shopByVehicle.cards).toHaveLength(2)
+    expect(shopByVehicle.cards).toHaveLength(3)
     const routes = shopByVehicle.cards.map((c) => c.to)
     expect(routes).toContain('/utes')
     expect(routes).toContain('/caravans')
+    expect(routes).toContain('/trucks')
     for (const card of shopByVehicle.cards) {
       expect(card.label).toBeTruthy()
       expect(card.sub).toBeTruthy()
