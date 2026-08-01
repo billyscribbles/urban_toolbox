@@ -203,7 +203,9 @@ describe('Home — featured rail placement', () => {
     expect(carousel).not.toBeNull()
     expect(featured).not.toBeNull()
     // compareDocumentPosition: FOLLOWING (4) means `featured` comes after.
-    expect(carousel.compareDocumentPosition(featured) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(
+      carousel.compareDocumentPosition(featured) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
     expect(carousel.nextElementSibling).toBe(featured)
   })
 })
