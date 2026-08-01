@@ -216,6 +216,19 @@
   }
 }
 
+/* Shop by Vehicle is the one panel with three columns (Caravans/Utes/Trucks)
+   instead of two. At the base 480px width, .navbar__mega-list's three
+   minmax(190px, 1fr) tracks plus its 28px column gaps need 3×190 + 2×28 =
+   626px, but 480px only leaves ~430px of content width after the panel's
+   border and .navbar__mega-inner's padding — so the third column wrapped onto
+   its own row. 720px leaves 670px of content width, clearing 626px with room
+   for the tracks to grow past their 190px floor. Scoped to this panel (via
+   `listItems`) so the catalog/custom/about panels stay compact.
+   Kept the min(…, 94vw) pattern to keep respecting small viewports. */
+.navbar__mega-panel--vehicle {
+  width: min(720px, 94vw);
+}
+
 .navbar__mega-inner {
   padding: 20px 24px 22px;
 }
