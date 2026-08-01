@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
@@ -26,6 +26,7 @@ vi.mock('../lib/adminApi.js', () => ({
   saveProduct: vi.fn(async () => ({ error: null })),
   deleteProduct: vi.fn(),
   setProductHidden: vi.fn(async () => {}),
+  setProductFeatured: vi.fn(async () => {}),
   fetchStoreDiscount: vi.fn(async () => 0),
   saveStoreDiscount: vi.fn(async () => {}),
   fetchPromoBanner: vi.fn(async () => ({ enabled: false, messages: [] })),
@@ -158,6 +159,8 @@ const listRows = [
 ]
 
 describe('ProductList', () => {
+  beforeEach(() => setProductFeatured.mockClear())
+
   it('renders a row per product with price and status badges', () => {
     render(
       <MemoryRouter>
@@ -328,6 +331,32 @@ describe('ProductList', () => {
     await userEvent.type(screen.getByLabelText(/search/i), 'Product 1')
     expect(screen.getByText(/showing 1 to/i)).toBeInTheDocument()
   })
+
+  it('features a product from the row star', async () => {
+    const onChanged = vi.fn()
+    render(
+      <MemoryRouter>
+        <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={onChanged} />
+      </MemoryRouter>,
+    )
+    // listRows[0] ('Whale Tail Lock') is not featured, so its star offers to add it.
+    await userEvent.click(screen.getByRole('button', { name: /^feature whale tail lock$/i }))
+    expect(setProductFeatured).toHaveBeenCalledWith('a', true)
+    await waitFor(() => expect(onChanged).toHaveBeenCalled())
+  })
+
+  it('unfeatures a product from the row star, and marks it pressed', async () => {
+    render(
+      <MemoryRouter>
+        <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={() => {}} />
+      </MemoryRouter>,
+    )
+    // listRows[1] ('Job Site Box') is featured.
+    const star = screen.getByRole('button', { name: /^unfeature job site box$/i })
+    expect(star).toHaveAttribute('aria-pressed', 'true')
+    await userEvent.click(star)
+    expect(setProductFeatured).toHaveBeenCalledWith('b', false)
+  })
 })
 
 const { default: StatCards } = await import('../pages/admin/StatCards.jsx')
@@ -380,7 +409,8 @@ describe('StatCards', () => {
 })
 
 const { default: ProductEditor } = await import('../pages/admin/ProductEditor.jsx')
-const { saveProduct, watchSession, setProductHidden } = await import('../lib/adminApi.js')
+const { saveProduct, watchSession, setProductHidden, setProductFeatured } =
+  await import('../lib/adminApi.js')
 
 describe('ProductEditor', () => {
   it('blocks save with inline errors when title is empty', async () => {

@@ -13,7 +13,7 @@ import {
 import { getAdminCategoryGroups } from '../../lib/catalog.js'
 import { publicPhotoUrl } from '../../lib/supabaseClient.js'
 import { formatPrice } from '../../lib/pricing.js'
-import { deleteProduct, setProductHidden } from '../../lib/adminApi.js'
+import { deleteProduct, setProductFeatured, setProductHidden } from '../../lib/adminApi.js'
 import StatCards from './StatCards.jsx'
 
 // Short, unambiguous date — e.g. "17 Jul 2026". Falls back to an em dash when a
@@ -103,6 +103,19 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
     setError('')
     try {
       await setProductHidden(row.id, !row.hidden)
+      onChanged()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setTogglingId(null)
+    }
+  }
+
+  async function onToggleFeatured(row) {
+    setTogglingId(row.id)
+    setError('')
+    try {
+      await setProductFeatured(row.id, !row.featured)
       onChanged()
     } catch (err) {
       setError(err.message)
@@ -309,6 +322,23 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
                           </>
                         ) : (
                           <>
+                            <button
+                              type="button"
+                              className={`admin__icon${row.featured ? ' admin__icon--on' : ''}`}
+                              disabled={togglingId === row.id}
+                              aria-pressed={!!row.featured}
+                              aria-label={
+                                row.featured ? `Unfeature ${row.title}` : `Feature ${row.title}`
+                              }
+                              onClick={() => onToggleFeatured(row)}
+                            >
+                              <Star
+                                size={15}
+                                strokeWidth={2}
+                                fill={row.featured ? 'currentColor' : 'none'}
+                                aria-hidden="true"
+                              />
+                            </button>
                             <button
                               type="button"
                               className="admin__icon"

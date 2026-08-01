@@ -653,6 +653,12 @@
 .admin__icon--danger:hover {
   border-color: var(--color-danger);
 }
+/* An icon button in its "on" state — the star on a featured product. */
+.admin__icon--on {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
 .admin-table__thumb {
   width: 52px;
   height: 40px;
