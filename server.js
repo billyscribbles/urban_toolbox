@@ -134,6 +134,21 @@ const server = createServer(async (req, res) => {
   const query = queryIndex === -1 ? '' : url.slice(queryIndex)
   const rawPath = decodeURIComponent(queryIndex === -1 ? url : url.slice(0, queryIndex))
 
+  // 0) www -> apex. The old GoDaddy edge served this 301; nothing in this stack
+  //    did, so after the DNS cutover every page would have answered 200 on both
+  //    hostnames and split the domain's equity in two. Railway does not add the
+  //    redirect for you — pointing both names at the service just serves both.
+  //
+  //    Scheme comes from x-forwarded-proto because TLS terminates at Railway's
+  //    edge and this process only ever sees http; hardcoding https would break
+  //    a plain-http local test, and echoing `http` would send a live visitor to
+  //    an insecure URL. Port-bearing hosts (localhost:4297) are left alone.
+  const host = req.headers.host || ''
+  if (host.startsWith('www.')) {
+    const proto = req.headers['x-forwarded-proto'] || 'https'
+    return send(res, 301, null, { Location: `${proto}://${host.slice(4)}${url}` })
+  }
+
   // 1) Canonicalise the trailing slash so /about/ and /about aren't two
   //    indexable URLs for one page. Root is exempt.
   if (rawPath !== '/' && rawPath.endsWith('/')) {
