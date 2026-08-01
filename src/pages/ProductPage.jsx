@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ChevronRight, ShieldCheck, Package, PhoneCall } from 'lucide-react'
+import { ChevronRight, ShieldCheck, Package, PhoneCall, FileDown } from 'lucide-react'
 import SEO from '../lib/seo.jsx'
 import ProductGallery from '../components/ProductGallery.jsx'
 import RelatedProducts from '../components/RelatedProducts.jsx'
@@ -31,6 +31,14 @@ function crumbHref(node, i, path) {
   if (top.slug === 'accessories') return `/accessories#${node.slug}`
   if (i === 1) return `/toolboxes/${node.slug}`
   return `/toolboxes/${path[i - 1].slug}#${node.slug}`
+}
+
+// Vehicle-exclusive tops live only on their vehicle page, so the trail reads
+// Home › <Vehicle> › <Top> › <Product> — insert the vehicle crumb ahead of
+// the category path. Generic catalog tops go straight under Home.
+const VEHICLE_CRUMBS = {
+  ute: { label: 'Ute', to: '/utes' },
+  truck: { label: 'Truck', to: '/trucks' },
 }
 
 // Australia silhouette — lucide has no country shapes, so this keeps the
@@ -119,12 +127,8 @@ function ProductDetail({ product }) {
   const leaf = getCategoryById(product.categoryId)
   const path = leaf ? getCategoryPath(leaf.slug) : []
   const topLabel = getTopLabelForProduct(product)
-  // Ute-exclusive tops (Trays, Canopy, Service Canopy) live only under /utes, so
-  // their trail reads Home › Ute › <Top> › <Product> — insert the vehicle crumb
-  // ahead of the category path. Generic catalog tops go straight under Home.
-  // The same scope drives the fitment chip in the buy box.
   const vehicleScope = path[0]?.vehicle ?? null
-  const vehicleCrumb = vehicleScope === 'ute' ? { label: 'Ute', to: '/utes' } : null
+  const vehicleCrumb = VEHICLE_CRUMBS[vehicleScope] ?? null
   const priceFrom = product.quote?.priceFrom ?? null
 
   // Same descriptor Card builds — the shape the quote store consumes. `color`
@@ -207,7 +211,8 @@ function ProductDetail({ product }) {
               <span className="product-page__accent" aria-hidden="true" />
 
               {/* Fitment sits above the price: it's the qualifying question, so
-                  it should be answered before the number. */}
+                  it should be answered before the number. Reuses vehicleScope
+                  from the breadcrumb above — its second consumer. */}
               {vehicleScope && <FitmentBadge vehicle={vehicleScope} variant="inline" />}
 
               <div className="product-page__price">
@@ -234,6 +239,16 @@ function ProductDetail({ product }) {
 
               <div className="product-page__actions">
                 <QuoteButton item={quoteItem} />
+                {/* A plain anchor, not a button with a handler: keyboard,
+                    right-click → Save link as, and middle-click all work for
+                    free. The Content-Disposition header from ?download= does
+                    the real work; the download attribute is belt-and-braces. */}
+                {product.brochureUrl && (
+                  <a className="product-page__brochure" href={product.brochureUrl} download>
+                    <FileDown size={18} strokeWidth={1.8} aria-hidden="true" />
+                    Download brochure (PDF)
+                  </a>
+                )}
               </div>
 
               <ul className="product-page__trust">

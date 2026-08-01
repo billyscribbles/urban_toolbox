@@ -128,8 +128,9 @@ export default function ProductRange({ data, status = 'ready', onRetry }) {
         bgImage={header.bgImage}
       >
         {/* `header.fitment` is the category's vehicle scope — set only on the
-            ute-exclusive tops (Trays, Canopy, Service Canopy), where "does it
-            fit my ute?" is the first thing a visitor wants answered. */}
+            vehicle-exclusive tops (Trays, Canopy, Service Canopy; Truck
+            Toolboxes, Truck Accessories), where "does it fit my ute/truck?"
+            is the first thing a visitor wants answered. */}
         {header.fitment && <FitmentBadge vehicle={header.fitment} />}
       </PageHero>
 

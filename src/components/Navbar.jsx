@@ -219,7 +219,7 @@ export default function Navbar() {
                   {openMenu === l.menu && (
                     <div
                       id={`megapanel-${l.menu}`}
-                      className="navbar__mega-panel"
+                      className={`navbar__mega-panel${l.panel.listItems ? ' navbar__mega-panel--vehicle' : ''}`}
                       role="group"
                       aria-label={l.label}
                     >

@@ -21,6 +21,7 @@ const PAGES = [
   ['/', '1.0'],
   ['/utes', '0.9'],
   ['/caravans', '0.9'],
+  ['/trucks', '0.9'],
   ['/fabrication', '0.8'],
   // Legacy GoDaddy URLs that kept their rankings and are now real pages.
   ['/laser-cutting', '0.8'],
@@ -37,8 +38,9 @@ const PAGES = [
 // A top with `pages: true` (Toolboxes) gives each child its own indexable page.
 // A top without it (Accessories) flattens its children into anchors on the one
 // page, so only the top is a URL. Vehicle-exclusive tops (Trays, Canopy,
-// Service Canopy) are bare single-segment routes. `exclusive` nodes render on
-// their own page, which is already in PAGES.
+// Service Canopy, Truck Toolboxes, Truck Accessories) are bare single-segment
+// routes. `exclusive` nodes render on their own page, which is already in
+// PAGES.
 function categoryRoutes() {
   const routes = []
   for (const top of categories) {

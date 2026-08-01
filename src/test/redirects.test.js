@@ -49,4 +49,12 @@ describe('redirect targets', () => {
       ).toBe(false)
     }
   })
+
+  // /trucks was an internal path retired in the catalogue restructure, not one
+  // of the seven ranked GoDaddy URLs — it is now the Trucks vehicle page, and
+  // must never go back to being a redirect.
+  it('serves /trucks as a real page rather than redirecting it', () => {
+    expect(served.has('/trucks')).toBe(true)
+    expect(redirected.has('/trucks')).toBe(false)
+  })
 })

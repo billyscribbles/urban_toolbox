@@ -4,10 +4,15 @@ import Eyebrow from './Eyebrow.jsx'
 import Img from './Img.jsx'
 import './ShopByVehicle.css'
 
-// Home "shop by vehicle" band — two full-bleed image cards that route to the
-// /utes and /caravans explore pages. Reads every string/asset from content so
-// the component stays a dumb layout. The hero derivatives ship at 800/1600.
-const CARD_SIZES = '(max-width: 700px) 100vw, 50vw'
+// Home "shop by vehicle" band — three full-bleed image cards that route to
+// the /utes, /caravans and /trucks explore pages. Reads every string/asset
+// from content so the component stays a dumb layout. The hero derivatives
+// ship at 800/1600.
+//
+// Sizes mirror .vehicles__grid's breakpoints (ShopByVehicle.css): full width
+// under 700px (1-up), half the 1240px container under 980px (2-up), a third
+// of it above that (3-up).
+const CARD_SIZES = '(max-width: 700px) 100vw, (max-width: 980px) 50vw, 33vw'
 const CARD_WIDTHS = [800, 1600]
 
 export default function ShopByVehicle() {

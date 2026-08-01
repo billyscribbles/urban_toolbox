@@ -701,6 +701,12 @@
   background: rgba(var(--color-accent-rgb), 0.12);
   color: var(--color-danger);
 }
+/* Deliberately neutral — this reports a fact (a brochure is attached), not a
+   status, so it shouldn't compete with Live/Hidden/Featured beside it. */
+.admin-badge--pdf {
+  background: var(--color-border-light);
+  color: var(--color-ink-muted);
+}
 .admin-badge--hidden {
   background: var(--color-border-light);
   color: var(--color-ink-muted);
@@ -902,6 +908,29 @@
   margin-top: 24px;
   padding-top: 18px;
   border-top: 1px solid var(--color-border-light);
+}
+
+/* Brochure manager — one optional PDF, so a single file row rather than a grid */
+.admin-brochure {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-border-light);
+}
+.admin-brochure__file {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+}
+.admin-brochure__name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
 }
 
 /* Drag-and-drop upload zone */

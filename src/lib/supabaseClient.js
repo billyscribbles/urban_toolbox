@@ -24,3 +24,11 @@ export function getSupabase() {
 export function publicPhotoUrl(storagePath) {
   return `${url}/storage/v1/object/public/product-photos/${storagePath}`
 }
+
+// Any public-bucket object, with an optional forced download. Supabase reads
+// `?download=<filename>` and answers with Content-Disposition: attachment,
+// which is what turns a browser-rendered PDF into a saved file.
+export function publicFileUrl(storagePath, { download } = {}) {
+  const base = `${url}/storage/v1/object/public/product-photos/${storagePath}`
+  return download ? `${base}?download=${encodeURIComponent(download)}` : base
+}

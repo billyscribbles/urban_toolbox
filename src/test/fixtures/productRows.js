@@ -47,6 +47,9 @@ export const productRows = [
     // Back-order — the other row omits the column entirely, so it defaults to
     // in stock (an environment that hasn't run 0008 reads that way too).
     in_stock: false,
+    // Brochure present on this row only — the other omits the column entirely,
+    // which is how every row reads before 0009 is applied.
+    brochure_path: 'brochures/job-site-toolbox-1/abc12345.pdf',
     sort_order: 0,
     product_images: [
       {

@@ -1,4 +1,4 @@
-/* Home "shop by vehicle" band — two image cards linking to /utes & /caravans. */
+/* Home "shop by vehicle" band — three image cards linking to /utes, /caravans & /trucks. */
 
 .vehicles__head {
   max-width: 760px;
@@ -11,7 +11,7 @@
 
 .vehicles__grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
 }
 
@@ -100,6 +100,12 @@
 .vehicles__card:focus-visible {
   outline: 3px solid var(--color-accent);
   outline-offset: 3px;
+}
+
+@media (max-width: 980px) {
+  .vehicles__grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 700px) {

@@ -14,6 +14,8 @@ const categoryImageRows = [
 vi.mock('../lib/supabaseClient.js', () => ({
   isConfigured: () => true,
   publicPhotoUrl: (p) => `https://cdn.test/${p}`,
+  publicFileUrl: (p, opts) =>
+    `https://cdn.test/${p}${opts?.download ? `?download=${opts.download}` : ''}`,
   getSupabase: () =>
     Promise.resolve({
       // Only `category_images` needs a branch. `store_settings` falls through to
@@ -96,6 +98,18 @@ describe('normalizeRow — DB row to storefront product', () => {
     expect(normalizeRow(productRows[1]).colors).toEqual(['silver', 'black'])
     // Row 0 omits the column entirely → no colours.
     expect(normalizeRow(productRows[0]).colors).toEqual([])
+  })
+
+  it('resolves brochure_path into a download URL named after the product', () => {
+    const product = normalizeRow(productRows[1])
+
+    expect(product.brochureUrl).toBe(
+      'https://cdn.test/brochures/job-site-toolbox-1/abc12345.pdf?download=urban-toolbox-job-site-box-brochure.pdf',
+    )
+  })
+
+  it('leaves brochureUrl null when the row has no brochure', () => {
+    expect(normalizeRow(productRows[0]).brochureUrl).toBeNull()
   })
 })
 
