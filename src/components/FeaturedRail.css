@@ -80,7 +80,18 @@
 
 /* --- the card --- */
 
+/* position:relative is load-bearing, not decoration. PriceTag emits a
+   `.sr-only` span, which is `position: absolute`. With no positioned ancestor
+   inside the rail, its containing block resolved above `.featured__track`, so
+   the track's `overflow-x` did NOT clip it — an out-of-flow box is only
+   clipped by ancestors that are also its containing block chain. Twelve cards
+   across a 4570px track therefore pushed real scrollable overflow onto the
+   viewport (documentElement.scrollWidth 4254 at a 500px viewport), masked but
+   not removed by the site-wide `body { overflow-x: hidden }`. Making the card
+   the containing block puts those spans back inside its own `overflow: hidden`.
+   A plain clipping wrapper does not fix this — verified in Chrome. */
 .featured-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
