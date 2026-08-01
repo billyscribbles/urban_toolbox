@@ -63,7 +63,11 @@ Consequences worth knowing:
   **Redeploy after a significant catalogue change.**
 - **Chrome is a build dependency.** `puppeteer-core` ships no browser on
   purpose. Local macOS and GitHub Actions already have one; Railway gets it from
-  `nixpacks.toml`. Override with `PUPPETEER_EXECUTABLE_PATH` if needed.
+  the root `Dockerfile`, which installs Debian's `chromium` and points
+  `PUPPETEER_EXECUTABLE_PATH` at it. That Dockerfile is why the build isn't on a
+  managed Railway builder: those run Ubuntu, whose `chromium` apt packages are
+  snap stubs that cannot launch. Override with `PUPPETEER_EXECUTABLE_PATH` if
+  needed.
 - **The build fails loudly if prerendering fails.** That is deliberate — a
   silent skip would ship a build that looks fine and serves an empty shell to
   every crawler. `SKIP_PRERENDER=1` opts out explicitly.
@@ -207,4 +211,4 @@ eagerly costs roughly 20 Lighthouse performance points on mobile.
 | Prerendering                                  | `scripts/prerender.mjs`                                 |
 | Route enumeration (prerender + sitemap)       | `scripts/routes.mjs`                                    |
 | `sitemap.xml` / `robots.txt` generation       | `scripts/gen-seo-files.mjs`                             |
-| Chromium for the Railway build                | `nixpacks.toml`                                         |
+| Chromium for the Railway build                | `Dockerfile`                                            |

@@ -1,0 +1,32 @@
+# Keep the build context to what `yarn build` actually reads. Everything here
+# is either regenerated inside the image (node_modules, .pnp.*, dist) or has no
+# business in it (.env, local reports, scratch output).
+#
+# .env matters most: scripts/routes.mjs falls back to reading it, so leaving it
+# in the context would let a local file silently override the Railway service
+# variables and bake the wrong Supabase project into a production build.
+
+.git
+.github
+node_modules
+dist
+dist-ssr
+.yarn/unplugged
+.yarn/install-state.gz
+.pnp.*
+.env
+.env.local
+.env.*.local
+*.log
+.vite
+.DS_Store
+
+# Local-only tooling and scratch output.
+.claude
+.superpowers
+.mcp.json
+.firecrawl
+.lighthouseci
+generated_imgs
+docs
+assets
