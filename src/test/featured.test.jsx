@@ -184,3 +184,26 @@ describe('FeaturedRail — paging', () => {
     })
   })
 })
+
+const { default: Home } = await import('../pages/Home.jsx')
+const { HelmetProvider } = await import('react-helmet-async')
+
+describe('Home — featured rail placement', () => {
+  it('renders the rail directly after the category carousel', () => {
+    seed([row('a', { featured: true, title: 'Alloy Toolbox', slug: 'alloy-toolbox', price: 1299 })])
+    const { container } = render(
+      <HelmetProvider>
+        <MemoryRouter>
+          <Home />
+        </MemoryRouter>
+      </HelmetProvider>,
+    )
+    const carousel = container.querySelector('.range')
+    const featured = container.querySelector('.featured')
+    expect(carousel).not.toBeNull()
+    expect(featured).not.toBeNull()
+    // compareDocumentPosition: FOLLOWING (4) means `featured` comes after.
+    expect(carousel.compareDocumentPosition(featured) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(carousel.nextElementSibling).toBe(featured)
+  })
+})

@@ -2,6 +2,7 @@ import SEO from '../lib/seo.jsx'
 import Hero from '../components/Hero.jsx'
 import CategoryCarousel from '../components/CategoryCarousel.jsx'
 import TrustBar from '../components/TrustBar.jsx'
+import FeaturedRail from '../components/FeaturedRail.jsx'
 import WhyChoose from '../components/WhyChoose.jsx'
 import DistanceCta from '../components/DistanceCta.jsx'
 import StoryBlock from '../components/StoryBlock.jsx'
@@ -17,6 +18,7 @@ export default function Home() {
         <TrustBar />
       </div>
       <CategoryCarousel />
+      <FeaturedRail />
       <WhyChoose />
       <DistanceCta />
       <StoryBlock />
