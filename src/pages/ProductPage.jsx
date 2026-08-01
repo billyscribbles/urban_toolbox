@@ -33,6 +33,14 @@ function crumbHref(node, i, path) {
   return `/toolboxes/${path[i - 1].slug}#${node.slug}`
 }
 
+// Vehicle-exclusive tops live only on their vehicle page, so the trail reads
+// Home › <Vehicle> › <Top> › <Product> — insert the vehicle crumb ahead of
+// the category path. Generic catalog tops go straight under Home.
+const VEHICLE_CRUMBS = {
+  ute: { label: 'Ute', to: '/utes' },
+  truck: { label: 'Truck', to: '/trucks' },
+}
+
 // Australia silhouette — lucide has no country shapes, so this keeps the
 // "Australian made" trust cell literal. Traced from real coastal reference
 // points (Cape York, the Gulf of Carpentaria, Arnhem Land, the Kimberley,
@@ -119,12 +127,8 @@ function ProductDetail({ product }) {
   const leaf = getCategoryById(product.categoryId)
   const path = leaf ? getCategoryPath(leaf.slug) : []
   const topLabel = getTopLabelForProduct(product)
-  // Ute-exclusive tops (Trays, Canopy, Service Canopy) live only under /utes, so
-  // their trail reads Home › Ute › <Top> › <Product> — insert the vehicle crumb
-  // ahead of the category path. Generic catalog tops go straight under Home.
-  // The same scope drives the fitment chip in the buy box.
   const vehicleScope = path[0]?.vehicle ?? null
-  const vehicleCrumb = vehicleScope === 'ute' ? { label: 'Ute', to: '/utes' } : null
+  const vehicleCrumb = VEHICLE_CRUMBS[vehicleScope] ?? null
   const priceFrom = product.quote?.priceFrom ?? null
 
   // Same descriptor Card builds — the shape the quote store consumes. `color`
