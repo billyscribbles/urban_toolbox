@@ -4,9 +4,10 @@
 // with `featured` ticked in /admin, in catalogue order. See
 // getFeaturedProducts() in src/lib/catalog.js.
 //
-// Contract (src/test/content.test.js): all three strings must be non-empty.
+// Contract (src/test/content.test.js): all four strings must be non-empty.
 export const featuredSection = {
   eyebrow: 'Hand-picked',
   heading: 'Featured Products',
+  sub: 'Our most popular toolboxes and accessories, built tough for Aussie conditions.',
   cta: 'View details',
 }

@@ -88,6 +88,24 @@ describe('FeaturedRail', () => {
     expect(screen.getByRole('link')).toHaveAttribute('href', '/product/legacy-id')
   })
 
+  it('renders the section strapline under the heading', () => {
+    seed([row('a', { featured: true })])
+    renderRail()
+    expect(screen.getByText(featuredSection.sub)).toBeInTheDocument()
+  })
+
+  it("renders a product's summary on its card, and omits it when there is none", () => {
+    seed([
+      row('a', { featured: true, title: 'With Summary', summary: 'Built for everyday use.' }),
+      row('b', { featured: true, title: 'No Summary' }),
+    ])
+    const { container } = renderRail()
+    expect(screen.getByText('Built for everyday use.')).toBeInTheDocument()
+    // Only the one card gets a summary node — the other must not render an
+    // empty paragraph that would knock the row out of alignment.
+    expect(container.querySelectorAll('.featured-card__summary')).toHaveLength(1)
+  })
+
   it('shows the enquiry line instead of a price when a product has none', () => {
     seed([row('a', { featured: true, price: null })])
     renderRail()

@@ -4,7 +4,6 @@ import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
 import { featuredSection } from '../content/featured.js'
 import { getFeaturedProducts } from '../lib/catalog.js'
 import { useProductCatalog } from '../lib/productStore.js'
-import Eyebrow from './Eyebrow.jsx'
 import Img from './Img.jsx'
 import PriceTag from './PriceTag.jsx'
 import './FeaturedRail.css'
@@ -86,9 +85,16 @@ export default function FeaturedRail() {
     <section className="featured">
       <div className="container">
         <div className="featured__head">
-          <div>
-            <Eyebrow>{featuredSection.eyebrow}</Eyebrow>
+          <div className="featured__lead">
+            {/* Not the shared <Eyebrow>: that pairs its label with a leading
+                accent rule, and here the rule belongs to the sub-line instead,
+                so the label sits flush above the heading. */}
+            <p className="featured__eyebrow">{featuredSection.eyebrow}</p>
             <h2 className="h2 h2--md featured__heading">{featuredSection.heading}</h2>
+            <p className="featured__sub">
+              <span className="featured__rule" aria-hidden="true" />
+              {featuredSection.sub}
+            </p>
           </div>
 
           {edges.overflows && (
@@ -146,9 +152,13 @@ export default function FeaturedRail() {
                 </div>
                 <div className="featured-card__body">
                   <h3 className="featured-card__title">{p.title}</h3>
+                  {p.summary && <p className="featured-card__summary">{p.summary}</p>}
                   <span className="featured-card__price">
                     <PriceTag price={p.price} discountPct={p.discountPct} />
                   </span>
+                  {/* Styled as a button, but deliberately still a span — the
+                      whole card is already the <a>, and nesting a second
+                      interactive element inside it would be invalid. */}
                   <span className="featured-card__cta">
                     {featuredSection.cta}
                     <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
