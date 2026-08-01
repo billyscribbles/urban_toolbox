@@ -166,12 +166,22 @@ function storageFilesFor(image) {
   return [image.storage_path, `${base}-400.webp`, `${base}-800.webp`]
 }
 
+// Brochures live beside the photos in the same bucket, under their own prefix
+// (the `categories/` precedent from 0006). The random component matters more
+// here than for photos: a fixed path would serve the old PDF from CDN cache
+// after a replace, so each upload gets a fresh key instead.
+function brochurePath(productId, name) {
+  return `brochures/${productId}/${name}.pdf`
+}
+
 export async function deleteProduct(row) {
   const c = await client()
   const images = row.product_images ?? []
-  if (images.length) {
+  const files = images.flatMap(storageFilesFor)
+  if (row.brochure_path) files.push(row.brochure_path)
+  if (files.length) {
     // Best-effort: DB rows are the source of truth; orphaned files are harmless.
-    await c.storage.from(BUCKET).remove(images.flatMap(storageFilesFor))
+    await c.storage.from(BUCKET).remove(files)
   }
   const { error } = await c.from('products').delete().eq('id', row.id)
   if (error) throw new Error(error.message)
@@ -280,4 +290,42 @@ export async function deleteCategoryImage(row) {
   const { error } = await c.from('category_images').delete().eq('category_id', row.category_id)
   if (error) throw new Error(error.message)
   retryLoad()
+}
+
+// --- Product brochure ------------------------------------------------------
+// One optional PDF per product, stored as a path on the product row. The
+// column is deliberately absent from toRow(): the editor form has no brochure
+// field, so routing it through a form save would write undefined over a file
+// that was just uploaded. Same split `hidden` uses.
+
+export async function uploadBrochure(productId, file) {
+  const c = await client()
+  // A replace would orphan the old object, so sweep it first. Best-effort,
+  // matching uploadCategoryImage — the row is the source of truth.
+  const { data: existing } = await c
+    .from('products')
+    .select('brochure_path')
+    .eq('id', productId)
+    .maybeSingle()
+  if (existing?.brochure_path) {
+    await c.storage.from(BUCKET).remove([existing.brochure_path])
+  }
+
+  const path = brochurePath(productId, crypto.randomUUID().slice(0, 8))
+  const upload = await c.storage.from(BUCKET).upload(path, file, { contentType: 'application/pdf' })
+  if (upload.error) throw new Error(upload.error.message)
+
+  const { error } = await c.from('products').update({ brochure_path: path }).eq('id', productId)
+  if (error) throw new Error(error.message)
+  retryLoad()
+  return path
+}
+
+export async function deleteBrochure(row) {
+  const c = await client()
+  await c.storage.from(BUCKET).remove([row.brochure_path])
+  const { error } = await c.from('products').update({ brochure_path: null }).eq('id', row.id)
+  if (error) throw new Error(error.message)
+  retryLoad()
+  return null
 }

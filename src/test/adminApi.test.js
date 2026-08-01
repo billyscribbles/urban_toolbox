@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-const calls = { upserts: [], updates: [], deletes: [], removed: [] }
+const calls = { upserts: [], updates: [], deletes: [], removed: [], uploads: [] }
 
 // store_settings singleton reads/writes are configured per-test via these two
 // module-level slots (mirroring `calls` above) rather than fixed canned data,
@@ -12,6 +12,11 @@ let updateError = null
 // Swapped per-test so "replace an existing photo" can assert the old files are
 // swept; null means "no photo yet".
 let existingCategoryImage = null
+
+// The product row uploadBrochure reads before replacing; null means "no
+// brochure yet". Separate from existingCategoryImage because both reach the
+// same select().eq().maybeSingle() path, on different tables.
+let existingBrochure = null
 
 function tableApi(table) {
   return {
@@ -42,9 +47,15 @@ function tableApi(table) {
       eq: vi.fn(() => ({
         order: vi.fn(() => Promise.resolve({ data: [], error: null })),
         // Filtered single-row read — uploadCategoryImage looking up the photo
-        // it is about to replace. Distinct from the unfiltered maybeSingle
-        // below, which is the store_settings singleton.
-        maybeSingle: vi.fn(() => Promise.resolve({ data: existingCategoryImage, error: null })),
+        // it is about to replace, or uploadBrochure looking up the PDF it is
+        // about to replace. Distinct from the unfiltered maybeSingle below,
+        // which is the store_settings singleton.
+        maybeSingle: vi.fn(() =>
+          Promise.resolve({
+            data: table === 'products' ? existingBrochure : existingCategoryImage,
+            error: null,
+          }),
+        ),
       })),
       maybeSingle: vi.fn(() => Promise.resolve(maybeSingleResult)),
     })),
@@ -59,7 +70,10 @@ const fakeClient = {
         calls.removed.push(...paths)
         return Promise.resolve({ error: null })
       }),
-      upload: vi.fn(() => Promise.resolve({ error: null })),
+      upload: vi.fn((path, body, opts) => {
+        calls.uploads.push({ path, opts })
+        return Promise.resolve({ error: null })
+      }),
     })),
   },
   auth: { signOut: vi.fn() },
@@ -94,6 +108,8 @@ const {
   savePromoBanner,
   uploadCategoryImage,
   deleteCategoryImage,
+  uploadBrochure,
+  deleteBrochure,
 } = await import('../lib/adminApi.js')
 const { retryLoad } = await import('../lib/productStore.js')
 
@@ -102,9 +118,11 @@ beforeEach(() => {
   calls.updates.length = 0
   calls.deletes.length = 0
   calls.removed.length = 0
+  calls.uploads.length = 0
   maybeSingleResult = { data: null, error: null }
   updateError = null
   existingCategoryImage = null
+  existingBrochure = null
   retryLoad.mockClear()
 })
 
@@ -290,5 +308,77 @@ describe('deleteCategoryImage', () => {
       col: 'category_id',
       val: 'locks',
     })
+  })
+})
+
+describe('brochures', () => {
+  it('uploads under brochures/<id>/ as application/pdf and stores the path', async () => {
+    const path = await uploadBrochure('job-site-toolbox-1', new File(['pdf'], 'a.pdf'))
+
+    expect(path).toMatch(/^brochures\/job-site-toolbox-1\/[a-f0-9-]{8}\.pdf$/)
+    expect(calls.uploads).toHaveLength(1)
+    expect(calls.uploads[0].path).toBe(path)
+    expect(calls.uploads[0].opts.contentType).toBe('application/pdf')
+    expect(calls.updates).toContainEqual({
+      table: 'products',
+      patch: { brochure_path: path },
+      col: 'id',
+      val: 'job-site-toolbox-1',
+    })
+    expect(retryLoad).toHaveBeenCalled()
+  })
+
+  it('sweeps the previous file before writing the replacement', async () => {
+    existingBrochure = { brochure_path: 'brochures/job-site-toolbox-1/old12345.pdf' }
+
+    await uploadBrochure('job-site-toolbox-1', new File(['pdf'], 'a.pdf'))
+
+    expect(calls.removed).toEqual(['brochures/job-site-toolbox-1/old12345.pdf'])
+  })
+
+  it('deleteBrochure removes the file, nulls the column and returns null', async () => {
+    const result = await deleteBrochure({
+      id: 'job-site-toolbox-1',
+      brochure_path: 'brochures/job-site-toolbox-1/abc12345.pdf',
+    })
+
+    expect(result).toBeNull()
+    expect(calls.removed).toEqual(['brochures/job-site-toolbox-1/abc12345.pdf'])
+    expect(calls.updates).toContainEqual({
+      table: 'products',
+      patch: { brochure_path: null },
+      col: 'id',
+      val: 'job-site-toolbox-1',
+    })
+    expect(retryLoad).toHaveBeenCalled()
+  })
+
+  it('deleteProduct sweeps the brochure alongside the photos', async () => {
+    await deleteProduct({
+      id: 'job-site-toolbox-1',
+      brochure_path: 'brochures/job-site-toolbox-1/abc12345.pdf',
+      product_images: [],
+    })
+
+    expect(calls.removed).toContain('brochures/job-site-toolbox-1/abc12345.pdf')
+  })
+
+  it('toRow never carries brochure_path — a form save must not wipe it', async () => {
+    await saveProduct(
+      {
+        id: 'job-site-toolbox-1',
+        slug: 'job-site-box',
+        title: 'Job Site Box',
+        categoryId: 'locks',
+        price: null,
+        discountPct: null,
+        colors: [],
+        sortOrder: 0,
+      },
+      { isNew: false },
+    )
+
+    const update = calls.updates.find((u) => u.table === 'products')
+    expect(update.patch).not.toHaveProperty('brochure_path')
   })
 })
