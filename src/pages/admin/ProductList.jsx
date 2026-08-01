@@ -116,7 +116,11 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
     setError('')
     try {
       await setProductFeatured(row.id, !row.featured)
-      onChanged()
+      // Awaited so the star doesn't re-enable over a stale `rows`: the row-click
+      // handler and Edit both hand ProductEditor a one-shot snapshot, and
+      // toRow() writes `featured` back — so an un-refreshed row would revert
+      // this toggle on the next save.
+      await onChanged()
     } catch (err) {
       setError(err.message)
     } finally {

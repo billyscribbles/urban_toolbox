@@ -143,7 +143,7 @@ export default function AdminPage() {
               ) : tab === 'carousel' ? (
                 <CarouselImages rows={rows} />
               ) : (
-                <FeaturedProducts rows={rows} onChanged={refresh} />
+                <FeaturedProducts rows={rows} loading={!loaded} onChanged={refresh} />
               )}
             </div>
           </div>

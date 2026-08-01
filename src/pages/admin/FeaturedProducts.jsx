@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Star } from 'lucide-react'
-import { getAdminCategoryGroups } from '../../lib/catalog.js'
+import { getAdminCategoryGroups, FEATURED_RAIL_LIMIT } from '../../lib/catalog.js'
 import { publicPhotoUrl } from '../../lib/supabaseClient.js'
 import { formatPrice } from '../../lib/pricing.js'
 import { setProductFeatured } from '../../lib/adminApi.js'
@@ -13,7 +13,7 @@ import { setProductFeatured } from '../../lib/adminApi.js'
 // storefront orders sort_order then id. Re-sort so this tab lists them in the
 // order a visitor actually sees — the same reason CarouselImages re-sorts its
 // own copy rather than trusting the admin fetch's order.
-export default function FeaturedProducts({ rows, onChanged }) {
+export default function FeaturedProducts({ rows, loading, onChanged }) {
   const [busyId, setBusyId] = useState(null)
   const [error, setError] = useState('')
 
@@ -34,6 +34,21 @@ export default function FeaturedProducts({ rows, onChanged }) {
     [rows],
   )
 
+  // Which of these actually reach the rail. The cap is applied to the
+  // storefront list, and that fetch already drops hidden rows
+  // (`.eq('hidden', false)`), so hidden rows don't consume a slot — counting
+  // positions in the list above would mislabel the tail whenever one is hidden.
+  const railIds = useMemo(
+    () =>
+      new Set(
+        featured
+          .filter((r) => !r.hidden)
+          .slice(0, FEATURED_RAIL_LIMIT)
+          .map((r) => r.id),
+      ),
+    [featured],
+  )
+
   function thumb(row) {
     const first = [...(row.product_images ?? [])].sort((a, b) => a.position - b.position)[0]
     return first ? publicPhotoUrl(first.storage_path) : null
@@ -44,7 +59,11 @@ export default function FeaturedProducts({ rows, onChanged }) {
     setError('')
     try {
       await setProductFeatured(row.id, false)
-      onChanged()
+      // Awaited, not fired-and-forgotten: `rows` is what ProductEditor snapshots
+      // when a row is opened, and `featured` is one of the columns toRow() writes
+      // back. Clearing busy before the refetch lands would hand the editor a
+      // pre-toggle row, and saving would silently undo this write.
+      await onChanged()
     } catch (err) {
       setError(err.message)
     } finally {
@@ -58,8 +77,9 @@ export default function FeaturedProducts({ rows, onChanged }) {
         <div>
           <span className="admin__label">Featured products</span>
           <span className="admin__label-hint">
-            The “Featured Products” rail on the home page, in the order visitors see it. Use the
-            star on a row in the Products tab to add one.
+            The “Featured Products” rail on the home page, in the order visitors see it. Only the
+            first {FEATURED_RAIL_LIMIT} reach the rail — anything past that is listed here but not
+            shown. Use the star on a row in the Products tab to add one.
           </span>
         </div>
       </div>
@@ -70,7 +90,17 @@ export default function FeaturedProducts({ rows, onChanged }) {
         </p>
       )}
 
-      {featured.length === 0 ? (
+      {/* The empty state instructs, so it must never render over a list that
+          simply hasn't arrived — on a cold /admin load, or a failed one, it
+          would be telling the truth about `rows` and lying about the store.
+          Same skeleton the Products tab shows for the same fetch. */}
+      {loading ? (
+        <ul className="admin-skel" aria-hidden="true">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <li key={i} className="admin-skel__row" />
+          ))}
+        </ul>
+      ) : featured.length === 0 ? (
         <p className="admin__empty">
           No featured products yet. Use the star on a row in the Products tab to add one.
         </p>
@@ -92,11 +122,18 @@ export default function FeaturedProducts({ rows, onChanged }) {
                 </span>
               </span>
 
-              {/* Featured AND hidden means the product never reaches the rail,
-                  and nothing else on this screen would explain why. */}
+              {/* Two ways a starred product never reaches the rail, both
+                  otherwise invisible: it's hidden from the storefront, or it
+                  sits past the rail's cap. --hidden is the muted badge; both
+                  cases mean the same thing to the reader. */}
               {row.hidden && (
                 <span className="admin-badge admin-badge--hidden">
                   Hidden — not on the home page
+                </span>
+              )}
+              {!row.hidden && !railIds.has(row.id) && (
+                <span className="admin-badge admin-badge--hidden">
+                  Not on the home page — over the {FEATURED_RAIL_LIMIT} limit
                 </span>
               )}
 

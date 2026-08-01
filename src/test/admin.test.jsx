@@ -386,6 +386,27 @@ describe('ProductList', () => {
     await userEvent.click(star)
     expect(setProductFeatured).toHaveBeenCalledWith('b', false)
   })
+
+  // Re-enabling the star before the refetch lands would leave `rows` stale, and
+  // ProductEditor snapshots a row once on open — so an edit started in that
+  // window would write the pre-toggle `featured` straight back.
+  it('holds the star disabled until the refetch lands', async () => {
+    let release
+    const onChanged = vi.fn(() => new Promise((resolve) => (release = resolve)))
+    render(
+      <MemoryRouter>
+        <ProductList rows={listRows} onEdit={() => {}} onNew={() => {}} onChanged={onChanged} />
+      </MemoryRouter>,
+    )
+    const star = screen.getByRole('button', { name: /^feature whale tail lock$/i })
+
+    await userEvent.click(star)
+    await waitFor(() => expect(onChanged).toHaveBeenCalled())
+    expect(star).toBeDisabled()
+
+    release()
+    await waitFor(() => expect(star).toBeEnabled())
+  })
 })
 
 const { default: StatCards } = await import('../pages/admin/StatCards.jsx')
@@ -650,6 +671,7 @@ describe('CarouselImages', () => {
 })
 
 const { default: FeaturedProducts } = await import('../pages/admin/FeaturedProducts.jsx')
+const { FEATURED_RAIL_LIMIT } = await import('../lib/catalog.js')
 
 // sort_order deliberately out of order relative to the array, so the re-sort is
 // actually exercised. 'c' is featured but hidden — it never reaches the rail.
@@ -729,5 +751,69 @@ describe('FeaturedProducts panel', () => {
   it('has no axe violations', async () => {
     const { container } = render(<FeaturedProducts rows={featuredRows} onChanged={() => {}} />)
     expect(await axe(container)).toHaveNoViolations()
+  })
+
+  // The rail truncates silently. Without this the panel would list a starred
+  // product, badge it Featured, and never say it isn't on the home page.
+  it('marks the featured rows that fall past the rail cap, and says so up front', () => {
+    const many = Array.from({ length: FEATURED_RAIL_LIMIT + 1 }, (_, i) => ({
+      id: `f${i}`,
+      category_id: 'locks',
+      title: `Featured ${i}`,
+      price: 10,
+      featured: true,
+      hidden: false,
+      sort_order: i,
+      product_images: [],
+    }))
+    render(<FeaturedProducts rows={many} onChanged={() => {}} />)
+
+    const overLimit = screen.getByText(`Featured ${FEATURED_RAIL_LIMIT}`).closest('li')
+    const lastOnRail = screen.getByText(`Featured ${FEATURED_RAIL_LIMIT - 1}`).closest('li')
+    expect(within(overLimit).getByText(/over the 12 limit/i)).toBeInTheDocument()
+    expect(within(lastOnRail).queryByText(/over the 12 limit/i)).toBeNull()
+    expect(screen.getByText(/only the first 12 reach the rail/i)).toBeInTheDocument()
+  })
+
+  // getProducts() is fetched with .eq('hidden', false), so a hidden row never
+  // occupies one of the twelve slots — position in this list is not the cap.
+  it('does not let a hidden row consume a rail slot', () => {
+    const many = Array.from({ length: FEATURED_RAIL_LIMIT + 1 }, (_, i) => ({
+      id: `f${i}`,
+      category_id: 'locks',
+      title: `Featured ${i}`,
+      price: 10,
+      featured: true,
+      hidden: i === 0,
+      sort_order: i,
+      product_images: [],
+    }))
+    render(<FeaturedProducts rows={many} onChanged={() => {}} />)
+    // 13 starred, one hidden -> 12 visible ones all fit, so nothing is over.
+    expect(screen.queryByText(/over the 12 limit/i)).toBeNull()
+    expect(screen.getByText(/hidden — not on the home page/i)).toBeInTheDocument()
+  })
+
+  // A cold /admin load lands here with rows=[] before the fetch resolves; the
+  // empty state gives an instruction, so it must not run ahead of the data.
+  it('shows a skeleton instead of the empty state while the fetch is in flight', () => {
+    render(<FeaturedProducts rows={[]} loading onChanged={() => {}} />)
+    expect(screen.queryByText(/no featured products yet/i)).toBeNull()
+    expect(document.querySelector('.admin-skel')).not.toBeNull()
+  })
+
+  it('keeps the row busy until the refetch lands, so the editor never sees a stale row', async () => {
+    let release
+    const onChanged = vi.fn(() => new Promise((resolve) => (release = resolve)))
+    render(<FeaturedProducts rows={featuredRows} onChanged={onChanged} />)
+    const button = screen.getByRole('button', { name: /unfeature job site box/i })
+
+    await userEvent.click(button)
+    await waitFor(() => expect(onChanged).toHaveBeenCalled())
+    expect(button).toBeDisabled()
+    expect(button).toHaveTextContent(/working/i)
+
+    release()
+    await waitFor(() => expect(button).toBeEnabled())
   })
 })

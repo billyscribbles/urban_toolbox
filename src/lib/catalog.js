@@ -353,7 +353,12 @@ export function getCategoryTileImage(categoryId) {
 // sort_order then id, so the rail matches catalogue order for free — there is
 // deliberately no separate ordering column to keep in sync. `limit` caps a
 // runaway rail; 12 is four full pages at the desktop card count.
-export function getFeaturedProducts(limit = 12) {
+//
+// Exported because the cap is otherwise invisible: the admin's Featured
+// Products tab imports it to warn about the rows it silently drops.
+export const FEATURED_RAIL_LIMIT = 12
+
+export function getFeaturedProducts(limit = FEATURED_RAIL_LIMIT) {
   return getProducts()
     .filter((p) => p.featured)
     .slice(0, limit)
