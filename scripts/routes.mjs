@@ -21,6 +21,7 @@ const PAGES = [
   ['/', '1.0'],
   ['/utes', '0.9'],
   ['/caravans', '0.9'],
+  ['/trucks', '0.9'],
   ['/fabrication', '0.8'],
   // Legacy GoDaddy URLs that kept their rankings and are now real pages.
   ['/laser-cutting', '0.8'],

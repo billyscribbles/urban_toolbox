@@ -159,10 +159,12 @@ function AppBody() {
                   ?product= detail drawer. Token is the product slug (or id). */}
               <Route path="/product/:slug" element={<ProductPage />} />
 
-              {/* Explore-by-vehicle pages — the whole range filtered to
-                  products flagged for utes / caravans in the admin. */}
+              {/* Explore-by-vehicle pages. Utes and caravans are the whole
+                  range filtered to products flagged for them in the admin;
+                  trucks renders its own two scoped categories. */}
               <Route path="/utes" element={<VehiclePage vehicle="ute" />} />
               <Route path="/caravans" element={<VehiclePage vehicle="caravan" />} />
+              <Route path="/trucks" element={<VehiclePage vehicle="truck" />} />
 
               <Route path="/fabrication" element={<FabricationPage />} />
               {/* /laser-cutting and /folding are legacy GoDaddy URLs that rank

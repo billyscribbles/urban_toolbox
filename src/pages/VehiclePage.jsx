@@ -25,11 +25,21 @@ const VEHICLES = {
     path: '/caravans',
     heroImage: '/brand/hero-product-caravan.webp',
   },
+  truck: {
+    title: 'For Trucks',
+    eyebrow: 'Shop by vehicle',
+    intro:
+      'Aluminium toolboxes and accessories built for trucks — underbody and top-opening boxes, drawers, racks and locks. Australian-made and built to order, measured to your truck. Add what fits to a no-obligation quote.',
+    seo: 'Aluminium truck toolboxes and accessories — Australian-made, built to order in Dandenong South. Add to a no-obligation quote.',
+    path: '/trucks',
+    heroImage: '/brand/hero-truck-1600.webp',
+  },
 }
 
-// One page renders the vehicle-filtered range for either /utes or /caravans.
-// Sections span every category (Toolboxes + Accessories), each keeping only the
-// products flagged for this vehicle in the admin — see catalog.getVehicleSections.
+// One page renders /utes, /caravans and /trucks. For utes and caravans,
+// sections span every category (Toolboxes + Accessories), each keeping only
+// the products flagged for this vehicle in the admin; trucks gets its own two
+// fixed, scope-owned sections instead — see catalog.getVehicleSections.
 export default function VehiclePage({ vehicle }) {
   const { status } = useProductCatalog()
   useEffect(() => {
