@@ -88,12 +88,6 @@ describe('FeaturedRail', () => {
     expect(screen.getByRole('link')).toHaveAttribute('href', '/product/legacy-id')
   })
 
-  it('renders the section strapline under the heading', () => {
-    seed([row('a', { featured: true })])
-    renderRail()
-    expect(screen.getByText(featuredSection.sub)).toBeInTheDocument()
-  })
-
   it("renders a product's summary on its card, and omits it when there is none", () => {
     seed([
       row('a', { featured: true, title: 'With Summary', summary: 'Built for everyday use.' }),

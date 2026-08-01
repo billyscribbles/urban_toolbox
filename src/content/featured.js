@@ -4,10 +4,13 @@
 // with `featured` ticked in /admin, in catalogue order. See
 // getFeaturedProducts() in src/lib/catalog.js.
 //
-// Contract (src/test/content.test.js): all four strings must be non-empty.
+// Deliberately just a heading and a CTA label: the rail sits high on the page
+// and the products speak for themselves, so it carries no eyebrow and no
+// strapline. Both were tried and cut — they cost a screenful of height for
+// copy nobody needs to read.
+//
+// Contract (src/test/content.test.js): both strings must be non-empty.
 export const featuredSection = {
-  eyebrow: 'Hand-picked',
   heading: 'Featured Products',
-  sub: 'Our most popular toolboxes and accessories, built tough for Aussie conditions.',
   cta: 'View details',
 }

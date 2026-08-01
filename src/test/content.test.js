@@ -112,10 +112,8 @@ describe('content — section copy contract', () => {
     }
   })
 
-  it('featured rail has an eyebrow, heading, strapline and CTA label', () => {
-    expect(featuredSection.eyebrow).toBeTruthy()
+  it('featured rail has a heading and a CTA label', () => {
     expect(featuredSection.heading).toBeTruthy()
-    expect(featuredSection.sub).toBeTruthy()
     expect(featuredSection.cta).toBeTruthy()
   })
 

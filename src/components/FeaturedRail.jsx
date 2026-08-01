@@ -85,17 +85,7 @@ export default function FeaturedRail() {
     <section className="featured">
       <div className="container">
         <div className="featured__head">
-          <div className="featured__lead">
-            {/* Not the shared <Eyebrow>: that pairs its label with a leading
-                accent rule, and here the rule belongs to the sub-line instead,
-                so the label sits flush above the heading. */}
-            <p className="featured__eyebrow">{featuredSection.eyebrow}</p>
-            <h2 className="h2 h2--md featured__heading">{featuredSection.heading}</h2>
-            <p className="featured__sub">
-              <span className="featured__rule" aria-hidden="true" />
-              {featuredSection.sub}
-            </p>
-          </div>
+          <h2 className="h2 h2--md featured__heading">{featuredSection.heading}</h2>
 
           {edges.overflows && (
             <div className="featured__nav">
