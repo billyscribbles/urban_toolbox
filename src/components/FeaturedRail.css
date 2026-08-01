@@ -202,15 +202,32 @@
   margin-left: 5px;
 }
 
+/* The save badge leaves the flow entirely and becomes a corner ribbon: in the
+   body it cost a full row for four characters. It anchors to .featured-card,
+   which is already position:relative, and the card's overflow:hidden clips the
+   band's ends into the corner. Cards with no discount render no badge at all,
+   so no ribbon — nothing to hide.
+
+   It stays PriceTag's own element rather than new markup, so it keeps its
+   place in the price's reading order for a screen reader. */
 .featured-card .price-tag__save {
-  display: block;
-  width: fit-content;
-  margin-top: 10px;
-  padding: 4px 9px;
+  position: absolute;
+  top: 20px;
+  right: -46px;
+  z-index: 1;
+  width: 160px;
+  margin: 0;
+  padding: 6px 0;
+  transform: rotate(45deg);
+  background: var(--color-accent);
+  color: var(--color-white);
+  border-radius: 0;
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
+  text-align: center;
   text-transform: uppercase;
+  box-shadow: var(--shadow-sm);
 }
 
 .featured-card .price-tag__enquire {
