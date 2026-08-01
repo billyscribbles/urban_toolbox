@@ -19,6 +19,39 @@
   margin-top: 4px;
 }
 
+.featured__nav {
+  display: flex;
+  flex-shrink: 0;
+  gap: 10px;
+}
+
+.featured__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: var(--color-ink);
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.featured__arrow:hover:not(:disabled) {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.featured__arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
 /* --- the track --- */
 
 .featured__track {
@@ -144,6 +177,9 @@
   }
   .featured__head {
     margin-bottom: 28px;
+  }
+  .featured__nav {
+    display: none;
   }
   /* Under a full width so the next card peeks — that sliver is what tells
      people the row swipes. */

@@ -8,7 +8,8 @@ vi.mock('../lib/supabaseClient.js', () => ({
   getSupabase: () => Promise.resolve(null),
 }))
 
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { axe, toHaveNoViolations } from 'jest-axe'
 
@@ -111,5 +112,75 @@ describe('FeaturedRail', () => {
     ])
     const { container } = renderRail()
     expect(await axe(container)).toHaveNoViolations()
+  })
+})
+
+// jsdom has no layout: every width reads 0, so overflow never happens by
+// itself. Force the numbers the component measures, and stand in for the
+// scrollBy that jsdom doesn't implement.
+function stubTrack({ clientWidth = 1000, scrollWidth = 3000, scrollLeft = 0 } = {}) {
+  const scrollBy = vi.fn()
+  const track = document.querySelector('.featured__track')
+  Object.defineProperty(track, 'clientWidth', { value: clientWidth, configurable: true })
+  Object.defineProperty(track, 'scrollWidth', { value: scrollWidth, configurable: true })
+  Object.defineProperty(track, 'scrollLeft', {
+    value: scrollLeft,
+    writable: true,
+    configurable: true,
+  })
+  track.scrollBy = scrollBy
+  // The component measures on scroll; fire one so it re-reads the stubs.
+  // fireEvent (not dispatchEvent) so React's state update is wrapped in act().
+  fireEvent.scroll(track)
+  return { track, scrollBy }
+}
+
+const seedTwo = () =>
+  seed([
+    row('a', { featured: true, title: 'Alloy Toolbox', slug: 'alloy-toolbox', price: 1299 }),
+    row('c', { featured: true, title: 'Dog Box', slug: 'dog-box', price: 890 }),
+  ])
+
+describe('FeaturedRail — paging', () => {
+  it('hides the arrows when every card already fits', () => {
+    seedTwo()
+    renderRail()
+    // jsdom's zero widths mean no overflow, which is exactly the "it all fits"
+    // case: no arrows should render.
+    expect(screen.queryByRole('button', { name: /next featured/i })).toBeNull()
+    expect(screen.queryByRole('button', { name: /previous featured/i })).toBeNull()
+  })
+
+  it('shows the arrows and pages one full screen at a time when it overflows', async () => {
+    const user = userEvent.setup()
+    seedTwo()
+    renderRail()
+    const { scrollBy } = stubTrack()
+
+    const next = await screen.findByRole('button', { name: /next featured/i })
+    await user.click(next)
+    expect(scrollBy).toHaveBeenCalledWith({ left: 1000, behavior: 'smooth' })
+  })
+
+  it('disables Previous at the start and Next at the end', async () => {
+    const user = userEvent.setup()
+    seedTwo()
+    renderRail()
+    stubTrack({ scrollLeft: 0 })
+
+    expect(await screen.findByRole('button', { name: /previous featured/i })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /next featured/i })).toBeEnabled()
+
+    // Scrolled hard right: 3000 - 1000 = 2000 is the maximum.
+    stubTrack({ scrollLeft: 2000 })
+    expect(await screen.findByRole('button', { name: /next featured/i })).toBeDisabled()
+
+    const prev = screen.getByRole('button', { name: /previous featured/i })
+    expect(prev).toBeEnabled()
+    await user.click(prev)
+    expect(document.querySelector('.featured__track').scrollBy).toHaveBeenCalledWith({
+      left: -1000,
+      behavior: 'smooth',
+    })
   })
 })
