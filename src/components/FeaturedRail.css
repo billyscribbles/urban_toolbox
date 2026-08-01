@@ -153,8 +153,8 @@
    ratio so a product with no photo keeps the card's shape. */
 .featured-card__media {
   display: block;
-  aspect-ratio: 1 / 1;
-  padding: 18px;
+  aspect-ratio: 5 / 4;
+  padding: 14px;
   background: var(--color-white);
   overflow: hidden;
 }
@@ -175,37 +175,46 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  padding: 4px 24px 24px;
+  padding: 2px 20px 20px;
 }
 
-.featured-card__title {
-  margin: 0;
-  font-size: 17px;
-  line-height: 1.35;
-  font-weight: 700;
-  color: var(--color-ink-strong);
-}
-
-/* Two lines, then ellipsis — summaries vary from a short line to a full spec
-   string, and a ragged row of cards is worse than a clipped sentence. */
+/* Title and summary are both clamped AND floored to exactly two lines. The
+   clamp stops a long spec string running away; the floor stops a one-line
+   title opening a ragged gap above the price. Every card's text block is the
+   same height, so the price and CTA rows line up across the row without
+   needing slack to absorb the difference. */
+.featured-card__title,
 .featured-card__summary {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   overflow: hidden;
-  margin: 10px 0 0;
-  font-size: 14px;
-  line-height: 1.5;
+}
+
+.featured-card__title {
+  margin: 0;
+  min-height: calc(2 * 1.3em);
+  font-size: 16px;
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--color-ink-strong);
+}
+
+.featured-card__summary {
+  margin: 8px 0 0;
+  min-height: calc(2 * 1.45em);
+  font-size: 13px;
+  line-height: 1.45;
   color: var(--color-gray-muted);
 }
 
-/* margin-top:auto pins the price and CTA to the bottom, so cards with one-line
-   and three-line titles still align along the row. */
+/* margin-top:auto is now only a safety net — with both text blocks floored to
+   two lines there is normally nothing left to absorb. */
 .featured-card__price {
   display: block;
   margin-top: auto;
-  padding-top: 18px;
+  padding-top: 14px;
 }
 
 /* PriceTag is shared with the product page and the shop cards, so it is
@@ -216,32 +225,32 @@
 }
 
 .featured-card .price-tag__was {
-  margin-right: 8px;
-  font-size: 15px;
+  margin-right: 7px;
+  font-size: 14px;
 }
 
 .featured-card .price-tag__amount {
-  font-size: 26px;
+  font-size: 22px;
   letter-spacing: -0.01em;
 }
 
 .featured-card .price-tag__gst {
-  margin-left: 6px;
+  margin-left: 5px;
 }
 
 .featured-card .price-tag__save {
   display: block;
   width: fit-content;
-  margin-top: 12px;
-  padding: 5px 10px;
-  font-size: 12px;
+  margin-top: 10px;
+  padding: 4px 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .featured-card .price-tag__enquire {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 /* A button in appearance only — the card itself is the link. */
@@ -250,9 +259,9 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin-top: 20px;
-  padding: 13px 16px;
-  font-size: 13px;
+  margin-top: 16px;
+  padding: 11px 14px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
