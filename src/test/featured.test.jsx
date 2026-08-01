@@ -8,6 +8,7 @@ vi.mock('../lib/supabaseClient.js', () => ({
   getSupabase: () => Promise.resolve(null),
 }))
 
+import { Profiler } from 'react'
 import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
@@ -182,6 +183,45 @@ describe('FeaturedRail — paging', () => {
       left: -1000,
       behavior: 'smooth',
     })
+  })
+
+  // Scroll fires per frame. Building a fresh object every time defeats React's
+  // Object.is bail-out, so an unchanged measurement would still reconcile every
+  // card — the common case mid-scroll, and the only case under 767px where the
+  // arrows aren't rendered at all. Profiler.onRender fires once per commit, so
+  // counting commits catches exactly that.
+  it('does not re-render when a scroll leaves the edge state unchanged', () => {
+    seedTwo()
+    let commits = 0
+    render(
+      <MemoryRouter>
+        <Profiler id="rail" onRender={() => (commits += 1)}>
+          <FeaturedRail />
+        </Profiler>
+      </MemoryRouter>,
+    )
+    const { track } = stubTrack({ clientWidth: 1000, scrollWidth: 3000, scrollLeft: 500 })
+
+    // One settling frame first: React can only take its eager bail-out path
+    // once the fiber has no lanes left over from the preceding update, so the
+    // scroll straight after a real change still renders once. Everything after
+    // it is the steady state we care about — the middle of a scroll.
+    fireEvent.scroll(track)
+    const settled = commits
+    expect(settled).toBeGreaterThan(0)
+
+    // Same numbers, four more frames: overflows/atStart/atEnd are all unmoved.
+    fireEvent.scroll(track)
+    fireEvent.scroll(track)
+    fireEvent.scroll(track)
+    fireEvent.scroll(track)
+    expect(commits).toBe(settled)
+
+    // ...and it must still commit when a boolean genuinely moves.
+    track.scrollLeft = 0
+    fireEvent.scroll(track)
+    expect(commits).toBeGreaterThan(settled)
+    expect(screen.getByRole('button', { name: /previous featured/i })).toBeDisabled()
   })
 })
 

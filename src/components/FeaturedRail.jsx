@@ -38,13 +38,25 @@ export default function FeaturedRail() {
     const el = trackRef.current
     if (!el) return
     const max = el.scrollWidth - el.clientWidth
-    setEdges({
+    const next = {
       overflows: max > 1,
       atStart: el.scrollLeft <= 0,
       // 1px of slack absorbs the sub-pixel rounding browsers leave at the
       // right edge, which would otherwise never satisfy a strict >=.
       atEnd: el.scrollLeft >= max - 1,
-    })
+    }
+    // A fresh object literal never satisfies React's Object.is bail-out, so
+    // returning `prev` unchanged is what stops every scroll frame from
+    // reconciling all twelve cards to restate booleans that did not move.
+    // Mid-scroll — and on every touch-swipe frame under 767px, where the
+    // arrows aren't even rendered — nothing changes, so this is the norm.
+    setEdges((prev) =>
+      prev.overflows === next.overflows &&
+      prev.atStart === next.atStart &&
+      prev.atEnd === next.atEnd
+        ? prev
+        : next,
+    )
   }, [])
 
   // Re-measure on scroll and on resize. products.length is a dependency
@@ -118,7 +130,11 @@ export default function FeaturedRail() {
           {products.map((p) => (
             <li className="featured__item" key={p.id}>
               <Link className="featured-card" to={`/product/${p.slug || p.id}`}>
-                <span className="featured-card__media">
+                {/* <div>, not <span>: the body holds an <h3>, and phrasing
+                    content can't. <a> has a transparent content model and the
+                    <li> permits flow content, so this is valid — the same
+                    shape Card.jsx uses. */}
+                <div className="featured-card__media">
                   {p.img && (
                     <Img
                       className="featured-card__img"
@@ -127,8 +143,8 @@ export default function FeaturedRail() {
                       sizes={CARD_SIZES}
                     />
                   )}
-                </span>
-                <span className="featured-card__body">
+                </div>
+                <div className="featured-card__body">
                   <h3 className="featured-card__title">{p.title}</h3>
                   <span className="featured-card__price">
                     <PriceTag price={p.price} discountPct={p.discountPct} />
@@ -137,7 +153,7 @@ export default function FeaturedRail() {
                     {featuredSection.cta}
                     <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
                   </span>
-                </span>
+                </div>
               </Link>
             </li>
           ))}
