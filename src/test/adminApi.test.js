@@ -13,6 +13,10 @@ let updateError = null
 // swept; null means "no photo yet".
 let existingCategoryImage = null
 
+// How many OTHER products are already featured, as the cap guard's count query
+// would report. 0 means there is room.
+let featuredCount = 0
+
 // The product row uploadBrochure reads before replacing; null means "no
 // brochure yet". Separate from existingCategoryImage because both reach the
 // same select().eq().maybeSingle() path, on different tables.
@@ -56,6 +60,9 @@ function tableApi(table) {
             error: null,
           }),
         ),
+        // .eq('featured', true).neq('id', …) — the head/count read that guards
+        // the featured cap. Answers with whatever featuredCount is set to.
+        neq: vi.fn(() => Promise.resolve({ count: featuredCount, error: null })),
       })),
       maybeSingle: vi.fn(() => Promise.resolve(maybeSingleResult)),
     })),
@@ -124,7 +131,46 @@ beforeEach(() => {
   updateError = null
   existingCategoryImage = null
   existingBrochure = null
+  featuredCount = 0
   retryLoad.mockClear()
+})
+
+describe('saveProduct — featured cap', () => {
+  const featuredProduct = {
+    id: 'x',
+    slug: 'x',
+    title: 'X',
+    categoryId: 'locks',
+    price: null,
+    discountPct: null,
+    featured: true,
+  }
+
+  // The editor's checkbox is the second way to raise the flag, so it has to hit
+  // the same ceiling as the row star — and report it the way the editor reads
+  // errors, by returning rather than throwing.
+  it('returns the cap error instead of saving when already at the limit', async () => {
+    featuredCount = 12
+    const { error } = await saveProduct(featuredProduct, { isNew: false })
+    expect(error.message).toMatch(/maximum 12/i)
+    expect(calls.updates).toHaveLength(0)
+    expect(calls.upserts).toHaveLength(0)
+  })
+
+  it('saves when there is still room', async () => {
+    featuredCount = 11
+    const { error } = await saveProduct(featuredProduct, { isNew: false })
+    expect(error).toBeFalsy()
+    expect(calls.updates[0].patch).toMatchObject({ featured: true })
+  })
+
+  // Re-saving an already-featured product must not count itself and trip the cap.
+  it('does not check the cap at all when the product is not being featured', async () => {
+    featuredCount = 40
+    const { error } = await saveProduct({ ...featuredProduct, featured: false }, { isNew: false })
+    expect(error).toBeFalsy()
+    expect(calls.updates[0].patch).toMatchObject({ featured: false })
+  })
 })
 
 describe('saveProduct', () => {
@@ -238,6 +284,24 @@ describe('setProductFeatured', () => {
   })
 
   it('unfeatures without touching any other column', async () => {
+    await setProductFeatured('x', false)
+    expect(calls.updates[0].patch).toEqual({ featured: false })
+  })
+
+  it('allows the 12th', async () => {
+    featuredCount = 11
+    await setProductFeatured('x', true)
+    expect(calls.updates[0].patch).toEqual({ featured: true })
+  })
+
+  it('refuses the 13th, and writes nothing', async () => {
+    featuredCount = 12
+    await expect(setProductFeatured('x', true)).rejects.toThrow(/maximum 12/i)
+    expect(calls.updates).toHaveLength(0)
+  })
+
+  it('still unfeatures when the data is already over the cap', async () => {
+    featuredCount = 40
     await setProductFeatured('x', false)
     expect(calls.updates[0].patch).toEqual({ featured: false })
   })

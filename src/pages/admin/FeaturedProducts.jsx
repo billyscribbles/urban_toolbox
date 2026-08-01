@@ -75,11 +75,16 @@ export default function FeaturedProducts({ rows, loading, onChanged }) {
     <div className="admin-card">
       <div className="admin-toolbar">
         <div>
-          <span className="admin__label">Featured products</span>
+          <span className="admin__label">
+            Featured products{' '}
+            <span className="admin-featured__count">
+              {featured.length} of {FEATURED_RAIL_LIMIT}
+            </span>
+          </span>
           <span className="admin__label-hint">
-            The “Featured Products” rail on the home page, in the order visitors see it. Only the
-            first {FEATURED_RAIL_LIMIT} reach the rail — anything past that is listed here but not
-            shown. Use the star on a row in the Products tab to add one.
+            The “Featured Products” rail on the home page, in the order visitors see it. Up to{' '}
+            {FEATURED_RAIL_LIMIT} can be featured — unfeature one here to make room. Use the star on
+            a row in the Products tab to add one.
           </span>
         </div>
       </div>

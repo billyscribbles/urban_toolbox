@@ -774,7 +774,19 @@ describe('FeaturedProducts panel', () => {
     const lastOnRail = screen.getByText(`Featured ${FEATURED_RAIL_LIMIT - 1}`).closest('li')
     expect(within(overLimit).getByText(/over the 12 limit/i)).toBeInTheDocument()
     expect(within(lastOnRail).queryByText(/over the 12 limit/i)).toBeNull()
-    expect(screen.getByText(/only the first 12 reach the rail/i)).toBeInTheDocument()
+    expect(screen.getByText(/up to 12 can be featured/i)).toBeInTheDocument()
+  })
+
+  // The admin now refuses the 13th write, so this state only arises from data
+  // edited outside the dashboard — the badge stays as the safety net for it.
+  it('shows how much room is left against the cap', () => {
+    const rows = [
+      { id: 'a', category_id: 'locks', title: 'A', price: 10, featured: true, product_images: [] },
+      { id: 'b', category_id: 'locks', title: 'B', price: 10, featured: true, product_images: [] },
+      { id: 'c', category_id: 'locks', title: 'C', price: 10, featured: false, product_images: [] },
+    ]
+    render(<FeaturedProducts rows={rows} onChanged={() => {}} />)
+    expect(screen.getByText(`2 of ${FEATURED_RAIL_LIMIT}`)).toBeInTheDocument()
   })
 
   // getProducts() is fetched with .eq('hidden', false), so a hidden row never

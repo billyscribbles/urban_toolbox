@@ -3,11 +3,34 @@ import { processPhoto, photoPaths, categoryPhotoPaths } from './imageResize.js'
 import { normalizeColors } from '../data/colors.js'
 import { retryLoad } from './productStore.js'
 import { normalizeMessages } from './promoStore.js'
+import { FEATURED_RAIL_LIMIT } from './catalog.js'
 
 // Auth + CRUD surface for the /admin dashboard. Every write refreshes the
 // storefront productStore so an open tab reflects edits without a reload.
 
 const BUCKET = 'product-photos'
+
+export const FEATURED_LIMIT_MESSAGE = `Maximum ${FEATURED_RAIL_LIMIT} featured products. Unfeature one first.`
+
+// The home rail only ever shows FEATURED_RAIL_LIMIT products, so the admin is
+// held to that ceiling rather than being allowed to flag more than can appear.
+//
+// The check lives here, not in the components, because TWO paths raise the
+// flag — the row star and the editor's checkbox — and guarding only the UI
+// would leave the other open. `id` is excluded from the count so re-saving an
+// already-featured product never trips on itself.
+//
+// Counted against every featured row, hidden or not: "maximum 12" is a rule an
+// admin can hold in their head, where "12 unless some are hidden" is not.
+async function assertFeaturedCapacity(c, id) {
+  const { count, error } = await c
+    .from('products')
+    .select('id', { count: 'exact', head: true })
+    .eq('featured', true)
+    .neq('id', id)
+  if (error) throw new Error(error.message)
+  if ((count ?? 0) >= FEATURED_RAIL_LIMIT) throw new Error(FEATURED_LIMIT_MESSAGE)
+}
 
 async function client() {
   const supabase = await getSupabase()
@@ -99,6 +122,15 @@ function toRow(p) {
 export async function saveProduct(p, { isNew, prevId } = {}) {
   const c = await client()
   const row = toRow(p)
+  // saveProduct reports failures by returning them, not throwing, so the cap
+  // breach has to be shaped like any other save error for the editor to show it.
+  if (row.featured) {
+    try {
+      await assertFeaturedCapacity(c, prevId ?? p.id)
+    } catch (err) {
+      return { error: err }
+    }
+  }
   const { error } = isNew
     ? await c.from('products').insert(row)
     : await c
@@ -164,6 +196,9 @@ export async function setProductHidden(id, hidden) {
 // storefront refresh so an open tab picks the change up without a reload.
 export async function setProductFeatured(id, featured) {
   const c = await client()
+  // Only raising the flag can breach the cap — unfeaturing is always allowed,
+  // which matters when the data already sits over the limit.
+  if (featured) await assertFeaturedCapacity(c, id)
   const { error } = await c.from('products').update({ featured }).eq('id', id)
   if (error) throw new Error(error.message)
   retryLoad()

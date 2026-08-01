@@ -1247,6 +1247,19 @@
   color: var(--color-gray-muted);
 }
 
+/* Capacity against the rail's cap, so the admin can see how much room is left
+   before the write is refused rather than only finding out on the refusal. */
+.admin-featured__count {
+  margin-left: 8px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-ink-muted);
+  background: var(--color-off-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-full);
+}
+
 @media (max-width: 700px) {
   .admin-featured__item {
     flex-wrap: wrap;
