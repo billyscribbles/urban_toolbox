@@ -12,4 +12,9 @@ export const fitment = {
     spec: 'Every make & model · Single, extra & dual cab',
     note: 'Built to order and measured to your ute — we confirm the fit before we build.',
   },
+  truck: {
+    label: 'Fits all trucks',
+    spec: 'Rigid, tipper & tray-back · Every make & model',
+    note: 'Built to order and measured to your truck — we confirm the fit before we build.',
+  },
 }

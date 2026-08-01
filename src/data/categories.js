@@ -62,13 +62,25 @@ export const categories = [
       { id: 'jack-off-legs', label: 'Jack-Off Legs', slug: 'jack-off-legs' },
     ],
   },
-  // `vehicle: 'ute'` marks a node as vehicle-exclusive: absent from the generic
-  // catalog menus and pages, surfaced only on /utes (pinned there even before
-  // its first product lands). Top-level leaves, so each stands beside the
-  // Browse buttons on the vehicle page rather than inside a group.
+  // `vehicle: 'ute' | 'truck'` marks a node as vehicle-exclusive: absent from
+  // the generic catalog menus and pages, surfaced only on that vehicle's page
+  // (pinned there even before its first product lands). Top-level leaves, so
+  // each stands beside the Browse buttons on the vehicle page rather than
+  // inside a group.
   { id: 'trays', label: 'Trays', slug: 'trays', vehicle: 'ute' },
   { id: 'canopy', label: 'Canopy', slug: 'canopy', vehicle: 'ute' },
   { id: 'service-canopy', label: 'Service Canopy', slug: 'service-canopy', vehicle: 'ute' },
+  // Trucks is scope-owned rather than flag-sliced (see VEHICLE_FIT in
+  // lib/catalog.js): these two ARE the /trucks page. Labels are qualified
+  // because each scoped top also owns a single-segment page — a bare
+  // "Toolboxes" would ship /truck-toolboxes with /toolboxes' own <title>.
+  { id: 'truck-toolboxes', label: 'Truck Toolboxes', slug: 'truck-toolboxes', vehicle: 'truck' },
+  {
+    id: 'truck-accessories',
+    label: 'Truck Accessories',
+    slug: 'truck-accessories',
+    vehicle: 'truck',
+  },
   // `exclusive: 'australian-made'` scopes this leaf to its own /australian-made
   // page (same hide-from-generic mechanism as `vehicle`, just a non-vehicle
   // scope). It stays a real leaf, so the admin category dropdown lists it and

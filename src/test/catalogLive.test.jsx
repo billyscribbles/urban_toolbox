@@ -156,11 +156,47 @@ describe('getVehicleSections — vehicle-filtered range', () => {
     expect(caravanIds).not.toContain('service-canopy')
   })
 
+  it('gives trucks its own two categories, pinned and empty', () => {
+    __setStateForTests({ status: 'ready', products: [] })
+
+    // Trucks owns its tops outright — no per-product fitment flag — so the page
+    // is exactly these two, present before the first truck product lands.
+    const sections = getVehicleSections('truck')
+    expect(sections.map((s) => s.id)).toEqual(['truck-toolboxes', 'truck-accessories'])
+    for (const s of sections) {
+      expect(s.pinned).toBe(true)
+      expect(s.products).toEqual([])
+      expect(s.fitment).toBe('truck')
+      expect(s.group).toBe(s.label)
+    }
+  })
+
+  it('keeps the generic catalogue and the other vehicles out of /trucks', () => {
+    __setStateForTests({ status: 'ready', products: productRows.map(normalizeRow) })
+
+    // Ute/caravan stock must not leak in: trucks has no fitment flag, so an
+    // unfiltered generic top would have dragged the whole catalogue onto it.
+    expect(idsIn(getVehicleSections('truck'))).toEqual([])
+    expect(getVehicleSections('truck').map((s) => s.group)).not.toContain('Toolboxes')
+
+    // …and the truck categories stay off every generic and rival-vehicle surface.
+    for (const top of ['toolboxes', 'accessories']) {
+      const labels = getMegaMenu(top).columns.map((c) => c.label)
+      expect(labels).not.toContain('Truck Toolboxes')
+      expect(labels).not.toContain('Truck Accessories')
+    }
+    for (const v of ['ute', 'caravan']) {
+      const ids = getVehicleSections(v).map((s) => s.id)
+      expect(ids).not.toContain('truck-toolboxes')
+      expect(ids).not.toContain('truck-accessories')
+    }
+  })
+
   it('vehicle menu lists each page’s top-level groups under its heading', () => {
     const menu = getVehicleMenu()
-    expect(menu.columns.map((c) => c.label)).toEqual(['Caravans', 'Utes'])
+    expect(menu.columns.map((c) => c.label)).toEqual(['Caravans', 'Utes', 'Trucks'])
 
-    const [caravans, utes] = menu.columns
+    const [caravans, utes, trucks] = menu.columns
     expect(caravans.items.map((i) => i.label)).toEqual(['Toolboxes', 'Accessories'])
     expect(utes.items.map((i) => i.label)).toEqual([
       'Toolboxes',
@@ -169,8 +205,12 @@ describe('getVehicleSections — vehicle-filtered range', () => {
       'Canopy',
       'Service Canopy',
     ])
+    // Trucks owns its two categories and shows nothing else — not the generic
+    // Toolboxes/Accessories tops the flag-sliced vehicles share.
+    expect(trucks.items.map((i) => i.label)).toEqual(['Truck Toolboxes', 'Truck Accessories'])
     for (const item of utes.items) expect(item.to).toMatch(/^\/utes#/)
     for (const item of caravans.items) expect(item.to).toMatch(/^\/caravans#/)
+    for (const item of trucks.items) expect(item.to).toMatch(/^\/trucks#/)
   })
 
   it('hides the exclusive Australian Made category from generic + vehicle surfaces but keeps it admin-selectable', () => {
@@ -215,6 +255,10 @@ describe('getVehicleSections — vehicle-filtered range', () => {
 
     // Scope-exclusive tops keep their own headings rather than sitting loose.
     expect(group('Utes').options.map((o) => o.id)).toEqual(['trays', 'canopy', 'service-canopy'])
+    expect(group('Trucks').options.map((o) => o.id)).toEqual([
+      'truck-toolboxes',
+      'truck-accessories',
+    ])
     expect(group('Custom').options.map((o) => o.id)).toEqual(['australian-made'])
 
     // Still every leaf, so no product can be left unfileable.

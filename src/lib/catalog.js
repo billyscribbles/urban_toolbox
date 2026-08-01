@@ -167,31 +167,38 @@ export function buildSections(node, filter = null, vehicle = null) {
   return filter ? sections.filter((s) => s.products.length > 0 || s.pinned) : sections
 }
 
-// Every category's sections, filtered to products that fit the given vehicle
-// ('ute' | 'caravan'). Powers the /utes and /caravans explore pages: one flat
-// pill nav spanning Toolboxes + Accessories, each section keeping only the
-// products flagged for that vehicle.
+// A vehicle page comes in one of two shapes. Utes and caravans slice the whole
+// generic catalogue by a per-product fitment flag. A vehicle with no flag owns
+// its categories outright (Trucks) — its page lists only the tops scoped to it,
+// so nothing filed for another vehicle can drift onto it.
+const VEHICLE_FIT = { ute: 'fitsUte', caravan: 'fitsCaravan' }
+
+const topsForVehicle = (vehicle) =>
+  getTopCategories().filter((top) =>
+    VEHICLE_FIT[vehicle] ? visibleFor(top, vehicle) : top.vehicle === vehicle,
+  )
+
+// Every category's sections for the given vehicle page. Flag-sliced vehicles
+// ('ute' | 'caravan') keep only the products that fit; scope-owned ones
+// ('truck') take their tops whole, empty sections included.
 export function getVehicleSections(vehicle) {
-  const key = vehicle === 'caravan' ? 'fitsCaravan' : 'fitsUte'
-  // Tag each section with its top-level category ('Toolboxes' / 'Accessories')
-  // so the range nav can split the pills into labelled groups.
-  const v = vehicle === 'caravan' ? 'caravan' : 'ute'
-  return getTopCategories()
-    .filter((top) => visibleFor(top, v))
-    .flatMap((top) =>
-      buildSections(top, (p) => p[key] !== false, v).map((s) => ({
-        ...s,
-        group: top.label,
-        // Anchor id for the whole group on the vehicle page (the nav's
-        // "Toolboxes" / "Accessories" deep links land on it).
-        groupSlug: top.slug,
-        // Only the vehicle-exclusive tops (Trays, Canopy, Service Canopy) carry
-        // `vehicle`, so this tags exactly those sections for the fitment chip —
-        // they have no hero of their own here to state it. Generic tops
-        // (Toolboxes, Accessories) get undefined and render no chip.
-        fitment: top.vehicle,
-      })),
-    )
+  const key = VEHICLE_FIT[vehicle]
+  const filter = key ? (p) => p[key] !== false : null
+  // Tag each section with its top-level category so the range nav can split the
+  // pills into labelled groups.
+  return topsForVehicle(vehicle).flatMap((top) =>
+    buildSections(top, filter, vehicle).map((s) => ({
+      ...s,
+      group: top.label,
+      // Anchor id for the whole group on the vehicle page (the nav's
+      // "Toolboxes" / "Accessories" deep links land on it).
+      groupSlug: top.slug,
+      // Only the vehicle-exclusive tops carry `vehicle`, so this tags exactly
+      // those sections for the fitment chip — they have no hero of their own
+      // here to state it. Generic tops get undefined and render no chip.
+      fitment: top.vehicle,
+    })),
+  )
 }
 
 // A top category whose children are ALL leaves renders as one page with the
@@ -236,22 +243,25 @@ export function getMegaMenu(topSlug) {
 
 // The "Shop by Vehicle" dropdown. One column per vehicle page, each listing
 // the top-level groups that page offers (Caravans: the generic catalog tops;
-// Utes: those plus the ute-exclusive tops), deep-linked to the group anchors.
-// `listItems` tells the desktop panel to render those items downwards under
-// each vehicle heading — catalog panels stay compact. There's no combined
-// "all vehicles" index, so no `showAll` flag / "View all" row.
+// Utes: those plus the ute-exclusive tops; Trucks: only its own two scoped
+// tops), deep-linked to the group anchors. `listItems` tells the desktop panel
+// to render those items downwards under each vehicle heading — catalog panels
+// stay compact. There's no combined "all vehicles" index, so no `showAll` flag
+// / "View all" row.
 export function getVehicleMenu() {
   const column = (label, path, vehicle) => ({
     label,
     to: path,
-    items: getTopCategories()
-      .filter((top) => visibleFor(top, vehicle))
-      .map((top) => ({ label: top.label, to: `${path}#${top.slug}` })),
+    items: topsForVehicle(vehicle).map((top) => ({ label: top.label, to: `${path}#${top.slug}` })),
   })
   return {
     label: 'Shop by Vehicle',
     to: '/caravans',
-    columns: [column('Caravans', '/caravans', 'caravan'), column('Utes', '/utes', 'ute')],
+    columns: [
+      column('Caravans', '/caravans', 'caravan'),
+      column('Utes', '/utes', 'ute'),
+      column('Trucks', '/trucks', 'truck'),
+    ],
     flattened: true,
     listItems: true,
   }
@@ -269,7 +279,12 @@ export function getCustomMenu() {
 
 // Headings for scope-exclusive top-level leaves — the nav menu each one is
 // reachable from, so the admin files it the same way a person would look for it.
-const SCOPE_HEADINGS = { ute: 'Utes', caravan: 'Caravans', 'australian-made': 'Custom' }
+const SCOPE_HEADINGS = {
+  ute: 'Utes',
+  caravan: 'Caravans',
+  truck: 'Trucks',
+  'australian-made': 'Custom',
+}
 
 // Admin category picker view model: the same leaves the nav exposes, grouped
 // the way the nav groups them. Products attach to leaves, but a FLAT leaf list
