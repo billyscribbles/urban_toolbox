@@ -12,9 +12,10 @@ import { useQuote } from './lib/quoteStore.js'
 import { categories } from './data/categories.js'
 import { legacyRedirects } from './config/redirects.js'
 
-// Vehicle-exclusive tops (Trays, Canopy, Service Canopy) are single-segment
-// top-level categories — each gets its own /<slug> CategoryPage route. Derived
-// from the tree so a new ute-exclusive top wires up its route automatically.
+// Vehicle-exclusive tops (Trays, Canopy, Service Canopy, the truck pair) are
+// single-segment top-level categories — each gets its own /<slug> CategoryPage
+// route. Derived from the tree so a new vehicle-exclusive top wires up its
+// route automatically.
 const vehicleTops = categories.filter((c) => c.vehicle)
 
 // Retry lazy imports once, then force a reload if the chunk is gone.
@@ -144,9 +145,10 @@ function AppBody() {
               <Route path="/accessories" element={<CategoryPage slug="accessories" />} />
               <Route path="/accessories/:subSlug" element={<CategoryPage />} />
 
-              {/* Ute-exclusive tops — Trays, Canopy, Service Canopy. Each is a
-                  bare top-level category (no /toolboxes|/accessories parent), so
-                  it owns a single-segment route rendering its own CategoryPage. */}
+              {/* Vehicle-exclusive tops — Trays, Canopy, Service Canopy (ute),
+                  Truck Toolboxes, Truck Accessories (truck). Each is a bare
+                  top-level category (no /toolboxes|/accessories parent), so it
+                  owns a single-segment route rendering its own CategoryPage. */}
               {vehicleTops.map((top) => (
                 <Route
                   key={top.slug}
@@ -159,10 +161,12 @@ function AppBody() {
                   ?product= detail drawer. Token is the product slug (or id). */}
               <Route path="/product/:slug" element={<ProductPage />} />
 
-              {/* Explore-by-vehicle pages — the whole range filtered to
-                  products flagged for utes / caravans in the admin. */}
+              {/* Explore-by-vehicle pages. Utes and caravans are the whole
+                  range filtered to products flagged for them in the admin;
+                  trucks renders its own two scoped categories. */}
               <Route path="/utes" element={<VehiclePage vehicle="ute" />} />
               <Route path="/caravans" element={<VehiclePage vehicle="caravan" />} />
+              <Route path="/trucks" element={<VehiclePage vehicle="truck" />} />
 
               <Route path="/fabrication" element={<FabricationPage />} />
               {/* /laser-cutting and /folding are legacy GoDaddy URLs that rank

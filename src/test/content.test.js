@@ -16,6 +16,7 @@ import { shopByVehicle } from '../content/shopByVehicle.js'
 import { fitment } from '../content/fitment.js'
 import { categories } from '../data/categories.js'
 import { getCategoryBySlug, getCategoryById } from '../lib/catalog.js'
+import { vehicles } from '../content/vehicles.js'
 
 // Products now live in Supabase (their contract is covered by productStore.test.js
 // against fixtures/productRows.js); only the static category tree remains here.
@@ -111,13 +112,14 @@ describe('content — section copy contract', () => {
     }
   })
 
-  it('shopByVehicle has cards routing to /utes and /caravans with images on disk', () => {
+  it('shopByVehicle has cards routing to /utes, /caravans and /trucks with images on disk', () => {
     expect(shopByVehicle.eyebrow).toBeTruthy()
     expect(shopByVehicle.heading).toBeTruthy()
-    expect(shopByVehicle.cards).toHaveLength(2)
+    expect(shopByVehicle.cards).toHaveLength(3)
     const routes = shopByVehicle.cards.map((c) => c.to)
     expect(routes).toContain('/utes')
     expect(routes).toContain('/caravans')
+    expect(routes).toContain('/trucks')
     for (const card of shopByVehicle.cards) {
       expect(card.label).toBeTruthy()
       expect(card.sub).toBeTruthy()
@@ -125,6 +127,21 @@ describe('content — section copy contract', () => {
       expect(existsSync(join(process.cwd(), 'public', card.img)), `missing image ${card.img}`).toBe(
         true,
       )
+    }
+  })
+
+  it('vehicles content has real copy and a hero image on disk for every vehicle', () => {
+    const entries = Object.values(vehicles)
+    expect(entries.length).toBeGreaterThan(0)
+    for (const v of entries) {
+      expect(v.title).toBeTruthy()
+      expect(v.intro).toBeTruthy()
+      expect(v.seo).toBeTruthy()
+      expect(v.path).toMatch(/^\//)
+      expect(
+        existsSync(join(process.cwd(), 'public', v.heroImage)),
+        `missing hero image ${v.heroImage}`,
+      ).toBe(true)
     }
   })
 })

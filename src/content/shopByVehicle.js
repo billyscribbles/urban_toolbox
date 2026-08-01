@@ -1,4 +1,4 @@
-// Home "shop by vehicle" band — two cards routing to the explore-by-vehicle
+// Home "shop by vehicle" band — three cards routing to the explore-by-vehicle
 // pages. Images are the same hero shots used elsewhere on the site.
 //
 // Contract (src/test/content.test.js): every `to` must start with "/" and every
@@ -20,6 +20,13 @@ export const shopByVehicle = {
       to: '/caravans',
       img: '/brand/hero-caravan.jpg',
       imgAlt: 'Aluminium toolbox suited to a caravan',
+    },
+    {
+      label: 'For Trucks',
+      sub: 'Truck toolboxes, drawers, racks & accessories',
+      to: '/trucks',
+      img: '/brand/hero-truck.jpg',
+      imgAlt: 'Aluminium toolbox fitted to a truck',
     },
   ],
 }

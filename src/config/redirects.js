@@ -15,7 +15,6 @@ export const legacyRedirects = {
   '/ute-accessories': '/accessories', // corrected spelling, same destination
   '/caravan-toolboxes': '/caravans', // retired product page → caravans vehicle page
   '/photos': '/toolboxes', // gallery page → the catalogue, its closest match
-  '/trucks': '/toolboxes/truck-boxes', // retired in the catalogue restructure
   '/contact': '/quote', // enquiry intent → the quote form
 }
 
