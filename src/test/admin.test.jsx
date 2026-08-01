@@ -36,6 +36,8 @@ vi.mock('../lib/adminApi.js', () => ({
   fetchCategoryImages: vi.fn(async () => []),
   uploadCategoryImage: vi.fn(async () => {}),
   deleteCategoryImage: vi.fn(async () => {}),
+  uploadBrochure: vi.fn(async () => 'brochures/x/new12345.pdf'),
+  deleteBrochure: vi.fn(async () => null),
 }))
 
 const { default: AdminPage } = await import('../pages/admin/AdminPage.jsx')

@@ -285,6 +285,9 @@ export default function ProductList({ rows, loading, onEdit, onNew, onChanged })
                             {Number(row.discount_pct)}% off
                           </span>
                         ) : null}
+                        {row.brochure_path && (
+                          <span className="admin-badge admin-badge--pdf">PDF</span>
+                        )}
                       </div>
                     </td>
                     <td>

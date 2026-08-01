@@ -6,6 +6,7 @@ import { slugify, uniqueValue, friendlySaveError, validateProduct } from '../../
 import { saveProduct } from '../../lib/adminApi.js'
 import { publicPhotoUrl } from '../../lib/supabaseClient.js'
 import PhotoManager from './PhotoManager.jsx'
+import BrochureManager from './BrochureManager.jsx'
 
 function toForm(row) {
   if (!row) {
@@ -56,6 +57,9 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
   const [saveError, setSaveError] = useState('')
   const [busy, setBusy] = useState(false)
   const [images, setImages] = useState(row?.product_images ?? [])
+  // Held here, not in the form: BrochureManager writes brochure_path straight
+  // to the row, so it must never ride along with a form save (see toRow).
+  const [brochurePath, setBrochurePath] = useState(row?.brochure_path ?? null)
 
   // The storefront card thumbnail (position 0) — shown as a hero at the top of
   // the tray so the product reads at a glance on open. Updates live as photos
@@ -389,14 +393,23 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
       </label>
 
       {isNew ? (
-        <p className="admin-photos__hint">Save the product first, then reopen it to add photos.</p>
+        <p className="admin-photos__hint">
+          Save the product first, then reopen it to add photos and a brochure.
+        </p>
       ) : (
-        <PhotoManager
-          productId={row.id}
-          title={form.title}
-          images={images}
-          onImagesChange={setImages}
-        />
+        <>
+          <PhotoManager
+            productId={row.id}
+            title={form.title}
+            images={images}
+            onImagesChange={setImages}
+          />
+          <BrochureManager
+            productId={row.id}
+            brochurePath={brochurePath}
+            onBrochureChange={setBrochurePath}
+          />
+        </>
       )}
 
       {saveError && (
