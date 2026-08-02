@@ -111,6 +111,7 @@ function toRow(p) {
     featured: !!p.featured,
     fits_ute: p.fitsUte !== false,
     fits_caravan: p.fitsCaravan !== false,
+    fits_truck: p.fitsTruck !== false,
     colors: normalizeColors(p.colors),
     in_stock: p.inStock !== false,
     sort_order: p.sortOrder ?? 0,

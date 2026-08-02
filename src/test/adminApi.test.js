@@ -208,6 +208,10 @@ describe('saveProduct', () => {
       // Nothing passed inStock, so the row lands in stock — the same default
       // the column itself carries.
       in_stock: true,
+      // Same for the vehicle flags: unset means fits all three.
+      fits_ute: true,
+      fits_caravan: true,
+      fits_truck: true,
       sort_order: 3,
     })
   })
@@ -226,6 +230,26 @@ describe('saveProduct', () => {
       { isNew: true },
     )
     expect(calls.upserts[0].row).toMatchObject({ in_stock: false })
+  })
+
+  it('persists an opted-out vehicle fit as false', async () => {
+    await saveProduct(
+      {
+        id: 'nf',
+        slug: 'nf',
+        title: 'No Fit',
+        categoryId: 'locks',
+        price: null,
+        discountPct: null,
+        fitsTruck: false,
+      },
+      { isNew: true },
+    )
+    expect(calls.upserts[0].row).toMatchObject({
+      fits_truck: false,
+      fits_ute: true,
+      fits_caravan: true,
+    })
   })
 
   it('updates by id when not new', async () => {

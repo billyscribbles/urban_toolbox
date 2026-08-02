@@ -24,6 +24,7 @@ function toForm(row) {
       featured: false,
       fitsUte: true,
       fitsCaravan: true,
+      fitsTruck: true,
       colors: [],
       inStock: true,
     }
@@ -42,6 +43,7 @@ function toForm(row) {
     featured: !!row.featured,
     fitsUte: row.fits_ute !== false,
     fitsCaravan: row.fits_caravan !== false,
+    fitsTruck: row.fits_truck !== false,
     colors: normalizeColors(row.colors),
     inStock: row.in_stock !== false,
   }
@@ -135,6 +137,7 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
         featured: form.featured,
         fitsUte: form.fitsUte,
         fitsCaravan: form.fitsCaravan,
+        fitsTruck: form.fitsTruck,
         colors: form.colors,
         inStock: form.inStock,
         sortOrder: isNew
@@ -234,6 +237,10 @@ export default function ProductEditor({ row, rows, onDone, onCancel }) {
         <label className="admin-editor__check">
           <input type="checkbox" checked={form.fitsCaravan} onChange={set('fitsCaravan')} />
           Fits caravans
+        </label>
+        <label className="admin-editor__check">
+          <input type="checkbox" checked={form.fitsTruck} onChange={set('fitsTruck')} />
+          Fits trucks
         </label>
       </fieldset>
 
