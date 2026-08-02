@@ -31,6 +31,13 @@ const visibleFor = (node, scope = null) => {
   return !s || s === scope
 }
 
+// What nav pills, section headings and the vehicle menu show for a node —
+// `shortLabel` when the node carries one (Truck Accessories reads "Accessories"
+// on surfaces that already say the vehicle), else the full `label`. The node's
+// own page keeps using `label`, so /truck-accessories' <title> stays qualified
+// and can't collide with /accessories'.
+const displayLabel = (node) => node?.shortLabel ?? node?.label
+
 // Depth-first search of the whole tree by slug (slugs are unique across the tree).
 export function getCategoryBySlug(slug) {
   const walk = (nodes) => {
@@ -152,15 +159,15 @@ export function buildSections(node, filter = null, vehicle = null) {
   const sections = grouped
     ? kids.map((child) => ({
         id: child.slug,
-        label: child.label,
-        heading: child.label,
+        label: displayLabel(child),
+        heading: displayLabel(child),
         pinned: !!child.vehicle,
         products: apply(getProductsUnder(child)),
       }))
     : (isLeaf(node) ? [node] : kids.flatMap(getLeaves)).map((leaf) => ({
         id: leaf.slug,
-        label: leaf.label,
-        heading: leaf.label,
+        label: displayLabel(leaf),
+        heading: displayLabel(leaf),
         pinned: !!leaf.vehicle,
         products: apply(getProductsForLeaf(leaf.id)),
       }))
@@ -189,7 +196,7 @@ export function getVehicleSections(vehicle) {
   return topsForVehicle(vehicle).flatMap((top) =>
     buildSections(top, filter, vehicle).map((s) => ({
       ...s,
-      group: top.label,
+      group: displayLabel(top),
       // Anchor id for the whole group on the vehicle page (the nav's
       // "Toolboxes" / "Accessories" deep links land on it).
       groupSlug: top.slug,
@@ -252,7 +259,10 @@ export function getVehicleMenu() {
   const column = (label, path, vehicle) => ({
     label,
     to: path,
-    items: topsForVehicle(vehicle).map((top) => ({ label: top.label, to: `${path}#${top.slug}` })),
+    items: topsForVehicle(vehicle).map((top) => ({
+      label: displayLabel(top),
+      to: `${path}#${top.slug}`,
+    })),
   })
   return {
     label: 'Shop by Vehicle',

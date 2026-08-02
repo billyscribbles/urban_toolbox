@@ -165,6 +165,9 @@ describe('getVehicleSections — vehicle-filtered range', () => {
     // is exactly these two, present before the first truck product lands.
     const sections = getVehicleSections('truck')
     expect(sections.map((s) => s.id)).toEqual(['truck-toolboxes', 'truck-accessories'])
+    // Truck Accessories drops its qualifier on the page itself (shortLabel) —
+    // the /trucks pill and heading read plain "Accessories".
+    expect(sections.map((s) => s.label)).toEqual(['Truck Toolboxes', 'Accessories'])
     for (const s of sections) {
       expect(s.pinned).toBe(true)
       expect(s.products).toEqual([])
@@ -241,8 +244,9 @@ describe('getVehicleSections — vehicle-filtered range', () => {
       'Service Canopy',
     ])
     // Trucks owns its two categories and shows nothing else — not the generic
-    // Toolboxes/Accessories tops the flag-sliced vehicles share.
-    expect(trucks.items.map((i) => i.label)).toEqual(['Truck Toolboxes', 'Truck Accessories'])
+    // Toolboxes/Accessories tops the flag-sliced vehicles share. Truck
+    // Accessories shows its shortLabel under the Trucks heading.
+    expect(trucks.items.map((i) => i.label)).toEqual(['Truck Toolboxes', 'Accessories'])
     for (const item of utes.items) expect(item.to).toMatch(/^\/utes#/)
     for (const item of caravans.items) expect(item.to).toMatch(/^\/caravans#/)
     for (const item of trucks.items) expect(item.to).toMatch(/^\/trucks#/)
