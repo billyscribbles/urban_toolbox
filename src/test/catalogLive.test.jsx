@@ -158,15 +158,14 @@ describe('getVehicleSections — vehicle-filtered range', () => {
     expect(caravanIds).not.toContain('service-canopy')
   })
 
-  it('gives trucks its own two categories, pinned and empty', () => {
+  it('pins the two truck sections to /trucks even before products exist', () => {
     __setStateForTests({ status: 'ready', products: [] })
 
-    // Trucks owns its tops outright — no per-product fitment flag — so the page
-    // is exactly these two, present before the first truck product lands.
+    // The page is exactly these two, present before any product lands. Truck
+    // Accessories drops its qualifier on the page itself (shortLabel) — the
+    // /trucks pill and heading read plain "Accessories".
     const sections = getVehicleSections('truck')
     expect(sections.map((s) => s.id)).toEqual(['truck-toolboxes', 'truck-accessories'])
-    // Truck Accessories drops its qualifier on the page itself (shortLabel) —
-    // the /trucks pill and heading read plain "Accessories".
     expect(sections.map((s) => s.label)).toEqual(['Truck Toolboxes', 'Accessories'])
     for (const s of sections) {
       expect(s.pinned).toBe(true)
@@ -176,15 +175,20 @@ describe('getVehicleSections — vehicle-filtered range', () => {
     }
   })
 
-  it('keeps the generic catalogue and the other vehicles out of /trucks', () => {
+  it('folds the flagged generic catalogue into the two truck sections', () => {
     __setStateForTests({ status: 'ready', products: productRows.map(normalizeRow) })
 
-    // Ute/caravan stock must not leak in: trucks has no fitment flag, so an
-    // unfiltered generic top would have dragged the whole catalogue onto it.
-    expect(idsIn(getVehicleSections('truck'))).toEqual([])
-    expect(getVehicleSections('truck').map((s) => s.group)).not.toContain('Toolboxes')
+    // Still only two sections — the generic groups never render on /trucks…
+    const sections = getVehicleSections('truck')
+    expect(sections.map((s) => s.id)).toEqual(['truck-toolboxes', 'truck-accessories'])
 
-    // …and the truck categories stay off every generic and rival-vehicle surface.
+    // …but generic stock folds in by flag: the toolbox row omitting the flag
+    // lands in Truck Toolboxes, the opted-out row (fits_truck: false) stays off.
+    const truckBoxes = sections.find((s) => s.id === 'truck-toolboxes')
+    expect(truckBoxes.products.map((p) => p.id)).toContain('ute-under-tray-boxes-1')
+    expect(idsIn(sections)).not.toContain('job-site-toolbox-1')
+
+    // …while the truck categories stay off every generic and rival-vehicle surface.
     for (const top of ['toolboxes', 'accessories']) {
       const labels = getMegaMenu(top).columns.map((c) => c.label)
       expect(labels).not.toContain('Truck Toolboxes')
@@ -198,9 +202,9 @@ describe('getVehicleSections — vehicle-filtered range', () => {
   })
 
   it('lists a product filed under a truck category on /trucks, and nowhere else', () => {
-    // Deliberately flagged fits_ute/fits_caravan true — trucks is scope-owned,
-    // not flag-sliced, so those flags must be irrelevant to whether this
-    // product shows up here.
+    // fits_ute/fits_caravan true is irrelevant here: truck-toolboxes is
+    // exclusive to /trucks, and the other vehicle pages never surface a rival
+    // vehicle's scoped tops.
     const truckRow = {
       id: 'truck-drawer-1',
       category_id: 'truck-toolboxes',
@@ -217,6 +221,8 @@ describe('getVehicleSections — vehicle-filtered range', () => {
 
     const truckSection = getVehicleSections('truck').find((s) => s.id === 'truck-toolboxes')
     expect(truckSection.products.map((p) => p.id)).toContain('truck-drawer-1')
+    // Truck-filed products lead; absorbed generic stock follows.
+    expect(truckSection.products[0].id).toBe('truck-drawer-1')
 
     // Filed for trucks, not fitted for utes/caravans — the fitment flags don't
     // matter because those pages slice the generic catalogue, and
@@ -228,6 +234,13 @@ describe('getVehicleSections — vehicle-filtered range', () => {
       const labels = getMegaMenu(top).columns.map((c) => c.label)
       expect(labels).not.toContain('Truck Toolboxes')
     }
+
+    // The flag governs the pinned sections too — untick and it leaves /trucks.
+    __setStateForTests({
+      status: 'ready',
+      products: [...productRows, { ...truckRow, fits_truck: false }].map((r) => normalizeRow(r)),
+    })
+    expect(idsIn(getVehicleSections('truck'))).not.toContain('truck-drawer-1')
   })
 
   it('vehicle menu lists each page’s top-level groups under its heading', () => {
@@ -243,9 +256,8 @@ describe('getVehicleSections — vehicle-filtered range', () => {
       'Canopy',
       'Service Canopy',
     ])
-    // Trucks owns its two categories and shows nothing else — not the generic
-    // Toolboxes/Accessories tops the flag-sliced vehicles share. Truck
-    // Accessories shows its shortLabel under the Trucks heading.
+    // Trucks' two sections absorb the generic tops, so its column is exactly
+    // its own pair — Truck Accessories under its shortLabel.
     expect(trucks.items.map((i) => i.label)).toEqual(['Truck Toolboxes', 'Accessories'])
     for (const item of utes.items) expect(item.to).toMatch(/^\/utes#/)
     for (const item of caravans.items) expect(item.to).toMatch(/^\/caravans#/)

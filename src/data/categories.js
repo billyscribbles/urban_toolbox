@@ -68,20 +68,29 @@ export const categories = [
   { id: 'trays', label: 'Trays', slug: 'trays', vehicle: 'ute' },
   { id: 'canopy', label: 'Canopy', slug: 'canopy', vehicle: 'ute' },
   { id: 'service-canopy', label: 'Service Canopy', slug: 'service-canopy', vehicle: 'ute' },
-  // Trucks is scope-owned rather than flag-sliced (see VEHICLE_FIT in
-  // lib/catalog.js): these two ARE the /trucks page. Labels are qualified
+  // Truck-exclusive tops (see getVehicleSections in lib/catalog.js): this pair
+  // IS the /trucks page. `absorbs` folds the named generic top's truck-flagged
+  // products in behind the section's own, so the page stays two sections deep
+  // instead of repeating the whole generic group list. Labels are qualified
   // because each scoped top also owns a single-segment page — a bare
   // "Toolboxes" would ship /truck-toolboxes with /toolboxes' own <title>.
   // `shortLabel`, when present, is what display surfaces that already say the
   // vehicle (the /trucks pills and headings, the Trucks menu column) show
   // instead — `label` keeps naming the node's own page.
-  { id: 'truck-toolboxes', label: 'Truck Toolboxes', slug: 'truck-toolboxes', vehicle: 'truck' },
+  {
+    id: 'truck-toolboxes',
+    label: 'Truck Toolboxes',
+    slug: 'truck-toolboxes',
+    vehicle: 'truck',
+    absorbs: 'toolboxes',
+  },
   {
     id: 'truck-accessories',
     label: 'Truck Accessories',
     slug: 'truck-accessories',
     shortLabel: 'Accessories',
     vehicle: 'truck',
+    absorbs: 'accessories',
   },
   // `exclusive: 'australian-made'` scopes this leaf to its own /australian-made
   // page (same hide-from-generic mechanism as `vehicle`, just a non-vehicle

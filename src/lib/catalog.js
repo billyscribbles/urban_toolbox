@@ -174,28 +174,41 @@ export function buildSections(node, filter = null, vehicle = null) {
   return filter ? sections.filter((s) => s.products.length > 0 || s.pinned) : sections
 }
 
-// A vehicle page comes in one of two shapes. Utes and caravans slice the whole
-// generic catalogue by a per-product fitment flag. A vehicle with no flag owns
-// its categories outright (Trucks) — its page lists only the tops scoped to it,
-// so nothing filed for another vehicle can drift onto it.
-const VEHICLE_FIT = { ute: 'fitsUte', caravan: 'fitsCaravan' }
+// Every vehicle page slices the whole generic catalogue by its per-product
+// fitment flag. The tops scoped to the vehicle (`vehicle:` nodes) come back
+// pinned beside the generic groups (ute's Trays/Canopy/Service Canopy) —
+// unless a scoped top `absorbs` a generic one, in which case it swallows that
+// top's flagged products and the generic group leaves the page (truck's pair
+// absorbs Toolboxes and Accessories, keeping /trucks two sections deep).
+const VEHICLE_FIT = { ute: 'fitsUte', caravan: 'fitsCaravan', truck: 'fitsTruck' }
 
-const topsForVehicle = (vehicle) =>
-  getTopCategories().filter((top) =>
-    VEHICLE_FIT[vehicle] ? visibleFor(top, vehicle) : top.vehicle === vehicle,
+const topsForVehicle = (vehicle) => {
+  const tops = getTopCategories().filter((top) => visibleFor(top, vehicle))
+  const absorbed = new Set(
+    tops.filter((t) => t.vehicle === vehicle && t.absorbs).map((t) => t.absorbs),
   )
+  return tops.filter((top) => !absorbed.has(top.id))
+}
 
-// Every category's sections for the given vehicle page. Flag-sliced vehicles
-// ('ute' | 'caravan') keep only the products that fit; scope-owned ones
-// ('truck') take their tops whole, empty sections included.
+// Every category's sections for the given vehicle page: generic sections keep
+// only the products flagged for the vehicle, exclusive sections come back
+// pinned (kept even while empty).
 export function getVehicleSections(vehicle) {
   const key = VEHICLE_FIT[vehicle]
   const filter = key ? (p) => p[key] !== false : null
   // Tag each section with its top-level category so the range nav can split the
   // pills into labelled groups.
-  return topsForVehicle(vehicle).flatMap((top) =>
-    buildSections(top, filter, vehicle).map((s) => ({
+  return topsForVehicle(vehicle).flatMap((top) => {
+    // An absorbing top folds its generic counterpart's flagged products in
+    // behind its own filed ones — a vehicle-page view, not a re-filing: the
+    // top's standalone category page still lists only what's filed under it.
+    const absorbedTop = top.absorbs ? getTopCategories().find((t) => t.id === top.absorbs) : null
+    const absorbedProducts = absorbedTop
+      ? getProductsUnder(absorbedTop).filter(filter ?? (() => true))
+      : []
+    return buildSections(top, filter, vehicle).map((s) => ({
       ...s,
+      products: absorbedTop ? [...s.products, ...absorbedProducts] : s.products,
       group: displayLabel(top),
       // Anchor id for the whole group on the vehicle page (the nav's
       // "Toolboxes" / "Accessories" deep links land on it).
@@ -204,8 +217,8 @@ export function getVehicleSections(vehicle) {
       // those sections for the fitment chip — they have no hero of their own
       // here to state it. Generic tops get undefined and render no chip.
       fitment: top.vehicle,
-    })),
-  )
+    }))
+  })
 }
 
 // A top category whose children are ALL leaves renders as one page with the
