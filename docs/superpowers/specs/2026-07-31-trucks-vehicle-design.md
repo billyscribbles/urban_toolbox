@@ -1,7 +1,9 @@
 # Trucks — a third Shop by Vehicle scope
 
 **Date:** 2026-07-31
-**Status:** approved, ready to plan
+**Status:** shipped; the scope-owned model was superseded by
+[2026-08-02-trucks-flag-sliced-design.md](./2026-08-02-trucks-flag-sliced-design.md)
+(trucks became flag-sliced like utes/caravans; the scoped categories remain)
 
 ## Goal
 
