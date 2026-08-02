@@ -20,7 +20,7 @@ export const services = {
     {
       icon: 'Wrench',
       title: 'Accessories',
-      body: 'Locks, drawer and shelving units, gas struts, ladder racks, cargo cages and the hardware that finishes a build.',
+      body: 'Locks, drawer and shelving units, ladder racks, cargo cages and the hardware that finishes a build.',
       cta: 'Explore',
       to: '/accessories',
       ph: 'PRODUCT SHOT',
