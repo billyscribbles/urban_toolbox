@@ -62,10 +62,11 @@ export function normalizeRow(row, storeDiscountPct = 0) {
     price,
     discountPct,
     featured: !!row.featured,
-    // Vehicle-fit flags drive the /utes and /caravans explore pages. Missing
-    // (older rows read before the migration) counts as fits-both.
+    // Vehicle-fit flags drive the /utes, /caravans and /trucks explore pages.
+    // Missing (older rows read before the migrations) counts as fits-all.
     fitsUte: row.fits_ute !== false,
     fitsCaravan: row.fits_caravan !== false,
+    fitsTruck: row.fits_truck !== false,
     // Enabled powder-coat colours (empty when none marked → no selector shown).
     colors: normalizeColors(row.colors),
     // Availability. Missing (a row read before 0008) counts as in stock, so an

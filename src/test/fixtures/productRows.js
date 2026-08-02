@@ -39,9 +39,10 @@ export const productRows = [
     standard_dims: '1200 × 500 × 700mm',
     featured: true,
     // Caravan-only — exercises the vehicle filter (the other row omits the
-    // flags entirely, so it defaults to fits-both).
+    // flags entirely, so it defaults to fits-all). Also opted out of trucks.
     fits_ute: false,
     fits_caravan: true,
+    fits_truck: false,
     // Colours out of canonical order + a junk value — normalizeRow must clean it.
     colors: ['black', 'nope', 'silver'],
     // Back-order — the other row omits the column entirely, so it defaults to

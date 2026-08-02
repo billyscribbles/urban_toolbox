@@ -74,15 +74,17 @@ describe('normalizeRow — DB row to storefront product', () => {
     expect(p.quote.priceFrom).toBeNull()
   })
 
-  it('maps vehicle-fit flags, defaulting to fits-both when the columns are absent', () => {
-    // productRows[0] omits the flags entirely → both true.
-    const both = normalizeRow(productRows[0])
-    expect(both.fitsUte).toBe(true)
-    expect(both.fitsCaravan).toBe(true)
+  it('maps vehicle-fit flags, defaulting to fits-all when the columns are absent', () => {
+    // productRows[0] omits the flags entirely → all three true.
+    const all = normalizeRow(productRows[0])
+    expect(all.fitsUte).toBe(true)
+    expect(all.fitsCaravan).toBe(true)
+    expect(all.fitsTruck).toBe(true)
     // productRows[1] is caravan-only.
     const caravanOnly = normalizeRow(productRows[1])
     expect(caravanOnly.fitsUte).toBe(false)
     expect(caravanOnly.fitsCaravan).toBe(true)
+    expect(caravanOnly.fitsTruck).toBe(false)
   })
 
   it('maps the stock flag, defaulting to in stock when the column is absent', () => {
