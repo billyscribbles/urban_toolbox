@@ -24,14 +24,15 @@ import { vehicles } from '../content/vehicles.js'
 const catalog = { categories }
 
 describe('content — section copy contract', () => {
-  it('hero has a lockup, two CTAs and a photo on disk', () => {
+  it('hero has a lockup, three CTAs and a photo on disk', () => {
     expect(hero.eyebrow).toBeTruthy()
     expect(hero.headingLines.length).toBeGreaterThan(0)
     for (const line of hero.headingLines) expect(line).toBeTruthy()
     expect(hero.description).toBeTruthy()
     expect(hero.alt).toBeTruthy()
 
-    expect(hero.ctas).toHaveLength(2)
+    // One CTA per explore-by-vehicle page, in display order.
+    expect(hero.ctas.map((c) => c.to)).toEqual(['/caravans', '/utes', '/trucks'])
     for (const cta of hero.ctas) {
       expect(cta.label).toBeTruthy()
       expect(cta.to).toMatch(/^\//)
