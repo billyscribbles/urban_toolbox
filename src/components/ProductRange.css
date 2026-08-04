@@ -148,6 +148,88 @@
   color: var(--color-white);
 }
 
+/* Catalog search — a single title-keyword filter box between the sub-nav and
+   the first section. Same pill language as the nav chips above it. */
+.range-search {
+  padding-top: 28px;
+}
+
+.range-search__box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 420px;
+  padding: 0 18px;
+  background: var(--color-white);
+  border: 1.5px solid var(--color-border-light);
+  border-radius: var(--radius-full);
+  transition: border-color var(--transition-fast);
+}
+
+.range-search__box:focus-within {
+  border-color: var(--color-accent);
+}
+
+.range-search__icon {
+  flex: 0 0 auto;
+  color: var(--color-gray-muted);
+}
+
+.range-search__input {
+  flex: 1;
+  min-width: 0;
+  padding: 13px 0;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--color-ink-strong);
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.range-search__input::placeholder {
+  color: var(--color-gray-muted);
+}
+
+/* Our own clear button stands in for webkit's inconsistent native one. */
+.range-search__input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.range-search__clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  color: var(--color-gray-muted);
+  background: none;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.range-search__clear:hover {
+  color: var(--color-ink-strong);
+}
+
+/* Zero margins so the always-mounted live region adds no air when empty. */
+.range-search__count {
+  margin: 0 auto;
+  padding-top: 10px;
+  color: var(--color-gray-muted);
+  font-size: 14px;
+}
+.range-search__count:empty {
+  padding-top: 0;
+}
+
+.range-search__empty {
+  text-align: center;
+  padding: 48px 0;
+}
+
 /* Keep the shared grid--3 column gutter, but tighten the vertical gap so
    stacked rows of product cards sit closer together. */
 .range-grid {

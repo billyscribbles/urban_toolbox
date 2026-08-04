@@ -52,8 +52,10 @@ describe('live catalog wiring', () => {
   it('renders product cards when the store is ready', () => {
     __setStateForTests({ status: 'ready', products: productRows.map(normalizeRow) })
     renderPage('accessories')
-    // Accessories page renders; the ready store means no loading status region
-    expect(screen.queryByRole('status')).toBeNull()
+    // Accessories page renders; the ready store means no loading status region.
+    // (The search box's always-mounted count live region also has role=status,
+    // so scope the check to the loading region's label.)
+    expect(screen.queryByRole('status', { name: 'Loading products' })).toBeNull()
   })
 
   it('shows a loading state while fetching', () => {
