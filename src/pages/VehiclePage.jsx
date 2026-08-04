@@ -24,6 +24,11 @@ export default function VehiclePage({ vehicle }) {
       title: copy.title,
       intro: copy.intro,
       bgImage: copy.heroImage,
+      bgSize: copy.heroSize,
+      bgPosition: copy.heroPosition,
+      bgWidth: copy.heroWidth,
+      bgOpacity: copy.heroOpacity,
+      bgFade: copy.heroFade,
     },
     sections,
   }

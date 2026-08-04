@@ -126,6 +126,11 @@ export default function ProductRange({ data, status = 'ready', onRetry }) {
         title={header.title}
         intro={header.intro}
         bgImage={header.bgImage}
+        bgSize={header.bgSize}
+        bgPosition={header.bgPosition}
+        bgWidth={header.bgWidth}
+        bgOpacity={header.bgOpacity}
+        bgFade={header.bgFade}
       >
         {/* `header.fitment` is the category's vehicle scope — set only on the
             vehicle-exclusive tops (Trays, Canopy, Service Canopy; Truck

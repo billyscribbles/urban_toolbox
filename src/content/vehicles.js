@@ -8,7 +8,12 @@
 // and `path` must be non-empty, `path` must start with "/", and `heroImage`
 // must exist under public/. `heroImage` is read as a single CSS background
 // photo (PageHero's `--page-hero-image`), not through <Img>, so there's no
-// srcset to check.
+// srcset to check. Optional `heroSize`/`heroPosition`/`heroWidth`/
+// `heroOpacity` override PageHero's default framing — the ute photo runs
+// large and dimmed across a widened layer so the toolbox reads first while
+// the whole vehicle stays in frame; the caravan keeps cover but sits low so
+// the front toolbox centres in the band (both have a left-edge alpha fade
+// baked into the webp so their edges melt into the dark band).
 export const vehicles = {
   ute: {
     title: 'For Utes',
@@ -18,6 +23,12 @@ export const vehicles = {
     seo: 'Aluminium ute toolboxes, canopies and accessories — Australian-made, built to order in Dandenong South. Add to a no-obligation quote.',
     path: '/utes',
     heroImage: '/brand/hero-product-ute.webp',
+    heroSize: 'auto 180%',
+    heroPosition: 'right 16px top 29%',
+    heroWidth: '100%',
+    heroOpacity: 0.9,
+    heroFade:
+      'linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.35) 30%, rgba(0, 0, 0, 0.45) 54%, #000 70%)',
   },
   caravan: {
     title: 'For Caravans',
@@ -27,6 +38,7 @@ export const vehicles = {
     seo: 'Aluminium caravan toolboxes, storage and accessories — Australian-made, built to order in Dandenong South. Add to a no-obligation quote.',
     path: '/caravans',
     heroImage: '/brand/hero-product-caravan.webp',
+    heroPosition: '50% 85%',
   },
   truck: {
     title: 'For Trucks',
@@ -35,6 +47,6 @@ export const vehicles = {
       'Aluminium toolboxes and accessories built for trucks — underbody and top-opening boxes, drawers, racks and locks. Australian-made and built to order, measured to your truck. Add what fits to a no-obligation quote.',
     seo: 'Aluminium truck toolboxes and accessories — Australian-made, built to order in Dandenong South. Add to a no-obligation quote.',
     path: '/trucks',
-    heroImage: '/brand/hero-truck-1600.webp',
+    heroImage: '/brand/hero-product-truck.webp',
   },
 }
