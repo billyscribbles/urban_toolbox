@@ -189,10 +189,13 @@
   color: var(--color-ink-strong);
 }
 
-/* Two equal-width actions: add-to-quote + View Details. */
+/* Two equal-width actions: add-to-quote + View Details. Side-by-side only when
+   each column can hold its label on one line — otherwise the pair stacks
+   instead of wrapping the button text. The 155px floor is the measured
+   one-line width of the widest label ("Add to quote"); retune if labels change. */
 .card__actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
   gap: 10px;
   width: 100%;
   margin-top: 16px;
