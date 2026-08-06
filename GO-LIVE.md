@@ -70,6 +70,23 @@ Summary of what's already done:
       the `www` → apex 301 and the Search Console sitemap submission are the two
       items that can only be done against the live domain.
 
+## 6b. Domain cutover — GoDaddy → Railway
+
+The DNS/hosting half of go-live, including the GoDaddy account steps, is in
+**[docs/domain-migration.md](docs/domain-migration.md)**. Three blockers are
+called out there and all are open as of 2026-07-31:
+
+- [ ] 🔴 **The Railway build is failing.** Every deploy since `716007c` errored in
+      the prerender step (Chromium isn't resolving on the Railway image), so the
+      live app is a stale pre-SEO build. Nothing else can proceed until this is
+      green.
+- [ ] 🔴 **DNS hosting must move off GoDaddy.** GoDaddy can't point a root domain
+      at Railway — no CNAME flattening, no ALIAS. Cloudflare (free) is the
+      recommended host; registration stays at GoDaddy.
+- [ ] 🔴 **Carry the Microsoft 365 mail records across.** MX, both TXT records,
+      `autodiscover`, `lyncdiscover` and `sip`. Miss them and company email
+      stops.
+
 ## 7. Final verification (run before declaring done)
 
 ```

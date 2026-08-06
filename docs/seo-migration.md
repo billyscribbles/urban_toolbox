@@ -96,10 +96,16 @@ Do these in order on launch day.
 
 ### 2. DNS + host
 
-- [ ] Point the apex at Railway.
+**Full step-by-step in [domain-migration.md](./domain-migration.md)** — it is
+more involved than "point the apex at Railway": GoDaddy's DNS can't CNAME a root
+domain at all, so DNS hosting has to move, and the domain's Microsoft 365 mail
+records have to come with it.
+
+- [ ] Point the apex at Railway (per `domain-migration.md`, Phases 2–3).
 - [ ] **Re-create the `www` → apex 301.** GoDaddy does this today
       (`https://www.urbantoolboxes.com.au/` → `https://urbantoolboxes.com.au/`).
       If it's lost, both hostnames serve the site and the equity splits.
+      `server.js` does not do this yet — see that doc's `www` section.
 - [ ] Confirm HTTPS is live and HTTP 301s to it.
 
 ### 3. Verify on the live domain
