@@ -102,3 +102,14 @@ Ready for Railway out of the box (`railway.json` included). `yarn start` serves 
 
 Ask Claude to "deploy to Railway" — the `railway-deploy` skill drives project creation, env
 vars, deploy, and domain generation via the Railway MCP.
+
+## DNS rollback — old GoDaddy site A records
+
+If the Railway cutover ever needs to be reversed, restore these two apex A records
+on `urbantoolboxes.com.au` (they are the old GoDaddy-hosted site and cannot be
+looked up again once that site is torn down):
+
+- `76.223.105.230`
+- `13.248.243.5`
+
+Full rollback procedure: [docs/domain-migration.md](docs/domain-migration.md#rollback).
