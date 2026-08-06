@@ -36,7 +36,9 @@ export default function Img({
       style={style}
       loading={loading}
       decoding={decoding}
-      fetchPriority={fetchPriority}
+      // Lowercase on the DOM element: React 18 doesn't know the camelCase
+      // property (React 19 does), so this renders the plain HTML attribute.
+      fetchpriority={fetchPriority}
       width={width}
       height={height}
     />
