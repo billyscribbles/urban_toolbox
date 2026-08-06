@@ -26,3 +26,9 @@ dist-ssr
 
 # image-gen (nano-banana) scratch output
 generated_imgs/
+
+# Supabase CLI scratch
+supabase/.temp/
+
+# playwright-skill executor scratch
+.claude/skills/playwright-skill/.temp-execution-*.js
