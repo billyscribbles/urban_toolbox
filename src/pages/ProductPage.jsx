@@ -58,12 +58,13 @@ function AustraliaIcon(props) {
 }
 
 // Static trust signals for the buy box — presentational microcopy, so they
-// live here rather than in a content file.
+// live here rather than in a content file. The Australian Made cell only
+// renders for products filed under the `australian-made` category.
 const TRUST = [
   { Icon: ShieldCheck, title: 'Built to Last', sub: 'Premium materials' },
   { Icon: Package, title: 'Made to Fit', sub: 'Built for your setup' },
-  { Icon: AustraliaIcon, title: 'Australian Made', sub: 'Proudly fabricated' },
 ]
+const AUSSIE_TRUST = { Icon: AustraliaIcon, title: 'Australian Made', sub: 'Proudly fabricated' }
 
 // Real, shareable product page — replaces the old ?product= detail drawer.
 // Resolves the product from the URL token (slug or id), then lays it out like a
@@ -148,6 +149,8 @@ function ProductDetail({ product }) {
   }
 
   const hasDetail = product.summary || product.features?.length > 0 || product.specs?.length > 0
+
+  const trust = product.categoryId === 'australian-made' ? [...TRUST, AUSSIE_TRUST] : TRUST
 
   const productPath = `/product/${product.slug || product.id}`
   // Structured data mirrors the visible breadcrumb below, so the two can't drift.
@@ -251,8 +254,10 @@ function ProductDetail({ product }) {
                 )}
               </div>
 
-              <ul className="product-page__trust">
-                {TRUST.map(({ Icon, title, sub }) => (
+              <ul
+                className={`product-page__trust${trust.length === 3 ? ' product-page__trust--three' : ''}`}
+              >
+                {trust.map(({ Icon, title, sub }) => (
                   <li className="product-page__trust-item" key={title}>
                     <span className="product-page__trust-icon" aria-hidden="true">
                       <Icon size={22} strokeWidth={1.7} />

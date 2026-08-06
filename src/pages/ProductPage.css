@@ -153,14 +153,19 @@
   color: var(--color-accent);
 }
 
-/* Trust row — three green-outline cells, mirroring the site's TrustBar. */
+/* Trust row — green-outline cells mirroring the site's TrustBar. Two by
+   default; three when the Australian Made cell joins on `australian-made`
+   products. */
 .product-page__trust {
   list-style: none;
   margin: 0 0 24px;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+}
+.product-page__trust--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 .product-page__trust-item {
   display: flex;
