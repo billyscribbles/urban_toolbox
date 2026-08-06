@@ -30,15 +30,45 @@ function groupSections(sections) {
   return groups
 }
 
-// The sticky category sub-nav. A single category (CategoryPage) shows a flat
-// always-visible pill row. Vehicle pages span multiple top categories, so their
-// nav is a row of "Toolboxes" / "Accessories" buttons — one open at a time —
-// each revealing that group's category pills below. A group that is one bare
-// category (vehicle-exclusive tops like Trays) renders as a direct anchor
-// beside the group buttons instead of a one-pill dropdown.
+// Title-keyword filter box riding inside the sticky sub-nav, ahead of the
+// category tabs, so it stays pinned while scrolling. Plain controlled input —
+// the catalog is small enough that filtering on every keystroke is free.
+function RangeSearch({ query, onChange }) {
+  return (
+    <div className="range-search__box" role="search">
+      <Search size={16} strokeWidth={2.5} className="range-search__icon" aria-hidden="true" />
+      <input
+        type="search"
+        className="range-search__input"
+        placeholder="Search products…"
+        aria-label="Search products"
+        value={query}
+        onChange={(e) => onChange(e.target.value)}
+      />
+      {query && (
+        <button
+          type="button"
+          className="range-search__clear"
+          aria-label="Clear search"
+          onClick={() => onChange('')}
+        >
+          <X size={16} strokeWidth={2.5} aria-hidden="true" />
+        </button>
+      )}
+    </div>
+  )
+}
+
+// The sticky category sub-nav, with the search box leading its first row. A
+// single category (CategoryPage) shows a flat always-visible pill row. Vehicle
+// pages span multiple top categories, so their nav is a row of "Toolboxes" /
+// "Accessories" buttons — one open at a time — each revealing that group's
+// category pills below. A group that is one bare category (vehicle-exclusive
+// tops like Trays) renders as a direct anchor beside the group buttons instead
+// of a one-pill dropdown.
 const isSoloGroup = (g) => g.sections.length === 1 && g.sections[0].label === g.label
 
-function RangeNav({ title, sections }) {
+function RangeNav({ title, sections, query, onQueryChange }) {
   const [openLabel, setOpenLabel] = useState(null)
   const groups = sections.some((s) => s.group) ? groupSections(sections) : null
 
@@ -46,6 +76,7 @@ function RangeNav({ title, sections }) {
     return (
       <nav className="range-nav" aria-label={`${title} sections`}>
         <div className="container range-nav__inner">
+          <RangeSearch query={query} onChange={onQueryChange} />
           {sections.map((s) => (
             <Pill key={s.id} section={s} />
           ))}
@@ -62,6 +93,7 @@ function RangeNav({ title, sections }) {
     >
       <div className="container">
         <div className="range-nav__toggles">
+          <RangeSearch query={query} onChange={onQueryChange} />
           {groups.map((g, i) => {
             if (isSoloGroup(g)) {
               return (
@@ -118,36 +150,6 @@ function RangeNav({ title, sections }) {
   )
 }
 
-// Title-keyword filter box under the sub-nav. Plain controlled input — the
-// catalog is small enough that filtering on every keystroke is free.
-function RangeSearch({ query, onChange }) {
-  return (
-    <div className="container range-search" role="search">
-      <div className="range-search__box">
-        <Search size={18} strokeWidth={2.5} className="range-search__icon" aria-hidden="true" />
-        <input
-          type="search"
-          className="range-search__input"
-          placeholder="Search products…"
-          aria-label="Search products"
-          value={query}
-          onChange={(e) => onChange(e.target.value)}
-        />
-        {query && (
-          <button
-            type="button"
-            className="range-search__clear"
-            aria-label="Clear search"
-            onClick={() => onChange('')}
-          >
-            <X size={16} strokeWidth={2.5} aria-hidden="true" />
-          </button>
-        )}
-      </div>
-    </div>
-  )
-}
-
 export default function ProductRange({ data, status = 'ready', onRetry }) {
   const { header, sections } = data
   const [query, setQuery] = useState('')
@@ -174,7 +176,7 @@ export default function ProductRange({ data, status = 'ready', onRetry }) {
         {header.fitment && <FitmentBadge vehicle={header.fitment} />}
       </PageHero>
 
-      <RangeNav title={header.title} sections={sections} />
+      <RangeNav title={header.title} sections={sections} query={query} onQueryChange={setQuery} />
 
       {status !== 'ready' ? (
         <section className="section range-section">
@@ -201,7 +203,6 @@ export default function ProductRange({ data, status = 'ready', onRetry }) {
         </section>
       ) : (
         <>
-          <RangeSearch query={query} onChange={setQuery} />
           {/* Always-mounted live region so screen readers hear count changes;
               empty text collapses to zero height when not searching. */}
           <p className="container range-search__count" role="status">

@@ -10,6 +10,7 @@
 .range-nav__inner {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
   padding-top: 14px;
   padding-bottom: 14px;
@@ -20,6 +21,7 @@
 .range-nav__toggles {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 12px;
   padding-top: 16px;
   padding-bottom: 16px;
@@ -124,6 +126,15 @@
     padding: 13px 16px;
     font-size: 13px;
   }
+  /* The search box leads the scrolling chip row — fixed width so it neither
+     collapses nor crowds the tabs out, with a 44px-ish touch height. */
+  .range-search__box {
+    flex: 0 0 auto;
+    width: 190px;
+  }
+  .range-search__input {
+    padding: 12px 0;
+  }
 }
 
 .range-nav__pill {
@@ -148,18 +159,16 @@
   color: var(--color-white);
 }
 
-/* Catalog search — a single title-keyword filter box between the sub-nav and
-   the first section. Same pill language as the nav chips above it. */
-.range-search {
-  padding-top: 28px;
-}
-
+/* Catalog search — a title-keyword filter box riding inside the sticky
+   sub-nav, ahead of the category tabs. Same pill language as the chips
+   beside it. */
 .range-search__box {
   display: flex;
   align-items: center;
-  gap: 10px;
-  max-width: 420px;
-  padding: 0 18px;
+  gap: 8px;
+  width: 250px;
+  max-width: 100%;
+  padding: 0 14px;
   background: var(--color-white);
   border: 1.5px solid var(--color-border-light);
   border-radius: var(--radius-full);
@@ -178,9 +187,9 @@
 .range-search__input {
   flex: 1;
   min-width: 0;
-  padding: 13px 0;
+  padding: 10px 0;
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: 14px;
   color: var(--color-ink-strong);
   background: transparent;
   border: none;
