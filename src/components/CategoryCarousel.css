@@ -144,4 +144,26 @@
     width: 176px;
     padding: 6px 8px;
   }
+
+  /* Touch swaps the transform marquee for a native scroll container, because a
+     transformed belt can't be swiped. CategoryCarousel.jsx then drives the
+     rotation by moving scrollLeft — keep this breakpoint in step with
+     MOBILE_QUERY there. Reduce Motion stops the drift in the component; the
+     strip stays swipeable either way. */
+  .range__viewport {
+    overflow-x: auto;
+    /* Keeps a horizontal swipe off the page's own scroll and away from the
+       browser's back gesture. */
+    overscroll-behavior-x: contain;
+    /* Explicitly auto: the per-frame scrollLeft writes must land instantly,
+       never animate. */
+    scroll-behavior: auto;
+    scrollbar-width: none;
+  }
+  .range__viewport::-webkit-scrollbar {
+    display: none;
+  }
+  .range__belt {
+    animation: none;
+  }
 }
