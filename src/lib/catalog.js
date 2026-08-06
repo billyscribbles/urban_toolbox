@@ -143,6 +143,19 @@ export function getRelatedProducts(product, limit = 3) {
   return [...pool].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)).slice(0, limit)
 }
 
+// Everything a scoped top folds in from the generic top it `absorbs`, filtered
+// by the scoped top's own vehicle flag. Empty for nodes that absorb nothing.
+// Lives here (not in getVehicleSections) so the fold applies wherever the
+// node's sections are built — its /trucks section and its own category page
+// must show the same products and can't be allowed to drift.
+function absorbedProductsFor(node) {
+  if (!node?.absorbs) return []
+  const absorbedTop = getTopCategories().find((t) => t.id === node.absorbs)
+  if (!absorbedTop) return []
+  const key = VEHICLE_FIT[node.vehicle]
+  return getProductsUnder(absorbedTop).filter((p) => !key || p[key] !== false)
+}
+
 // The section list a ProductRange renders for a node: one section per direct
 // child when children nest (Toolboxes → subcategories), otherwise one per leaf
 // (Accessories → its leaves). `filter`, when given, keeps only matching products
@@ -154,6 +167,9 @@ export function getRelatedProducts(product, limit = 3) {
 export function buildSections(node, filter = null, vehicle = null) {
   if (!node) return []
   const apply = (products) => (filter ? products.filter(filter) : products)
+  // An absorbing top (always a leaf) appends its generic counterpart's flagged
+  // stock behind its own filed products — filed first, absorbed after.
+  const foldFor = (leaf) => (leaf === node ? absorbedProductsFor(node) : [])
   const kids = (node.children ?? []).filter((child) => visibleFor(child, vehicle))
   const grouped = kids.some((child) => !isLeaf(child))
   const sections = grouped
@@ -169,7 +185,7 @@ export function buildSections(node, filter = null, vehicle = null) {
         label: displayLabel(leaf),
         heading: displayLabel(leaf),
         pinned: !!leaf.vehicle,
-        products: apply(getProductsForLeaf(leaf.id)),
+        products: [...apply(getProductsForLeaf(leaf.id)), ...apply(foldFor(leaf))],
       }))
   return filter ? sections.filter((s) => s.products.length > 0 || s.pinned) : sections
 }
@@ -197,18 +213,12 @@ export function getVehicleSections(vehicle) {
   const key = VEHICLE_FIT[vehicle]
   const filter = key ? (p) => p[key] !== false : null
   // Tag each section with its top-level category so the range nav can split the
-  // pills into labelled groups.
-  return topsForVehicle(vehicle).flatMap((top) => {
-    // An absorbing top folds its generic counterpart's flagged products in
-    // behind its own filed ones — a vehicle-page view, not a re-filing: the
-    // top's standalone category page still lists only what's filed under it.
-    const absorbedTop = top.absorbs ? getTopCategories().find((t) => t.id === top.absorbs) : null
-    const absorbedProducts = absorbedTop
-      ? getProductsUnder(absorbedTop).filter(filter ?? (() => true))
-      : []
-    return buildSections(top, filter, vehicle).map((s) => ({
+  // pills into labelled groups. An absorbing top's fold (generic flagged stock
+  // behind its own filed products) happens inside buildSections, so its section
+  // here matches its standalone category page exactly.
+  return topsForVehicle(vehicle).flatMap((top) =>
+    buildSections(top, filter, vehicle).map((s) => ({
       ...s,
-      products: absorbedTop ? [...s.products, ...absorbedProducts] : s.products,
       group: displayLabel(top),
       // Anchor id for the whole group on the vehicle page (the nav's
       // "Toolboxes" / "Accessories" deep links land on it).
@@ -217,14 +227,14 @@ export function getVehicleSections(vehicle) {
       // those sections for the fitment chip — they have no hero of their own
       // here to state it. Generic tops get undefined and render no chip.
       fitment: top.vehicle,
-    }))
-  })
+    })),
+  )
 }
 
 // A top category whose children are ALL leaves renders as one page with the
 // leaves as in-page sections (that's Accessories). Otherwise each subcategory is
 // its own page. `pages: true` forces the per-page form even for an all-leaf top
-// (that's Toolboxes — seven flat families that each deserve their own page).
+// (that's Toolboxes — six flat families that each deserve their own page).
 export function isFlattenedTop(topSlug) {
   const top = getCategoryBySlug(topSlug)
   if (!top?.children?.length || top.pages) return false
@@ -233,7 +243,7 @@ export function isFlattenedTop(topSlug) {
 
 // Nav view model for the dropdown. Each top category becomes a panel:
 //   { label, to, columns: [{ label, to, items: [{ label, to }] }] }
-// Toolboxes (`pages`): each of the seven families is a bare leaf, so every
+// Toolboxes (`pages`): each of the six families is a bare leaf, so every
 // column links straight to its own /toolboxes/<slug> page with no sub-items. A
 // column that DOES nest lists its leaves as `items`, anchored into that page.
 // Accessories (flattened): every leaf is a column linking to an in-page anchor.
@@ -258,6 +268,17 @@ export function getMegaMenu(topSlug) {
         })),
       }
     })
+
+  // A scope-exclusive top can opt into a generic menu with `alsoInMenu` —
+  // Truck Toolboxes stays a /trucks-scoped category but is listed under the
+  // Toolboxes panel too, as a link out to its own single-segment page. Listed
+  // after the top's own families, so the vehicle line reads as the odd one out.
+  for (const node of categories) {
+    if (node.alsoInMenu === topSlug) {
+      columns.push({ label: node.label, to: `/${node.slug}`, items: [] })
+    }
+  }
+
   return { label: top.label, to: `/${top.slug}`, columns, flattened, showAll: true }
 }
 

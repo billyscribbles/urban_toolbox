@@ -8,7 +8,7 @@ import { useProductCatalog, loadProducts, retryLoad } from '../lib/productStore.
 import { breadcrumbSchema, itemListSchema } from '../lib/schema.js'
 
 // One page renders any catalog category — the Toolboxes root (slug prop, every
-// product shown grouped by family), one of the eight Toolboxes families
+// product shown grouped by family), one of the Toolboxes families
 // (/toolboxes/:subSlug), a bare vehicle-exclusive leaf (Trays), or the
 // flattened Accessories root. Sections become a ProductRange; the sticky pill sub-nav and
 // Card grid come for free. When a node has nested children, each direct child is

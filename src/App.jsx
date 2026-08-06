@@ -137,7 +137,7 @@ function AppBody() {
                 element={
                   <CategoryPage
                     slug="toolboxes"
-                    intro="Custom aluminium toolboxes for utes, trucks, campers and trailers — under-tray, top-opening, side-opening, truck boxes, dog boxes, drawer units and canopies. Every model, built to order in Dandenong South."
+                    intro="Custom aluminium toolboxes for utes, trucks, campers and trailers — under-tray, top-opening, side-opening, dog boxes, drawer units and canopies. Every model, built to order in Dandenong South."
                   />
                 }
               />

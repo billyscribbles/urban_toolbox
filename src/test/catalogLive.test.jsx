@@ -190,12 +190,20 @@ describe('getVehicleSections — vehicle-filtered range', () => {
     expect(truckBoxes.products.map((p) => p.id)).toContain('ute-under-tray-boxes-1')
     expect(idsIn(sections)).not.toContain('job-site-toolbox-1')
 
-    // …while the truck categories stay off every generic and rival-vehicle surface.
-    for (const top of ['toolboxes', 'accessories']) {
-      const labels = getMegaMenu(top).columns.map((c) => c.label)
-      expect(labels).not.toContain('Truck Toolboxes')
-      expect(labels).not.toContain('Truck Accessories')
-    }
+    // …while the truck categories stay off the rival-vehicle surfaces and the
+    // Accessories menu. The one deliberate exception (`alsoInMenu`): the
+    // Toolboxes menu lists Truck Toolboxes after its own six families, linking
+    // out to the /truck-toolboxes page — the old Truck Boxes family merged in.
+    const toolboxesColumns = getMegaMenu('toolboxes').columns
+    expect(toolboxesColumns.at(-1)).toEqual({
+      label: 'Truck Toolboxes',
+      to: '/truck-toolboxes',
+      items: [],
+    })
+    expect(toolboxesColumns.map((c) => c.label)).not.toContain('Truck Accessories')
+    const accessoriesLabels = getMegaMenu('accessories').columns.map((c) => c.label)
+    expect(accessoriesLabels).not.toContain('Truck Toolboxes')
+    expect(accessoriesLabels).not.toContain('Truck Accessories')
     for (const v of ['ute', 'caravan']) {
       const ids = getVehicleSections(v).map((s) => s.id)
       expect(ids).not.toContain('truck-toolboxes')
@@ -232,10 +240,9 @@ describe('getVehicleSections — vehicle-filtered range', () => {
     expect(idsIn(getVehicleSections('ute'))).not.toContain('truck-drawer-1')
     expect(idsIn(getVehicleSections('caravan'))).not.toContain('truck-drawer-1')
 
-    for (const top of ['toolboxes', 'accessories']) {
-      const labels = getMegaMenu(top).columns.map((c) => c.label)
-      expect(labels).not.toContain('Truck Toolboxes')
-    }
+    // The Accessories menu never lists it (the Toolboxes menu deliberately
+    // does — see the alsoInMenu assertions above).
+    expect(getMegaMenu('accessories').columns.map((c) => c.label)).not.toContain('Truck Toolboxes')
 
     // The flag governs the pinned sections too — untick and it leaves /trucks.
     __setStateForTests({
@@ -243,6 +250,23 @@ describe('getVehicleSections — vehicle-filtered range', () => {
       products: [...productRows, { ...truckRow, fits_truck: false }].map((r) => normalizeRow(r)),
     })
     expect(idsIn(getVehicleSections('truck'))).not.toContain('truck-drawer-1')
+  })
+
+  it('shows the same products on /truck-toolboxes as on the /trucks section', () => {
+    __setStateForTests({ status: 'ready', products: productRows.map(normalizeRow) })
+
+    // Same fold on both surfaces: the standalone category page and the /trucks
+    // section both read filed products first, then the absorbed truck-flagged
+    // generic stock — identical lists, identical order.
+    const pageIds = buildSections(getCategoryBySlug('truck-toolboxes')).flatMap((s) =>
+      s.products.map((p) => p.id),
+    )
+    const trucksSection = getVehicleSections('truck').find((s) => s.id === 'truck-toolboxes')
+    expect(pageIds).toEqual(trucksSection.products.map((p) => p.id))
+
+    // The fold respects the fits-truck opt-out on the standalone page too.
+    expect(pageIds).toContain('ute-under-tray-boxes-1')
+    expect(pageIds).not.toContain('job-site-toolbox-1')
   })
 
   it('vehicle menu lists each page’s top-level groups under its heading', () => {
@@ -285,15 +309,19 @@ describe('getVehicleSections — vehicle-filtered range', () => {
     expect(vehicleGroupLabels).not.toContain('Australian Made')
   })
 
-  it('admin category groups mirror the nav — the seven Toolboxes and every Accessories entry', () => {
+  it('admin category groups mirror the nav — the six Toolboxes families and every Accessories entry', () => {
     const groups = getAdminCategoryGroups()
     const group = (label) => groups.find((g) => g.label === label)
 
-    // The Toolboxes optgroup is exactly the seven families the mega-menu lists.
+    // The Toolboxes optgroup is the six families filed under the top. The menu
+    // shows those six plus the linked-in Truck Toolboxes (alsoInMenu), which
+    // the admin files under Trucks instead — it must not appear twice.
     expect(group('Toolboxes').options.map((o) => o.label)).toEqual(
-      getMegaMenu('toolboxes').columns.map((c) => c.label),
+      getMegaMenu('toolboxes')
+        .columns.map((c) => c.label)
+        .filter((label) => label !== 'Truck Toolboxes'),
     )
-    expect(group('Toolboxes').options).toHaveLength(7)
+    expect(group('Toolboxes').options).toHaveLength(6)
 
     // Accessories: one option per menu column, with a nesting column's leaves
     // qualified by their parent so no two options read the same. Nothing nests

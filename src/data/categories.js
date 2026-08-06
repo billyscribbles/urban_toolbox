@@ -10,8 +10,8 @@ export const categories = [
     slug: 'toolboxes',
     // Every child is a leaf, which would normally flatten the whole top into one
     // anchored page (that's Accessories). `pages: true` opts out: each of the
-    // seven families keeps its own /toolboxes/<slug> page, so the mega-menu and
-    // sitemap still point at seven indexable category pages rather than seven
+    // six families keeps its own /toolboxes/<slug> page, so the mega-menu and
+    // sitemap still point at six indexable category pages rather than six
     // anchors on a single ~70-product page.
     pages: true,
     children: [
@@ -32,7 +32,6 @@ export const categories = [
         label: 'Top Opening Toolboxes',
         slug: 'top-opening-toolboxes',
       },
-      { id: 'truck-boxes', label: 'Truck Boxes', slug: 'truck-boxes' },
       {
         id: 'under-tray-toolboxes',
         label: 'Under Tray Toolboxes',
@@ -71,7 +70,9 @@ export const categories = [
   // Truck-exclusive tops (see getVehicleSections in lib/catalog.js): this pair
   // IS the /trucks page. `absorbs` folds the named generic top's truck-flagged
   // products in behind the section's own, so the page stays two sections deep
-  // instead of repeating the whole generic group list. Labels are qualified
+  // instead of repeating the whole generic group list. The fold applies
+  // wherever the top's sections are built — its own /truck-toolboxes page
+  // shows the same combined list as its /trucks section. Labels are qualified
   // because each scoped top also owns a single-segment page — a bare
   // "Toolboxes" would ship /truck-toolboxes with /toolboxes' own <title>.
   // `shortLabel`, when present, is what display surfaces that already say the
@@ -83,6 +84,10 @@ export const categories = [
     slug: 'truck-toolboxes',
     vehicle: 'truck',
     absorbs: 'toolboxes',
+    // The old "Truck Boxes" family (under Toolboxes) merged into this node, so
+    // `alsoInMenu` lists it in that mega-menu too — a link out to its own
+    // /truck-toolboxes page, while the node itself stays truck-scoped.
+    alsoInMenu: 'toolboxes',
   },
   {
     id: 'truck-accessories',

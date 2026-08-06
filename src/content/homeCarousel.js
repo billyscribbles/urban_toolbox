@@ -38,7 +38,7 @@ export const homeCarousel = [
     categoryId: 'top-opening-toolboxes',
     to: '/toolboxes/top-opening-toolboxes',
   },
-  { label: 'Truck Boxes', categoryId: 'truck-boxes', to: '/toolboxes/truck-boxes' },
+  { label: 'Truck Toolboxes', categoryId: 'truck-toolboxes', to: '/truck-toolboxes' },
   {
     label: 'Under Tray Toolboxes',
     categoryId: 'under-tray-toolboxes',

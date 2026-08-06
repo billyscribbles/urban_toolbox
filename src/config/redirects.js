@@ -16,6 +16,9 @@ export const legacyRedirects = {
   '/caravan-toolboxes': '/caravans', // retired product page → caravans vehicle page
   '/photos': '/toolboxes', // gallery page → the catalogue, its closest match
   '/contact': '/quote', // enquiry intent → the quote form
+  // Not a GoDaddy URL — the Truck Boxes family merged into the truck-scoped
+  // Truck Toolboxes category, retiring its /toolboxes page.
+  '/toolboxes/truck-boxes': '/truck-toolboxes',
 }
 
 // Every URL the old site published, taken verbatim from its sitemap
