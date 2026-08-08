@@ -43,18 +43,31 @@ export const categories = [
     id: 'accessories',
     label: 'Accessories',
     slug: 'accessories',
+    // Order is curated, not alphabetical: related lines sit next to each other,
+    // because this list IS the mega-menu column order and the section order on
+    // the flattened /accessories page.
     children: [
-      { id: 'mounting-kit', label: 'Mounting Kits', slug: 'mounting-kit' },
       { id: 'locks', label: 'Locks', slug: 'locks' },
       { id: 'drawer-units', label: 'Drawer Units', slug: 'drawer-units' },
+      {
+        id: 'drawer-divider-system',
+        label: 'Drawer Divider Systems',
+        slug: 'drawer-divider-system',
+      },
       { id: 'shelving-units', label: 'Shelving Units', slug: 'shelving-units' },
       { id: 'ladder-rack', label: 'Ladder Racks', slug: 'ladder-rack' },
+      { id: 'roof-rack', label: 'Roof Racks', slug: 'roof-rack' },
       { id: 'canopy-ladder', label: 'Canopy Ladders', slug: 'canopy-ladder' },
       { id: 'cargo-cage', label: 'Cargo Cages', slug: 'cargo-cage' },
       {
         id: 'fuel-gas-tool-holder',
         label: 'Fuel, Gas & Tool Holders',
         slug: 'fuel-gas-tool-holder',
+      },
+      {
+        id: 'spare-wheel-holder',
+        label: 'Spare Wheel Holders',
+        slug: 'spare-wheel-holder',
       },
       { id: 'jack-off-legs', label: 'Jack-Off Legs', slug: 'jack-off-legs' },
     ],
